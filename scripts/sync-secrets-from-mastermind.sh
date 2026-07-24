@@ -31,7 +31,8 @@ REF="$(echo "$URL" | sed -E 's|https://([^.]+)\.supabase\.co.*|\1|')"
 
 # xcconfig treats // as a comment — a raw https:// URL silently truncates to
 # "https:" (shipped broken in build 23). $() breaks up the slashes safely.
-XCCONFIG_URL="${URL/:\/\//:\/\$()\/}"
+# Result must be: https:/$()/host  (NO backslashes — those embed as literal \/).
+XCCONFIG_URL="$(printf '%s' "$URL" | sed 's|https://|https:/$()/|')"
 
 YELP_KEY="${YELP_API_KEY:-${MANGASM_YELP_API_KEY:-}}"
 TM_KEY="${TICKETMASTER_API_KEY:-${MANGASM_TICKETMASTER_API_KEY:-}}"

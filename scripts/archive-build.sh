@@ -63,8 +63,14 @@ echo "✓ Supabase config embedded (key length ${#EMBEDDED_KEY})"
 # truncated "https:" via the xcconfig //-comment gotcha). Absent is fine —
 # the app falls back to SupabaseConfig.defaultURL.
 EMBEDDED_URL="$(plutil -extract SUPABASE_URL raw "$APP_PLIST" 2>/dev/null || true)"
-if [[ -n "$EMBEDDED_URL" ]] && ! [[ "$EMBEDDED_URL" =~ ^https://[a-z0-9.-]+ ]]; then
+# Normalize accidental JSON-style escapes from older xcconfig bugs (https:\/\/host).
+EMBEDDED_URL_NORM="${EMBEDDED_URL//\\/}"
+if [[ -n "$EMBEDDED_URL" ]] && ! [[ "$EMBEDDED_URL_NORM" =~ ^https://[a-z0-9.-]+ ]]; then
   echo "✗ SUPABASE_URL embedded but malformed ('$EMBEDDED_URL') — xcconfig //-comment truncation?" >&2
+  exit 1
+fi
+if [[ "$EMBEDDED_URL" == *'\\/'* ]] || [[ "$EMBEDDED_URL" == *'\/'* ]]; then
+  echo "✗ SUPABASE_URL contains literal backslash escapes ('$EMBEDDED_URL') — re-run sync-secrets-from-mastermind.sh" >&2
   exit 1
 fi
 
