@@ -31,6 +31,9 @@ targets:
         # which is how builds 20-22 shipped without Supabase config (B3 crash).
         SUPABASE_URL: $(SUPABASE_URL)
         SUPABASE_PUBLISHABLE_KEY: $(SUPABASE_PUBLISHABLE_KEY)
+        YELP_API_KEY: $(YELP_API_KEY)
+        TICKETMASTER_API_KEY: $(TICKETMASTER_API_KEY)
+        NSLocationWhenInUseUsageDescription: Mangasm uses your location to find restaurants and events within 10 miles of both of you for Date Night.
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

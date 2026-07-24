@@ -192,6 +192,8 @@ public struct Candidate: Identifiable, Hashable, Sendable {
     public var bio: String
     public var notes: CompatNotes
     public var avatarURL: String?        // Unsplash URL string
+    /// Optional lat/lon for DateNight dual-proximity (≤10 mi of both).
+    public var geoCoordinate: GeoCoordinate?
 
     public init(
         id: String,
@@ -207,7 +209,8 @@ public struct Candidate: Identifiable, Hashable, Sendable {
         hobbies: [String],
         bio: String,
         notes: CompatNotes,
-        avatarURL: String? = nil
+        avatarURL: String? = nil,
+        geoCoordinate: GeoCoordinate? = nil
     ) {
         self.id = id
         self.name = name
@@ -223,11 +226,13 @@ public struct Candidate: Identifiable, Hashable, Sendable {
         self.bio = bio
         self.notes = notes
         self.avatarURL = avatarURL
+        self.geoCoordinate = geoCoordinate
     }
 
     public static let sample = samples[0]
 
     /// Seeded from MATCHES array in mangasm-match.jsx
+    /// geoCoordinate: Miami-area anchors so DateNight dual-proximity demos work offline.
     public static let samples: [Candidate] = [
         Candidate(
             id: "m1",
@@ -247,7 +252,8 @@ public struct Candidate: Identifiable, Hashable, Sendable {
                 numerology: "Seeker meets free spirit",
                 chinese: "Dragon × Rat — a classic power pair"
             ),
-            avatarURL: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=240&h=240&q=80&auto=format&fit=crop&crop=faces"
+            avatarURL: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=240&h=240&q=80&auto=format&fit=crop&crop=faces",
+            geoCoordinate: GeoCoordinate(latitude: 25.7907, longitude: -80.1300)
         ),
         Candidate(
             id: "m2",
@@ -267,7 +273,8 @@ public struct Candidate: Identifiable, Hashable, Sendable {
                 numerology: "Creative spark, playful",
                 chinese: "Dragon × Monkey — magnetic"
             ),
-            avatarURL: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=240&h=240&q=80&auto=format&fit=crop&crop=faces"
+            avatarURL: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=240&h=240&q=80&auto=format&fit=crop&crop=faces",
+            geoCoordinate: GeoCoordinate(latitude: 25.786, longitude: -80.14)
         ),
         Candidate(
             id: "m3",
@@ -287,7 +294,8 @@ public struct Candidate: Identifiable, Hashable, Sendable {
                 numerology: "Old soul meets idealist",
                 chinese: "Dragon × Monkey — magnetic"
             ),
-            avatarURL: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=240&h=240&q=80&auto=format&fit=crop&crop=faces"
+            avatarURL: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=240&h=240&q=80&auto=format&fit=crop&crop=faces",
+            geoCoordinate: GeoCoordinate(latitude: 25.775, longitude: -80.19)
         ),
         Candidate(
             id: "m4",
@@ -307,7 +315,8 @@ public struct Candidate: Identifiable, Hashable, Sendable {
                 numerology: "Mirror life paths",
                 chinese: "Dragon × Rat — power pair"
             ),
-            avatarURL: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=240&h=240&q=80&auto=format&fit=crop&crop=faces"
+            avatarURL: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=240&h=240&q=80&auto=format&fit=crop&crop=faces",
+            geoCoordinate: GeoCoordinate(latitude: 25.77, longitude: -80.20)
         ),
         Candidate(
             id: "m5",
@@ -327,7 +336,8 @@ public struct Candidate: Identifiable, Hashable, Sendable {
                 numerology: "Builder energy",
                 chinese: "Dragon × Rooster — bold duo"
             ),
-            avatarURL: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=240&h=240&q=80&auto=format&fit=crop&crop=faces"
+            avatarURL: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=240&h=240&q=80&auto=format&fit=crop&crop=faces",
+            geoCoordinate: GeoCoordinate(latitude: 25.80, longitude: -80.13)
         ),
     ]
 }
