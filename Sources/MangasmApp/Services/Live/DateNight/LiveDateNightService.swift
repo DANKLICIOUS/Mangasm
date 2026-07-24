@@ -39,6 +39,18 @@ public struct LiveDateNightService: DateNightService {
         }
 
         let wantsLive = query.categories.contains(.event) || query.categories.contains(.festival)
+
+        // Yelp local events (GET /v3/events + optional /v3/events/{id})
+        if wantsLive, DateNightConfig.isUsableKey(config.yelpAPIKey) {
+            do {
+                let yelpEvents = try await yelp.searchEvents(center: center, radiusMiles: radius)
+                collected.append(contentsOf: yelpEvents)
+            } catch let error as DateNightError {
+                lastNetwork = error
+            }
+        }
+
+        // Ticketmaster events + festivals (when key present)
         if wantsLive, DateNightConfig.isUsableKey(config.ticketmasterAPIKey) {
             do {
                 let live = try await ticketmaster.search(center: center, radiusMiles: radius)

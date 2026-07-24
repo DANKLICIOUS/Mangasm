@@ -69,6 +69,11 @@ DateNightService (protocol)
 - **Reviews (max 3):** `GET https://api.yelp.com/v3/businesses/{id}/reviews`  
   Example: `/v3/businesses/north-india-restaurant-san-francisco/reviews`  
   → `YelpFusionClient.reviews(businessID:)` / `reviews(forPlaceID:)` — hard-cap `maxReviews = 3`
+- **Event by id:** `GET https://api.yelp.com/v3/events/{id}`  
+  Example: `/v3/events/awesome-event` · Bearer API key · `accept: application/json`  
+  → `YelpFusionClient.event(id:)` / `eventURL(eventID:)`
+- **Events search:** `GET https://api.yelp.com/v3/events?latitude=&longitude=&radius=`  
+  → `searchEvents(center:radiusMiles:)` → `DateNightPlace` (`yelp-event:…`, deep-link `event_site_url`)
 
 ### Ticketmaster Discovery
 
