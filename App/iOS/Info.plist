@@ -18,9 +18,15 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Mangasm uses your location to find restaurants and events within 10 miles of both of you for Date Night.</string>
 	<key>SUPABASE_PUBLISHABLE_KEY</key>
 	<string>$(SUPABASE_PUBLISHABLE_KEY)</string>
 	<key>SUPABASE_URL</key>
 	<string>$(SUPABASE_URL)</string>
+	<key>TICKETMASTER_API_KEY</key>
+	<string>$(TICKETMASTER_API_KEY)</string>
+	<key>YELP_API_KEY</key>
+	<string>$(YELP_API_KEY)</string>
 </dict>
 </plist>
