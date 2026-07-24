@@ -46,7 +46,7 @@ targets:
         CODE_SIGN_ENTITLEMENTS: App/iOS/Mangasm.entitlements
         PRODUCT_NAME: Mangasm
         MARKETING_VERSION: "1.1.0"
-        CURRENT_PROJECT_VERSION: "26"
+        CURRENT_PROJECT_VERSION: "27"
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleDisplayName: Mangasm
