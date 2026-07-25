@@ -1,83 +1,97 @@
 # App Store Review Notes — Mangasm (com.mangasm.app)
 
-> Paste the **Demo Account** + **Notes** sections below into App Store Connect →
-> your version → **App Review Information**. Fill in the password before submitting.
+**Build for this notes set:** **1.1.0 (26)** · DateNight Discovery ship
+
+> Paste the **Demo Account** + **Notes** sections below into App Store Connect →  
+> your version → **App Review Information**. Do not invent credentials — use Opal from masterlist / secrets.
 
 ---
 
 ## Demo Account (App Review Information → Sign-In required: YES)
 
-> ⚠️ The app is login-gated. Reviewers **cannot** use "Sign in with Apple," so you
-> MUST supply a working **email/password** demo login. The Email provider is enabled
-> in Supabase, so create one real account and put its credentials here.
+> ⚠️ The app is login-gated. Reviewers **cannot** use Sign in with Apple for testing, so  
+> you MUST supply a working **email/password** (or username/password) demo login.
 
 ```
-Username:  review-demo@mangasm.app      (or any mailbox you control)
-Password:  __________________________   ← create this; do NOT leave blank
+Username:  Opal
+Password:  [SET in ASC App Review Information from MANGASM_DEMO_PASSWORD — never invent]
 ```
 
-The app is sign-in-only (no in-app sign-up): create the account in the Supabase
-dashboard (Auth → Users → Add user, with email confirmed), then verify you can
-log in with it in the app on a clean install before submitting.
+(Opal is the fixed TestFlight / App Review demo account. Create or confirm the matching
+user in Supabase Auth before submission; verify login on a clean install.)
 
 ---
 
 ## Notes for Reviewer (paste into the Notes field)
 
-Mangasm is a safety-first social app for adult gay men. Sign in with the demo
-email/password above (Apple Sign-In also works but requires a personal Apple ID).
+Mangasm is a safety-first social app for adult gay men. Sign in with the **Opal** demo
+account above.
 
-This build satisfies Guideline 1.2 (user-generated content) — all four required
-controls are present and reachable:
+### What is new in build 26 — DateNight (please exercise)
 
-1. **Filter objectionable content** — content moderation/filtering is applied to
-   profiles and messages.
-2. **Report** — open any chat thread or a match's detail screen → overflow menu →
-   "Report." Reports are sent to the backend `file-report` function.
-3. **Block** — same chat thread / match detail menu → "Block." The chat thread
-   plays a short dissolve animation on all bubbles, then is **removed from the
-   inbox** so the blocked member cannot be messaged in that session. Blocked
-   users are also filtered from discovery and messaging (BlockPolicy) on later
-   sessions. (TestFlight video can show: open chat → ⋯ → Block → dissolve → thread gone.)
-4. **Contact / account deletion** — Settings → **Delete Account** permanently
-   purges the user's record from the backend (Supabase `delete-account` edge
-   function: deletes the auth user; all owned rows cascade via ON DELETE CASCADE),
-   then signs out. This satisfies the account-deletion requirement.
+1. Sign in as **Opal**.
+2. Open the **AI Match** tab (center lamp / lightbulb tab).
+3. Scroll to **“RSVP A FIRST DATE”** (DateNight Discovery).
+4. Optionally enter a **keyword** (e.g. `delis`, `sushi`) and/or a **ZIP**, or leave
+   **Use my GPS** on (iOS may prompt for When In Use location — OK to Allow or Deny;
+   ZIP works without GPS).
+5. Tap **Find**. You should see restaurant and/or event cards within ~10 miles of
+   **both** you and the featured match (party of 2).
+6. Tap **Book table** / **Get tickets** — the app opens the provider **deep link**
+   (Yelp or Ticketmaster) in Safari / the partner app. We do **not** take payments
+   or complete table booking inside Mangasm.
+7. On a Yelp restaurant card, expand **Yelp reviews (up to 3)** if the control is
+   shown (requires a live Yelp key; offline builds may show demo fixtures).
 
-**Location privacy:** the app collects **no location data at all** — there is no
-CoreLocation usage anywhere in the binary and the privacy manifest declares none.
-The "map" on Discover is a stylized illustration, and any location shown on a
-member card is self-reported profile text, never GPS.
+**How DateNight works (for review):**
 
-**Encryption:** transport is standard HTTPS. Direct messages are additionally
-end-to-end encrypted on device using Apple CryptoKit's standard algorithms
-(Curve25519 sealed boxes) — the server stores ciphertext only. No proprietary
-cryptography is used; ITSAppUsesNonExemptEncryption is set to NO because the app
-uses only Apple-provided, standard/exempt algorithms.
+- Restaurants: Yelp Fusion search (keyword + lat/lon).
+- Events: Yelp Events search when available + Ticketmaster Discovery when configured.
+- Booking/ticketing: **deep-link only** (Safari / partner app).
+- Proximity rule: places must sit within **10 miles of both** people.
+- Offline / missing keys: deterministic mock venues so the UI remains reviewable.
 
-**Payments:** in-app subscriptions use Apple StoreKit / In-App Purchase. (Any
-Stripe code in the project is for the separate web surface only and is not reachable
-from this iOS build.)
+### Guideline 1.2 (UGC) — still present
+
+1. **Filter objectionable content** — applied to profiles and messages.
+2. **Report** — chat thread or match detail → overflow → Report.
+3. **Block** — same menus → Block; thread dissolves and leaves the inbox.
+4. **Delete account** — Settings → Delete Account (server purge + sign out).
+
+### Location (build 26 update — honest disclosure)
+
+DateNight may use **optional** location to find nearby restaurants/events:
+
+- **GPS (When In Use)** if the reviewer allows the system prompt, **or**
+- **ZIP code** typed on the DateNight section (no GPS required).
+
+Purpose is app functionality only (local date suggestions). Location is **not** used
+for advertising or tracking. The Discover “map” remains a stylized illustration;
+member card “distance” text may still be self-reported profile copy.
+
+Please update the App Privacy nutrition label to include **Precise Location** and/or
+**Coarse Location** as “App Functionality,” optional, not linked to tracking, if not
+already aligned with this binary.
+
+### Encryption
+
+HTTPS in transit. Direct messages use Apple CryptoKit (Curve25519 sealed boxes);
+server stores ciphertext only. ITSAppUsesNonExemptEncryption = NO.
+
+### Payments
+
+Mangasm+ uses StoreKit IAP only (`Mangasm2cute4u001` monthly, `Mangasm0001` quarterly).
+No Stripe checkout inside this iOS build.
 
 ---
 
-## Pre-submit checklist (the gates that actually block this binary)
+## Pre-submit checklist
 
-- [x] **Team ID — CONFIRMED `854XZ2543V`** (dicklicious@icloud.com, Account Holder).
-      project.yml already matches. No change needed. (The `9SCVWDNBJ8` from
-      MANGASM_MAP.md was stale — ignore it.)
-- [ ] **Provisioning profile** — regenerate the distribution profile for
-      `com.mangasm.app` so it includes the **Sign in with Apple** capability
-      (entitlement was just added). Fresh Archive under Automatic signing usually
-      handles this if the App ID has "Sign in with Apple" enabled.
-- [ ] **Deploy** the `delete-account` edge function to the live Supabase project:
-      `supabase functions deploy delete-account`
-- [x] **In-App Purchases** — code now matches the EXISTING ASC product IDs
-      (one M+ tier, two billing lengths): - `Mangasm2cute4u001` → $9.99 / 1 month
-        - `Mangasm0001`        → $24.99 / 3 months
-      Just confirm both are **"Ready to Submit"** and attached to this version.
-      (iOS uses StoreKit, NOT Stripe — confirmed in code.)
-- [x] **Age rating** — questionnaire completed in App Store Connect.
-- [ ] Privacy nutrition label, screenshots, 1024 icon, privacy policy URL (ASC
-      clicks).
-- [ ] Demo email/password account created and login-tested on a clean install.
+- [x] Team ID `854XZ2543V`
+- [x] Build **26** notes describe DateNight path for reviewers
+- [x] Demo username **Opal** (password only in secrets / ASC form)
+- [ ] Paste Notes + Opal password into ASC App Review Information
+- [ ] Nutrition label location fields match DateNight (GPS/ZIP)
+- [ ] IAP products Ready to Submit and attached to version
+- [ ] Attach build **26** to the iOS version after processing
+- [ ] Privacy policy URL live

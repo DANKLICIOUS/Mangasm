@@ -13,6 +13,7 @@ public final class AppEnvironment: ObservableObject {
     public let reputation: any ReputationService
     public let safety: any SafetyService
     public let referrals: any ReferralService
+    public let dateNight: any DateNightService
 
     public init(
         auth: any AuthService,
@@ -22,7 +23,8 @@ public final class AppEnvironment: ObservableObject {
         events: any EventService,
         reputation: any ReputationService,
         safety: any SafetyService,
-        referrals: any ReferralService
+        referrals: any ReferralService,
+        dateNight: any DateNightService = MockDateNightService()
     ) {
         self.auth = auth
         self.profile = profile
@@ -32,6 +34,7 @@ public final class AppEnvironment: ObservableObject {
         self.reputation = reputation
         self.safety = safety
         self.referrals = referrals
+        self.dateNight = dateNight
     }
 
     /// Pre-built mock environment for previews, tests, and Simulator runs.
@@ -43,16 +46,35 @@ public final class AppEnvironment: ObservableObject {
         events: MockEventService(),
         reputation: MockReputationService(),
         safety: MockSafetyService(),
-        referrals: MockReferralService()
+        referrals: MockReferralService(),
+        dateNight: MockDateNightService()
     )
 
     /// Live auth + profile + chat + safety when Supabase keys are configured.
     /// Events / reputation remain mock until their live services ship.
+    /// DateNight uses Yelp + Ticketmaster when keys are present; otherwise mock fixtures.
     public static func makeDefault() -> AppEnvironment {
+        let dateNight: any DateNightService = {
+            if let dn = DateNightConfig.fromInfoPlist() {
+                return LiveDateNightService(config: dn)
+            }
+            return MockDateNightService()
+        }()
+
         guard let config = SupabaseConfig.fromInfoPlist() else {
             #if DEBUG
             // Previews, tests, and Simulator runs without secrets use mocks.
-            return .mock
+            return AppEnvironment(
+                auth: MockAuthService(),
+                profile: MockProfileService(),
+                matches: MockMatchService(),
+                chat: MockChatService(),
+                events: MockEventService(),
+                reputation: MockReputationService(),
+                safety: MockSafetyService(),
+                referrals: MockReferralService(),
+                dateNight: dateNight
+            )
             #else
             // A Release binary without Supabase config would silently ship
             // all-mock services — every safety control would be fake in front
@@ -73,7 +95,8 @@ public final class AppEnvironment: ObservableObject {
                 client: client,
                 projectURL: config.url,
                 publishableKey: config.publishableKey
-            )
+            ),
+            dateNight: dateNight
         )
     }
 }

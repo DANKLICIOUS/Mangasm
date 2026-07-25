@@ -52,18 +52,11 @@ struct AIMatchScreen: View {
                     // ── Trio grid ─────────────────────────────────────────────
                     trioGrid
 
-                    // ── RSVP A FIRST DATE ─────────────────────────────────────
-                    SectionLabel("RSVP A FIRST DATE")
-                        .padding(.top, 4)
-
-                    Text("We'll book the table for two. \(featured.name) RSVPs to accept — or you message to pick another time & place.")
-                        .font(MGFont.sans(10, .light))
-                        .foregroundStyle(MGColor.inkSoft)
-                        .lineSpacing(3)
-
-                    // Venue cards — each has its own @State for idle/requested/declined
-                    ForEach(Venue.samples) { venue in
-                        VenueCard(venue: venue, matchName: featured.name) {
+                    // ── DateNight discovery (Yelp + Ticketmaster, dual 10-mi, deep-link) ──
+                    DateNightSection(
+                        matchName: featured.name,
+                        matchCoordinate: featured.geoCoordinate,
+                        onMessage: {
                             let convo = env.chat.conversation(
                                 for: featured.id,
                                 name: featured.name,
@@ -71,7 +64,7 @@ struct AIMatchScreen: View {
                             )
                             state.activeChat = convo
                         }
-                    }
+                    )
 
                     // Bottom padding for tab bar
                     Spacer().frame(height: 96)

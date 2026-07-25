@@ -31,12 +31,18 @@ REF="$(echo "$URL" | sed -E 's|https://([^.]+)\.supabase\.co.*|\1|')"
 
 # xcconfig treats // as a comment — a raw https:// URL silently truncates to
 # "https:" (shipped broken in build 23). $() breaks up the slashes safely.
-XCCONFIG_URL="${URL/:\/\//:\/\$()\/}"
+# Result must be: https:/$()/host  (NO backslashes — those embed as literal \/).
+XCCONFIG_URL="$(printf '%s' "$URL" | sed 's|https://|https:/$()/|')"
+
+YELP_KEY="${YELP_API_KEY:-${MANGASM_YELP_API_KEY:-}}"
+TM_KEY="${TICKETMASTER_API_KEY:-${MANGASM_TICKETMASTER_API_KEY:-}}"
 
 cat >"$XCCONFIG" <<EOF
 // Auto-synced from mastermind secrets.env — DO NOT COMMIT
 SUPABASE_URL = $XCCONFIG_URL
 SUPABASE_PUBLISHABLE_KEY = $KEY
+YELP_API_KEY = $YELP_KEY
+TICKETMASTER_API_KEY = $TM_KEY
 EOF
 chmod 600 "$XCCONFIG"
 
