@@ -172,9 +172,14 @@ final class DateNightDiscoveryTests: XCTestCase {
         }
     }
 
-    // MARK: - Party of 2 metadata
+    // MARK: - Party size
 
-    func testPartySizeIsAlwaysTwo() {
-        XCTAssertEqual(DateNightQuery.partySize, 2)
+    func testOneToOneQueryPartySizeIsTwo() {
+        XCTAssertEqual(DateNightQuery(viewer: miami, match: beach).partySize, 2)
+    }
+
+    func testGroupQueryPartySizeMatchesAnchorCount() {
+        let query = DateNightQuery(anchors: [miami, beach, miami], maxMiles: 12)
+        XCTAssertEqual(query.partySize, 3)
     }
 }

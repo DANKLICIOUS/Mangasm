@@ -14,14 +14,13 @@ public struct LiveDateNightService: DateNightService {
     }
 
     public func discover(_ query: DateNightQuery) async throws -> [DateNightPlace] {
-        if DualProximity.usersTooFarApart(viewer: query.viewer, match: query.match) {
+        guard MultiProximity.feasible(anchors: query.anchors, maxMiles: query.maxMiles) else {
             throw DateNightError.tooFarApart
         }
-        guard let radius = query.searchRadiusMiles else {
+        guard let radius = query.searchRadiusMiles, let center = query.center else {
             throw DateNightError.tooFarApart
         }
 
-        let center = query.center
         var collected: [DateNightPlace] = []
         var lastNetwork: DateNightError?
 
@@ -60,10 +59,10 @@ public struct LiveDateNightService: DateNightService {
             }
         }
 
-        let filtered = DualProximity.filter(
+        let filtered = MultiProximity.filter(
             places: collected,
-            viewer: query.viewer,
-            match: query.match
+            anchors: query.anchors,
+            maxMiles: query.maxMiles
         )
         .filter { query.categories.contains($0.category) }
         .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }

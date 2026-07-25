@@ -52,13 +52,13 @@ public struct MockDateNightService: DateNightService {
     }
 
     public func discover(_ query: DateNightQuery) async throws -> [DateNightPlace] {
-        if DualProximity.usersTooFarApart(viewer: query.viewer, match: query.match) {
+        guard MultiProximity.feasible(anchors: query.anchors, maxMiles: query.maxMiles) else {
             throw DateNightError.tooFarApart
         }
-        let filtered = DualProximity.filter(
+        let filtered = MultiProximity.filter(
             places: fixtures,
-            viewer: query.viewer,
-            match: query.match
+            anchors: query.anchors,
+            maxMiles: query.maxMiles
         )
         .filter { query.categories.contains($0.category) }
 

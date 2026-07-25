@@ -77,32 +77,54 @@ public struct DateNightPlace: Identifiable, Sendable, Hashable, Codable {
 // MARK: - Query
 
 public struct DateNightQuery: Sendable, Equatable {
-    public static let partySize = 2
-
-    public var viewer: GeoCoordinate
-    public var match: GeoCoordinate
+    /// One anchor per participant — a venue must sit within `maxMiles` of **each**.
+    /// Two anchors = the classic 1:1 DateNight; three = a group date.
+    public var anchors: [GeoCoordinate]
+    /// The "X miles" radius every anchor must be within of the venue.
+    public var maxMiles: Double
     public var categories: Set<DateNightCategory>
     /// Yelp Fusion `term` keyword (e.g. "delis"). Empty/nil = open restaurant search.
     public var term: String?
 
+    /// General N-anchor initializer (group dates).
+    public init(
+        anchors: [GeoCoordinate],
+        maxMiles: Double = MultiProximity.defaultMaxMiles,
+        categories: Set<DateNightCategory> = Set(DateNightCategory.allCases),
+        term: String? = nil
+    ) {
+        self.anchors = anchors
+        self.maxMiles = maxMiles
+        self.categories = categories
+        self.term = term
+    }
+
+    /// Back-compat 1:1 initializer — viewer + one match at the default 10-mi radius.
     public init(
         viewer: GeoCoordinate,
         match: GeoCoordinate,
         categories: Set<DateNightCategory> = Set(DateNightCategory.allCases),
         term: String? = nil
     ) {
-        self.viewer = viewer
-        self.match = match
-        self.categories = categories
-        self.term = term
+        self.init(
+            anchors: [viewer, match],
+            maxMiles: DualProximity.defaultMaxMiles,
+            categories: categories,
+            term: term
+        )
     }
 
-    public var center: GeoCoordinate {
-        DualProximity.midpoint(viewer: viewer, match: match)
+    /// Party size = number of anchors (was a fixed 2).
+    public var partySize: Int { anchors.count }
+
+    /// Fairest provider-search origin (min-enclosing-circle center); `nil` if no anchors.
+    public var center: GeoCoordinate? {
+        MultiProximity.center(of: anchors)
     }
 
+    /// Provider search radius that stays inside every anchor's range; `nil` if infeasible.
     public var searchRadiusMiles: Double? {
-        DualProximity.searchRadiusMiles(viewer: viewer, match: match)
+        MultiProximity.searchRadiusMiles(anchors: anchors, maxMiles: maxMiles)
     }
 }
 
