@@ -4,6 +4,18 @@ import SwiftUI
 // Defined here (Task 4). Task 5+ must NOT redefine it.
 public enum Weather: String, CaseIterable, Sendable {
     case clear, cloudy, rain, heavyRain, sleet, snow
+
+    /// Cute glyph for pills and the weather selector (single source of truth).
+    public var sfSymbol: String {
+        switch self {
+        case .clear:     return "sun.max.fill"
+        case .cloudy:    return "cloud.fill"
+        case .rain:      return "cloud.drizzle.fill"
+        case .heavyRain: return "cloud.heavyrain.fill"
+        case .sleet:     return "cloud.sleet.fill"
+        case .snow:      return "snowflake"
+        }
+    }
 }
 
 // MARK: - Deterministic particle helpers

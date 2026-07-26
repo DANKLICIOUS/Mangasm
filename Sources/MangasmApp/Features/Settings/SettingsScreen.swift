@@ -288,22 +288,15 @@ public struct SettingsScreen: View {
                             Divider().opacity(0.2).padding(.horizontal, 13)
                             #endif
 
-                            // Weather picker
-                            HStack {
+                            // Weather — cute glyph selector (was a stock .menu Picker)
+                            VStack(alignment: .leading, spacing: 9) {
                                 Text("WEATHER")
                                     .font(MGFont.mono(8.5))
                                     .tracking(8.5 * 0.1)
                                     .foregroundStyle(MGColor.inkFaint)
-                                Spacer()
-                                Picker("Weather", selection: $state.weather) {
-                                    ForEach(Weather.allCases, id: \.self) { w in
-                                        Text(w.settingsLabel).tag(w)
-                                    }
-                                }
-                                .pickerStyle(.menu)
-                                .tint(MGColor.goldDeep)
-                                .font(MGFont.sans(12))
+                                WeatherPickerRow(selection: $state.weather)
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 13)
                             .padding(.horizontal, 13)
                         }
@@ -553,6 +546,64 @@ func parseHobbies(_ text: String) -> [String] {
     text.split(separator: ",")
         .map { $0.trimmingCharacters(in: .whitespaces) }
         .filter { !$0.isEmpty }
+}
+
+// MARK: - Cute weather selector
+// A row of tappable glyph chips. The selected one fills gold, glows, springs up,
+// and its icon pops — replacing the old stock `.menu` Picker.
+private struct WeatherPickerRow: View {
+    @Binding var selection: Weather
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(Weather.allCases, id: \.self) { w in
+                    chip(w)
+                }
+            }
+            .padding(.vertical, 4)
+            .padding(.horizontal, 1)
+        }
+    }
+
+    private func chip(_ w: Weather) -> some View {
+        let isOn = selection == w
+        return Button {
+            withAnimation(.spring(response: 0.34, dampingFraction: 0.66)) {
+                selection = w
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: w.sfSymbol)
+                    .font(.system(size: 13, weight: .semibold))
+                    .symbolRenderingMode(.monochrome)
+                    .symbolEffect(.bounce, value: isOn)
+                if isOn {
+                    Text(w.settingsLabel.uppercased())
+                        .font(MGFont.mono(8.5, .medium))
+                        .tracking(0.8)
+                        .fixedSize()
+                        .transition(.opacity.combined(with: .move(edge: .leading)))
+                }
+            }
+            .foregroundStyle(isOn ? MGColor.goldText : MGColor.inkFaint)
+            .padding(.vertical, 7)
+            .padding(.horizontal, isOn ? 12 : 9)
+            .background {
+                if isOn {
+                    Capsule().fill(MGGradient.goldButton)
+                        .shadow(color: MGColor.gold.opacity(0.5), radius: 7, y: 2)
+                } else {
+                    Capsule().fill(MGColor.ink.opacity(0.05))
+                        .overlay(Capsule().strokeBorder(MGColor.inkFaint.opacity(0.25), lineWidth: 1))
+                }
+            }
+            .scaleEffect(isOn ? 1.06 : 1)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(w.settingsLabel)
+        .accessibilityAddTraits(isOn ? [.isSelected, .isButton] : .isButton)
+    }
 }
 
 // MARK: - Weather display label
