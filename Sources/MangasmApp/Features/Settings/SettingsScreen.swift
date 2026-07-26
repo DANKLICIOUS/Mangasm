@@ -288,13 +288,14 @@ public struct SettingsScreen: View {
                             Divider().opacity(0.2).padding(.horizontal, 13)
                             #endif
 
-                            // Weather — cute glyph selector (was a stock .menu Picker)
+                            // Weather — now resolved automatically from your location
+                            // (WeatherKit). Read-only readout; no longer a manual picker.
                             VStack(alignment: .leading, spacing: 9) {
                                 Text("WEATHER")
                                     .font(MGFont.mono(8.5))
                                     .tracking(8.5 * 0.1)
                                     .foregroundStyle(MGColor.inkFaint)
-                                WeatherPickerRow(selection: $state.weather)
+                                CurrentWeatherReadout(weather: state.weather)
                             }
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 13)
@@ -548,61 +549,36 @@ func parseHobbies(_ text: String) -> [String] {
         .filter { !$0.isEmpty }
 }
 
-// MARK: - Cute weather selector
-// A row of tappable glyph chips. The selected one fills gold, glows, springs up,
-// and its icon pops — replacing the old stock `.menu` Picker.
-private struct WeatherPickerRow: View {
-    @Binding var selection: Weather
+// MARK: - Current weather readout
+// Read-only pill showing the weather resolved from the device's location.
+// Replaced the manual chip picker — weather is now automatic (WeatherKit).
+private struct CurrentWeatherReadout: View {
+    let weather: Weather
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                ForEach(Weather.allCases, id: \.self) { w in
-                    chip(w)
-                }
-            }
-            .padding(.vertical, 4)
-            .padding(.horizontal, 1)
+        HStack(spacing: 8) {
+            Image(systemName: weather.sfSymbol)
+                .font(.system(size: 13, weight: .semibold))
+                .symbolRenderingMode(.monochrome)
+                .foregroundStyle(MGColor.goldText)
+            Text(weather.settingsLabel)
+                .font(MGFont.mono(9, .medium))
+                .tracking(0.6)
+                .foregroundStyle(MGColor.goldText)
+            Spacer(minLength: 0)
+            Text("AUTO · YOUR LOCATION")
+                .font(MGFont.mono(7.5))
+                .tracking(0.8)
+                .foregroundStyle(MGColor.inkFaint)
         }
-    }
-
-    private func chip(_ w: Weather) -> some View {
-        let isOn = selection == w
-        return Button {
-            withAnimation(.spring(response: 0.34, dampingFraction: 0.66)) {
-                selection = w
-            }
-        } label: {
-            HStack(spacing: 6) {
-                Image(systemName: w.sfSymbol)
-                    .font(.system(size: 13, weight: .semibold))
-                    .symbolRenderingMode(.monochrome)
-                    .symbolEffect(.bounce, value: isOn)
-                if isOn {
-                    Text(w.settingsLabel.uppercased())
-                        .font(MGFont.mono(8.5, .medium))
-                        .tracking(0.8)
-                        .fixedSize()
-                        .transition(.opacity.combined(with: .move(edge: .leading)))
-                }
-            }
-            .foregroundStyle(isOn ? MGColor.goldText : MGColor.inkFaint)
-            .padding(.vertical, 7)
-            .padding(.horizontal, isOn ? 12 : 9)
-            .background {
-                if isOn {
-                    Capsule().fill(MGGradient.goldButton)
-                        .shadow(color: MGColor.gold.opacity(0.5), radius: 7, y: 2)
-                } else {
-                    Capsule().fill(MGColor.ink.opacity(0.05))
-                        .overlay(Capsule().strokeBorder(MGColor.inkFaint.opacity(0.25), lineWidth: 1))
-                }
-            }
-            .scaleEffect(isOn ? 1.06 : 1)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background {
+            Capsule().fill(MGColor.ink.opacity(0.05))
+                .overlay(Capsule().strokeBorder(MGColor.inkFaint.opacity(0.25), lineWidth: 1))
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel(w.settingsLabel)
-        .accessibilityAddTraits(isOn ? [.isSelected, .isButton] : .isButton)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Current weather: \(weather.settingsLabel), from your location")
     }
 }
 

@@ -34,6 +34,10 @@ struct MainTabView: View {
             GlassTabBar()
         }
         .ignoresSafeArea()
+        // Resolve weather from the device's location once, when the app shell appears.
+        .task {
+            await state.refreshWeather(weather: env.weather, location: env.location)
+        }
         // Match detail sheet — shared entry point for AIMatch and Discover taps.
         // Candidate is Identifiable, so .sheet(item:) drives presentation automatically.
         .sheet(item: $state.selectedMatch) { candidate in

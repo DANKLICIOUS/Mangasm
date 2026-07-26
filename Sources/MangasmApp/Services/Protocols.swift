@@ -17,6 +17,19 @@ public protocol AuthService {
     func deleteAccount() async throws
 }
 
+// MARK: - WeatherProvider
+/// Resolves the ambient `Weather` from a coordinate — WeatherKit-backed when live,
+/// deterministic heuristic as fallback. Non-throwing: weather must never break the UI.
+public protocol WeatherProvider: Sendable {
+    func current(at coordinate: GeoCoordinate) async -> Weather
+}
+
+// MARK: - LocationProvider
+/// One-shot, best-effort device coordinate; `nil` when unavailable or permission denied.
+public protocol LocationProvider: Sendable {
+    func currentCoordinate() async -> GeoCoordinate?
+}
+
 // MARK: - ReferralService
 /// Records a cartoon referral code after sign-up (validate-referral edge function).
 @MainActor
