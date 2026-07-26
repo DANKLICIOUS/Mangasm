@@ -95,8 +95,6 @@ private struct AuthSheet: View {
             referralNotice = "Welcome — you're on \(code)'s team."
             state.clearPendingReferralCode()
             inviteCode = ""
-        } catch let error as ReferralError {
-            referralNotice = error.localizedDescription
         } catch {
             referralNotice = error.localizedDescription
         }
