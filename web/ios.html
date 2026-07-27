@@ -1,74 +1,124 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mangasm for iOS — Download</title>
-  <meta name="description" content="Download Mangasm for iOS. Members-only LGBTQ+ social — live map, floating chat, video rooms, AI matchmaking, reputation.">
-  <meta property="og:title" content="Mangasm for iOS">
-  <meta property="og:url" content="https://ios.mangasm.app">
-  <meta name="apple-itunes-app" content="app-id=6776317775">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
-  <style>
-    .glass-panel { background: rgba(255,255,255,0.08); backdrop-filter: blur(16px) saturate(120%); border: 1px solid rgba(255,255,255,0.15); }
-    .glass-card { background: rgba(15,23,42,0.35); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
-    .gold { color: #c9a84c; }
-  </style>
-</head>
-<body class="bg-slate-900 text-white font-sans min-h-screen relative overflow-x-hidden">
-  <div class="absolute inset-0 z-0 bg-cover bg-center" style="background-image: url('https://gothamgodzilla-4923s-projects.vercel.app/edited-image.jpg');">
-    <div class="absolute inset-0 bg-black/45"></div>
-  </div>
-
-  <div class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 md:p-8 max-w-lg mx-auto text-center">
-    <div class="glass-card rounded-[32px] p-8 md:p-10 shadow-2xl w-full">
-      <div class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-amber-400/30 to-purple-600/30 border border-amber-400/30 flex items-center justify-center">
-        <svg class="w-10 h-10 text-amber-300" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-2.66 3.68A9.87 9.87 0 0112 22a9.87 9.87 0 01-4.05-.82c-.95-1.23-1.83-2.44-2.66-3.68C3.61 16.85 2 14.28 2 11.5 2 6.81 6.03 3 11.5 3S21 6.81 21 11.5c0 2.78-1.61 5.35-2.29 8z"/></svg>
-      </div>
-
-      <p class="text-[10px] font-bold tracking-[0.3em] text-amber-300/80 uppercase mb-2">ios.mangasm.app</p>
-      <div id="invite-banner" class="hidden rounded-2xl px-4 py-3 mb-4 text-sm border border-amber-400/30 bg-amber-400/10">
-        Invited with code <strong id="invite-code" class="gold"></strong>
-      </div>
-      <h1 class="font-['Playfair_Display'] text-3xl md:text-4xl font-semibold mb-3">Mangasm for iOS</h1>
-      <p class="text-slate-300 text-sm leading-relaxed mb-8">
-        Members-only social for gay men who value reputation, privacy, and real connection.
-        Live map · floating chat · video rooms · AI matchmaking.
-      </p>
-
-      <a id="open-app" href="mangasm://join"
-         class="hidden block w-full bg-gradient-to-r from-amber-500/90 to-purple-600/90 text-white font-bold py-4 px-6 rounded-2xl hover:opacity-95 transition mb-3 text-sm tracking-wide">
-        Open in Mangasm with invite code
-      </a>
-      <a href="https://apps.apple.com/app/mangasm/id6776317775"
-         class="block w-full bg-white text-slate-900 font-bold py-4 px-6 rounded-2xl hover:bg-slate-100 transition mb-3 text-sm tracking-wide">
-        Download on the App Store
-      </a>
-      <a href="https://mangasm.app/promo"
-         class="block w-full bg-white/10 hover:bg-white/15 border border-white/20 font-semibold py-3.5 px-6 rounded-2xl transition text-sm">
-        Join the Referral Team →
-      </a>
-
-      <p class="mt-8 text-[10px] text-slate-500">18+ only · Invitation &amp; reputation gated · com.mangasm.app</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mangasm for iOS — Download</title>
+    <meta
+      name="description"
+      content="Download Mangasm for iOS. Members-only LGBTQ+ social — live map, floating chat, video rooms, AI matchmaking, reputation."
+    />
+    <meta property="og:title" content="Mangasm for iOS" />
+    <meta property="og:url" content="https://ios.mangasm.app" />
+    <meta name="apple-itunes-app" content="app-id=6776317775" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(16px) saturate(120%);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+      }
+      .glass-card {
+        background: rgba(15, 23, 42, 0.35);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .gold {
+        color: #c9a84c;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-900 text-white font-sans min-h-screen relative overflow-x-hidden">
+    <div
+      class="absolute inset-0 z-0 bg-cover bg-center"
+      style="
+        background-image: url(&quot;https://gothamgodzilla-4923s-projects.vercel.app/edited-image.jpg&quot;);
+      "
+    >
+      <div class="absolute inset-0 bg-black/45"></div>
     </div>
 
-    <a href="https://mangasm.app" class="mt-6 text-xs text-slate-400 hover:text-white transition">← mangasm.app</a>
-  </div>
-  <script>
-    (function () {
-      var params = new URLSearchParams(location.search);
-      var code = (params.get('code') || localStorage.getItem('mangasm_referral_code') || '').trim().toUpperCase();
-      if (!/^[A-Z0-9]{2,24}$/.test(code)) return;
+    <div
+      class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 md:p-8 max-w-lg mx-auto text-center"
+    >
+      <div class="glass-card rounded-[32px] p-8 md:p-10 shadow-2xl w-full">
+        <div
+          class="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-amber-400/30 to-purple-600/30 border border-amber-400/30 flex items-center justify-center"
+        >
+          <svg class="w-10 h-10 text-amber-300" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M18.71 19.5c-.83 1.24-1.71 2.45-2.66 3.68A9.87 9.87 0 0112 22a9.87 9.87 0 01-4.05-.82c-.95-1.23-1.83-2.44-2.66-3.68C3.61 16.85 2 14.28 2 11.5 2 6.81 6.03 3 11.5 3S21 6.81 21 11.5c0 2.78-1.61 5.35-2.29 8z"
+            />
+          </svg>
+        </div>
 
-      localStorage.setItem('mangasm_referral_code', code);
-      document.getElementById('invite-banner').classList.remove('hidden');
-      document.getElementById('invite-code').textContent = code;
+        <p class="text-[10px] font-bold tracking-[0.3em] text-amber-300/80 uppercase mb-2">
+          ios.mangasm.app
+        </p>
+        <div
+          id="invite-banner"
+          class="hidden rounded-2xl px-4 py-3 mb-4 text-sm border border-amber-400/30 bg-amber-400/10"
+        >
+          Invited with code <strong id="invite-code" class="gold"></strong>
+        </div>
+        <h1 class="font-['Playfair_Display'] text-3xl md:text-4xl font-semibold mb-3">
+          Mangasm for iOS
+        </h1>
+        <p class="text-slate-300 text-sm leading-relaxed mb-8">
+          Members-only social for gay men who value reputation, privacy, and real connection. Live
+          map · floating chat · video rooms · AI matchmaking.
+        </p>
 
-      var openApp = document.getElementById('open-app');
-      openApp.href = 'mangasm://join?code=' + encodeURIComponent(code);
-      openApp.classList.remove('hidden');
-    })();
-  </script>
-</body>
+        <a
+          id="open-app"
+          href="mangasm://join"
+          class="hidden block w-full bg-gradient-to-r from-amber-500/90 to-purple-600/90 text-white font-bold py-4 px-6 rounded-2xl hover:opacity-95 transition mb-3 text-sm tracking-wide"
+        >
+          Open in Mangasm with invite code
+        </a>
+        <a
+          href="https://apps.apple.com/app/mangasm/id6776317775"
+          class="block w-full bg-white text-slate-900 font-bold py-4 px-6 rounded-2xl hover:bg-slate-100 transition mb-3 text-sm tracking-wide"
+        >
+          Download on the App Store
+        </a>
+        <a
+          href="https://mangasm.app/promo"
+          class="block w-full bg-white/10 hover:bg-white/15 border border-white/20 font-semibold py-3.5 px-6 rounded-2xl transition text-sm"
+        >
+          Join the Referral Team →
+        </a>
+
+        <p class="mt-8 text-[10px] text-slate-500">
+          18+ only · Invitation &amp; reputation gated · com.mangasm.app
+        </p>
+      </div>
+
+      <a href="https://mangasm.app" class="mt-6 text-xs text-slate-400 hover:text-white transition"
+        >← mangasm.app</a
+      >
+    </div>
+    <script>
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var code = (params.get("code") || localStorage.getItem("mangasm_referral_code") || "")
+          .trim()
+          .toUpperCase();
+        if (!/^[A-Z0-9]{2,24}$/.test(code)) return;
+
+        localStorage.setItem("mangasm_referral_code", code);
+        document.getElementById("invite-banner").classList.remove("hidden");
+        document.getElementById("invite-code").textContent = code;
+
+        var openApp = document.getElementById("open-app");
+        openApp.href = "mangasm://join?code=" + encodeURIComponent(code);
+        openApp.classList.remove("hidden");
+      })();
+    </script>
+    <script type="module" src="analytics.js"></script>
+  </body>
 </html>

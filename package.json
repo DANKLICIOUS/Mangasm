@@ -13,5 +13,8 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.1.1",
     "prettier": "^3.9.6"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }
