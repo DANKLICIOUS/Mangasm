@@ -1,4 +1,5 @@
 {
+  "framework": null,
   "headers": [
     {
       "source": "/.well-known/apple-app-site-association",
