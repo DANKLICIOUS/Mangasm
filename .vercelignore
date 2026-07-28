@@ -15,3 +15,7 @@
 # "No entrypoint found". The lockfile keeps the install deterministic.
 !/package.json
 !/package-lock.json
+
+# .git must survive: the project's "Ignored Build Step" runs a `git diff`,
+# which fails with "Not a git repository" if the clone's .git is stripped.
+!/.git
