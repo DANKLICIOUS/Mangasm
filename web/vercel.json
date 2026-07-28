@@ -30,6 +30,12 @@
     { "source": "/storybook/", "destination": "/storybook.html" },
     { "source": "/autopsy", "destination": "/storybook.html" },
     { "source": "/autopsy/", "destination": "/storybook.html" },
+    { "source": "/plus", "destination": "/plus.html" },
+    { "source": "/plus/", "destination": "/plus.html" },
+    { "source": "/plus/success", "destination": "/plus-success.html" },
+    { "source": "/plus/success/", "destination": "/plus-success.html" },
+    { "source": "/admin/revenue", "destination": "/admin/revenue.html" },
+    { "source": "/admin/revenue/", "destination": "/admin/revenue.html" },
     { "source": "/", "destination": "/index.html" }
   ]
 }
