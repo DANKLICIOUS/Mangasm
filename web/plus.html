@@ -109,21 +109,25 @@
           $("plan-msg").textContent = "Opening secure checkout…";
           const { data: { session } } = await supabase.auth.getSession();
           if (!session) { $("plan-msg").textContent = "Please sign in first."; return; }
-          const res = await fetch(`${CONFIG.SUPABASE_URL}/functions/v1/stripe-checkout`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${session.access_token}`,
-              "apikey": CONFIG.SUPABASE_ANON_KEY,
-            },
-            body: JSON.stringify({ plan: btn.dataset.plan }),
-          });
-          const body = await res.json().catch(() => ({}));
-          if (!res.ok || !body.url) {
-            $("plan-msg").textContent = body.error ?? "Checkout is unavailable right now — try again shortly.";
-            return;
+          try {
+            const res = await fetch(`${CONFIG.SUPABASE_URL}/functions/v1/stripe-checkout`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`,
+                "apikey": CONFIG.SUPABASE_ANON_KEY,
+              },
+              body: JSON.stringify({ plan: btn.dataset.plan }),
+            });
+            const body = await res.json().catch(() => ({}));
+            if (!res.ok || !body.url) {
+              $("plan-msg").textContent = body.error ?? "Checkout is unavailable right now — try again shortly.";
+              return;
+            }
+            window.location.href = body.url;
+          } catch {
+            $("plan-msg").textContent = "Network error — check your connection and try again.";
           }
-          window.location.href = body.url;
         }));
     }
   </script>
