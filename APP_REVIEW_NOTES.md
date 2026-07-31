@@ -1,24 +1,33 @@
 # App Store Review Notes — Mangasm (com.mangasm.app)
 
-**Build for this notes set:** **1.1.0 (26)** · DateNight Discovery ship
+**Build for this notes set:** **1.1.0 (30)** · DateNight Discovery ship
 
 > Paste the **Demo Account** + **Notes** sections below into App Store Connect →  
-> your version → **App Review Information**. Do not invent credentials — use Opal from masterlist / secrets.
+> your version → **App Review Information**. Do not invent credentials — use the Opal account from masterlist / secrets.
 
 ---
 
 ## Demo Account (App Review Information → Sign-In required: YES)
 
-> ⚠️ The app is login-gated. Reviewers **cannot** use Sign in with Apple for testing, so  
-> you MUST supply a working **email/password** (or username/password) demo login.
+> ⚠️ The app is login-gated and the sign-in screen has **an EMAIL field only** — there is
+> **no username field**. The reviewer MUST be given a working **email + password**. Giving
+> a bare username (e.g. "Opal") makes Supabase reject the login → **Guideline 2.1 rejection.**
+> Reviewers cannot use Sign in with Apple for testing.
 
 ```
-Username:  Opal
+Email:     [the email address of the Opal demo account — e.g. opal@mangasm.app —
+            from masterlist / secrets; must be a real email, NOT the word "Opal"]
 Password:  [SET in ASC App Review Information from MANGASM_DEMO_PASSWORD — never invent]
 ```
 
-(Opal is the fixed TestFlight / App Review demo account. Create or confirm the matching
-user in Supabase Auth before submission; verify login on a clean install.)
+### Pre-submit verification checklist (all must be ✅ before submitting)
+
+- [ ] The Opal user **exists in Supabase Auth** with the exact email above.
+- [ ] Its password matches what you enter in ASC → App Review Information.
+- [ ] On a **clean install** of the archived build, that email + password **signs in successfully**
+      (this catches both the login mismatch and a B3 launch-crash from missing Supabase config).
+- [ ] Secrets (`SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`) are populated in the archived
+      binary — a Release build without them **fatalErrors on launch** (past B3 crash, builds 20–22).
 
 ---
 
@@ -27,7 +36,7 @@ user in Supabase Auth before submission; verify login on a clean install.)
 Mangasm is a safety-first social app for adult gay men. Sign in with the **Opal** demo
 account above.
 
-### What is new in build 26 — DateNight (please exercise)
+### What is new in build 30 — DateNight (please exercise)
 
 1. Sign in as **Opal**.
 2. Open the **AI Match** tab (center lamp / lightbulb tab).
@@ -58,7 +67,7 @@ account above.
 3. **Block** — same menus → Block; thread dissolves and leaves the inbox.
 4. **Delete account** — Settings → Delete Account (server purge + sign out).
 
-### Location (build 26 update — honest disclosure)
+### Location (build 30 update — honest disclosure)
 
 DateNight may use **optional** location to find nearby restaurants/events:
 
@@ -88,10 +97,11 @@ No Stripe checkout inside this iOS build.
 ## Pre-submit checklist
 
 - [x] Team ID `854XZ2543V`
-- [x] Build **26** notes describe DateNight path for reviewers
-- [x] Demo username **Opal** (password only in secrets / ASC form)
-- [ ] Paste Notes + Opal password into ASC App Review Information
+- [x] Build **30** notes describe DateNight path for reviewers
+- [ ] Demo **EMAIL** + password for the Opal account pasted into ASC App Review Information
+      (email address, **not** the bare word "Opal" — the app has no username field)
+- [ ] Opal user confirmed in Supabase Auth; email + password sign in on a clean install of build 30
 - [ ] Nutrition label location fields match DateNight (GPS/ZIP)
 - [ ] IAP products Ready to Submit and attached to version
-- [ ] Attach build **26** to the iOS version after processing
+- [ ] Attach build **30** to the iOS version after processing
 - [ ] Privacy policy URL live
