@@ -50,19 +50,22 @@ public final class SupabaseReferralService: ReferralService {
     public func redeem(code raw: String) async throws -> ReferralRedeemResult {
         guard let code = ReferralCode.normalize(raw) else { throw ReferralError.invalidCode }
 
-        let userID: UUID
+        let accessToken: String
         do {
-            userID = try await client.auth.session.user.id
+            accessToken = try await client.auth.session.accessToken
         } catch {
             throw ReferralError.notAuthenticated
         }
 
+        // The edge function derives the referred user from the verified JWT
+        // (auth: 'user'), so only the code travels in the body.
         let url = projectURL.appending(path: "functions/v1/validate-referral")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("Bearer \(publishableKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(publishableKey, forHTTPHeaderField: "apikey")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONEncoder().encode(RedeemBody(referrer_code: code, referred_user_id: userID.uuidString))
+        request.httpBody = try JSONEncoder().encode(RedeemBody(referrer_code: code))
 
         let (data, response) = try await URLSession.shared.data(for: request)
         guard let http = response as? HTTPURLResponse else {
@@ -85,7 +88,6 @@ public final class SupabaseReferralService: ReferralService {
 
     private struct RedeemBody: Encodable {
         let referrer_code: String
-        let referred_user_id: String
     }
 
     private struct ErrorBody: Decodable {

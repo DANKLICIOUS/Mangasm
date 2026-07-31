@@ -13,7 +13,9 @@ public final class AppState: ObservableObject {
     @Published public var tab: AppTab = .profile
     @Published public var night = false
     @Published public var premium = false
-    @Published public var weather: Weather = .clear   // sunny daylight by default (no rain)
+    @Published public var weather: Weather = .clear   // resolved from device location at launch (was a manual toggle)
+    /// Guards against re-resolving weather on every view appearance.
+    private var weatherResolved = false
     @Published public var selectedMatch: Candidate? = nil
     @Published public var activeChat: Conversation? = nil
     @Published public var showChatList: Bool = false
@@ -58,5 +60,15 @@ public final class AppState: ObservableObject {
         visibility = .sample
         ageGateAffirmed = false
         clearPendingReferralCode()
+    }
+
+    /// Resolve the ambient weather from the device's location — once. Silent on
+    /// failure (permission denied or no fix): the default clear-day weather stays,
+    /// so the UI never blocks on location.
+    public func refreshWeather(weather: any WeatherProvider, location: any LocationProvider) async {
+        guard !weatherResolved else { return }
+        guard let coordinate = await location.currentCoordinate() else { return }
+        self.weather = await weather.current(at: coordinate)
+        weatherResolved = true
     }
 }

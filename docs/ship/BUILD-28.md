@@ -4,7 +4,9 @@
 **Marketing version:** 1.1.0  
 **CFBundleVersion:** 28  
 **Team:** 854XZ2543V  
-**Uploaded:** _pending_ — version bump only; Transporter/CI upload is a separate step.
+**Uploaded:** _not via App Store_ — App Store Connect / Transporter upload is
+**intentionally skipped**; distribution is moving to a different method (TBD). The
+binary still builds on `main`; only the ASC upload step is being retired here.
 
 ## Why 28
 
@@ -20,11 +22,12 @@ is a build-number bump for the ASC re-upload.
 
 ## Binary / upload
 
-| Item        | Value                                           |
-| ----------- | ----------------------------------------------- |
-| Version     | **1.1.0 (28)**                                  |
-| IPA         | produced by the iOS build (CI on `main`)        |
-| Transporter | not yet run — upload after the archive is built |
+| Item        | Value                                                |
+| ----------- | ---------------------------------------------------- |
+| Version     | **1.1.0 (28)**                                       |
+| IPA         | produced by the iOS build (CI on `main`)             |
+| Transporter | **retired** — not shipping to the App Store this way |
 
-Merge to `main` triggers the iOS build workflow; archive + Transporter upload of
-**1.1.0 (28)** is the follow-up ship step.
+Merge to `main` still triggers the iOS build workflow (archive produced for record),
+but the **App Store / Transporter upload step is no longer part of the ship path**.
+Distribution is moving to a different method — see the follow-up plan when chosen.

@@ -1,4 +1,6 @@
 {
+  "framework": null,
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- web vercel.json package.json",
   "headers": [
     {
       "source": "/.well-known/apple-app-site-association",

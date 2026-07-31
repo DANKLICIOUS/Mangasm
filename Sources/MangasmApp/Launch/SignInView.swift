@@ -95,8 +95,6 @@ private struct AuthSheet: View {
             referralNotice = "Welcome — you're on \(code)'s team."
             state.clearPendingReferralCode()
             inviteCode = ""
-        } catch let error as ReferralError {
-            referralNotice = error.localizedDescription
         } catch {
             referralNotice = error.localizedDescription
         }
@@ -178,31 +176,6 @@ private struct AuthSheet: View {
         #endif
     }
 
-    @ViewBuilder
-    private var inviteCodeField: some View {
-        let field = TextField("TWEETY, TAZ, ELMERFUDD…", text: $inviteCode)
-            .font(MGFont.mono(13))
-            .foregroundStyle(Color.white)
-            .padding(.horizontal, 14)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white.opacity(0.08))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white.opacity(0.18), lineWidth: 0.8)
-                    )
-            )
-            .accessibilityIdentifier("referral_code_field")
-        #if os(iOS)
-        field
-            .textInputAutocapitalization(.characters)
-            .autocorrectionDisabled()
-        #else
-        field
-        #endif
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             Capsule()
@@ -225,18 +198,6 @@ private struct AuthSheet: View {
                     .padding(.top, 7)
             }
             .padding(.bottom, 18)
-
-            VStack(alignment: .leading, spacing: 6) {
-                Text("INVITE CODE")
-                    .font(MGFont.mono(8))
-                    .tracking(8 * 0.2)
-                    .foregroundStyle(cream.opacity(0.55))
-                inviteCodeField
-                Text("Optional — enter a friend's cartoon code from the Referral Team.")
-                    .font(MGFont.mono(7.5))
-                    .foregroundStyle(cream.opacity(0.45))
-            }
-            .padding(.bottom, 14)
 
             VStack(spacing: 9) {
                 ProviderButton(kind: .apple) {

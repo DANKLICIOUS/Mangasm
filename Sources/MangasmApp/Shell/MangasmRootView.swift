@@ -31,6 +31,7 @@ public struct MangasmRootView: View {
         .task {
             if let config = SupabaseConfig.fromInfoPlist() {
                 store.verifyBaseURL = config.url.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+                store.authTokenProvider = env.accessTokenProvider
             }
             await store.loadProducts()
             await store.updatePurchasedProducts()

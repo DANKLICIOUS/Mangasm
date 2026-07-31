@@ -1,0 +1,21 @@
+# The deployable surface is web/ — vercel.json sets "outputDirectory": "web",
+# and there is no build step. Everything else in this repo is the iOS app,
+# MCP tooling, and build artifacts, none of which Vercel needs.
+#
+# Without this file the upload was 443.8 MB / 16,092 files, which blew both
+# the 15,000-file limit and then the build container's memory (SIGKILL).
+/*
+
+# ...except the site itself and its config.
+!/web
+!/vercel.json
+
+# package.json must ship: without it Vercel's zero-config detection cannot
+# identify the project and falls back to a Node server, failing with
+# "No entrypoint found". The lockfile keeps the install deterministic.
+!/package.json
+!/package-lock.json
+
+# .git must survive: the project's "Ignored Build Step" runs a `git diff`,
+# which fails with "Not a git repository" if the clone's .git is stripped.
+!/.git
