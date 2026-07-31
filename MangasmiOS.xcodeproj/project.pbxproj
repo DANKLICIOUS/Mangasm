@@ -1,0 +1,629 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		01BE82BC0C8CA80157421AD7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 19645365FC576CE8AEBF67AC /* PrivacyInfo.xcprivacy */; };
+		1A2E3CDB7C6772463C72A121 /* Secrets.xcconfig.example in Resources */ = {isa = PBXBuildFile; fileRef = F7272258B3B396C524D7457D /* Secrets.xcconfig.example */; };
+		22BFC0025D4F314884193AF4 /* StoreKitFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF2248EAED495EC7CE066B6 /* StoreKitFlowTests.swift */; };
+		27C96F74F9B21BE7CFD00DD1 /* MangasmiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C46FF32476AD1D7AF4191 /* MangasmiOSApp.swift */; };
+		29DF38F66C0C806582ABAF08 /* MangasmApp in Frameworks */ = {isa = PBXBuildFile; productRef = ADBE1269B0EDA1C2C57E231A /* MangasmApp */; };
+		3A3D17C71C6E6B4F4659E680 /* AccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C43881DD548E43A3F438173E /* AccessibilityTests.swift */; };
+		3B0B7283C20E8C9A4929C62D /* Mangasm.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F7D0DC32658E4549295EA /* Mangasm.storekit */; };
+		9DF9174A978539A07A65A343 /* OnboardingGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DD157383A178567B6852E7 /* OnboardingGateTests.swift */; };
+		AF3E88B0C45BB7393D166FF2 /* MangasmUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E2A9BDB35C5616905707E2 /* MangasmUITests.swift */; };
+		B3991D578F99050AEBC9676F /* AccountDeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73EF19D756023682C68055 /* AccountDeletionTests.swift */; };
+		D31C04FF680874347E9BE3F7 /* MangasmApp in Frameworks */ = {isa = PBXBuildFile; productRef = 439639961FEF326E42E622A0 /* MangasmApp */; };
+		E1643D1AC94016CAF142391D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 956090C6B869CD7B55EC3C46 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		95B9BB35D32EF610F99EE9C1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 27C5EB8FF37AB90188D34BDF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BFA0684EE62C2A42C47EA386;
+			remoteInfo = Mangasm;
+		};
+		BC2C6D334C2D0D7DF5727284 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 27C5EB8FF37AB90188D34BDF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BFA0684EE62C2A42C47EA386;
+			remoteInfo = Mangasm;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		03E2A9BDB35C5616905707E2 /* MangasmUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangasmUITests.swift; sourceTree = "<group>"; };
+		0E2F7D0DC32658E4549295EA /* Mangasm.storekit */ = {isa = PBXFileReference; path = Mangasm.storekit; sourceTree = "<group>"; };
+		19645365FC576CE8AEBF67AC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		40AFB0EF89FD55B8FD4A329E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		6333C84D8378CE6856AB36FF /* MangasmUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MangasmUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		640C46FF32476AD1D7AF4191 /* MangasmiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangasmiOSApp.swift; sourceTree = "<group>"; };
+		6A73EF19D756023682C68055 /* AccountDeletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDeletionTests.swift; sourceTree = "<group>"; };
+		7C71C546ED59CFD9C14626B4 /* mangasm */ = {isa = PBXFileReference; lastKnownFileType = folder; name = mangasm; path = .; sourceTree = SOURCE_ROOT; };
+		91DD157383A178567B6852E7 /* OnboardingGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGateTests.swift; sourceTree = "<group>"; };
+		956090C6B869CD7B55EC3C46 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9BAF78D20DC7054DCBD57279 /* Mangasm.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Mangasm.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB6E2245510C6B7EEF9D26D0 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		BB48E013ADF3C182D2568515 /* MangasmTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MangasmTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C43881DD548E43A3F438173E /* AccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTests.swift; sourceTree = "<group>"; };
+		DEF2248EAED495EC7CE066B6 /* StoreKitFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitFlowTests.swift; sourceTree = "<group>"; };
+		E4075162F68D71543906C5B2 /* Mangasm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Mangasm.entitlements; sourceTree = "<group>"; };
+		F7272258B3B396C524D7457D /* Secrets.xcconfig.example */ = {isa = PBXFileReference; path = Secrets.xcconfig.example; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3213074A1B64AD3CF61ED97C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D31C04FF680874347E9BE3F7 /* MangasmApp in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		81BD0842EB36A1098193F35B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				29DF38F66C0C806582ABAF08 /* MangasmApp in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		65A3ABAB02FC5DE7D65B73C9 /* Unit */ = {
+			isa = PBXGroup;
+			children = (
+				DEF2248EAED495EC7CE066B6 /* StoreKitFlowTests.swift */,
+			);
+			name = Unit;
+			path = Tests/iOS/Unit;
+			sourceTree = "<group>";
+		};
+		887C1709DBFC5AA1CB65FDE2 = {
+			isa = PBXGroup;
+			children = (
+				0E2F7D0DC32658E4549295EA /* Mangasm.storekit */,
+				C2EB6830B327F762C71705C9 /* iOS */,
+				CEC1A7C7B81D2A2F0E61809B /* Packages */,
+				9703AAD5C979916A2DF3D988 /* UI */,
+				65A3ABAB02FC5DE7D65B73C9 /* Unit */,
+				F5D211655205AB115AB78676 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9703AAD5C979916A2DF3D988 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				C43881DD548E43A3F438173E /* AccessibilityTests.swift */,
+				6A73EF19D756023682C68055 /* AccountDeletionTests.swift */,
+				03E2A9BDB35C5616905707E2 /* MangasmUITests.swift */,
+				91DD157383A178567B6852E7 /* OnboardingGateTests.swift */,
+			);
+			name = UI;
+			path = Tests/iOS/UI;
+			sourceTree = "<group>";
+		};
+		C2EB6830B327F762C71705C9 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				956090C6B869CD7B55EC3C46 /* Assets.xcassets */,
+				40AFB0EF89FD55B8FD4A329E /* Info.plist */,
+				E4075162F68D71543906C5B2 /* Mangasm.entitlements */,
+				640C46FF32476AD1D7AF4191 /* MangasmiOSApp.swift */,
+				19645365FC576CE8AEBF67AC /* PrivacyInfo.xcprivacy */,
+				AB6E2245510C6B7EEF9D26D0 /* Secrets.xcconfig */,
+				F7272258B3B396C524D7457D /* Secrets.xcconfig.example */,
+			);
+			name = iOS;
+			path = App/iOS;
+			sourceTree = "<group>";
+		};
+		CEC1A7C7B81D2A2F0E61809B /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				7C71C546ED59CFD9C14626B4 /* mangasm */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		F5D211655205AB115AB78676 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9BAF78D20DC7054DCBD57279 /* Mangasm.app */,
+				BB48E013ADF3C182D2568515 /* MangasmTests.xctest */,
+				6333C84D8378CE6856AB36FF /* MangasmUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		BC79DF7775A1DC78DE91A66B /* MangasmUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3A9D71204FA372507D6CCE00 /* Build configuration list for PBXNativeTarget "MangasmUITests" */;
+			buildPhases = (
+				6D5556DEACC800468632C52B /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				424377C29F50D0569C9E5FD7 /* PBXTargetDependency */,
+			);
+			name = MangasmUITests;
+			packageProductDependencies = (
+			);
+			productName = MangasmUITests;
+			productReference = 6333C84D8378CE6856AB36FF /* MangasmUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		BFA0684EE62C2A42C47EA386 /* Mangasm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 20404E8B70E00007A0A5FC72 /* Build configuration list for PBXNativeTarget "Mangasm" */;
+			buildPhases = (
+				3C4E8607F083D34FDBC767F0 /* Sources */,
+				33D0FDF29E8F2C1B66FFC289 /* Resources */,
+				81BD0842EB36A1098193F35B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Mangasm;
+			packageProductDependencies = (
+				ADBE1269B0EDA1C2C57E231A /* MangasmApp */,
+			);
+			productName = Mangasm;
+			productReference = 9BAF78D20DC7054DCBD57279 /* Mangasm.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D64917A9C2404B54C9B5C433 /* MangasmTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B9E9ED1BE03168530473B02B /* Build configuration list for PBXNativeTarget "MangasmTests" */;
+			buildPhases = (
+				C3B8601806F50FFB0F317255 /* Sources */,
+				D8ECD25AE39137A73F1AC731 /* Resources */,
+				3213074A1B64AD3CF61ED97C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA3DA56D1CC146D61CC07C7C /* PBXTargetDependency */,
+			);
+			name = MangasmTests;
+			packageProductDependencies = (
+				439639961FEF326E42E622A0 /* MangasmApp */,
+			);
+			productName = MangasmTests;
+			productReference = BB48E013ADF3C182D2568515 /* MangasmTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		27C5EB8FF37AB90188D34BDF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					BC79DF7775A1DC78DE91A66B = {
+						TestTargetID = BFA0684EE62C2A42C47EA386;
+					};
+					BFA0684EE62C2A42C47EA386 = {
+						DevelopmentTeam = 854XZ2543V;
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 08403E43A2AA84C688EFDF50 /* Build configuration list for PBXProject "MangasmiOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 887C1709DBFC5AA1CB65FDE2;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A8F10DA77AA6AEE01D768A82 /* XCLocalSwiftPackageReference "." */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F5D211655205AB115AB78676 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				BFA0684EE62C2A42C47EA386 /* Mangasm */,
+				D64917A9C2404B54C9B5C433 /* MangasmTests */,
+				BC79DF7775A1DC78DE91A66B /* MangasmUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		33D0FDF29E8F2C1B66FFC289 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E1643D1AC94016CAF142391D /* Assets.xcassets in Resources */,
+				01BE82BC0C8CA80157421AD7 /* PrivacyInfo.xcprivacy in Resources */,
+				1A2E3CDB7C6772463C72A121 /* Secrets.xcconfig.example in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8ECD25AE39137A73F1AC731 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3B0B7283C20E8C9A4929C62D /* Mangasm.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3C4E8607F083D34FDBC767F0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				27C96F74F9B21BE7CFD00DD1 /* MangasmiOSApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6D5556DEACC800468632C52B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A3D17C71C6E6B4F4659E680 /* AccessibilityTests.swift in Sources */,
+				B3991D578F99050AEBC9676F /* AccountDeletionTests.swift in Sources */,
+				AF3E88B0C45BB7393D166FF2 /* MangasmUITests.swift in Sources */,
+				9DF9174A978539A07A65A343 /* OnboardingGateTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C3B8601806F50FFB0F317255 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				22BFC0025D4F314884193AF4 /* StoreKitFlowTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		424377C29F50D0569C9E5FD7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BFA0684EE62C2A42C47EA386 /* Mangasm */;
+			targetProxy = 95B9BB35D32EF610F99EE9C1 /* PBXContainerItemProxy */;
+		};
+		AA3DA56D1CC146D61CC07C7C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BFA0684EE62C2A42C47EA386 /* Mangasm */;
+			targetProxy = BC2C6D334C2D0D7DF5727284 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1262B883079479DECB4AF5ED /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/iOS/Mangasm.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Mark Webster (854XZ2543V)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 30;
+				DEVELOPMENT_TEAM = 854XZ2543V;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = App/iOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Mangasm;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = "#0A0612";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mangasm.app;
+				PRODUCT_NAME = Mangasm;
+				PROVISIONING_PROFILE_SPECIFIER = "Mangasm App Store 18";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		242AA6B386B7809166EA2A7D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mangasm.MangasmUITests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Mangasm;
+			};
+			name = Debug;
+		};
+		41BFCA87DFA15BADC1EEC9FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mangasm.MangasmTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mangasm.app/Mangasm";
+			};
+			name = Release;
+		};
+		4C3070DCDC1AF233A236B812 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mangasm.MangasmUITests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Mangasm;
+			};
+			name = Release;
+		};
+		90B31FE1E33B49CA150755BA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.mangasm.MangasmTests;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mangasm.app/Mangasm";
+			};
+			name = Debug;
+		};
+		A1269EEE17628335DA887120 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = App/iOS/Mangasm.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Mark Webster (854XZ2543V)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 30;
+				DEVELOPMENT_TEAM = 854XZ2543V;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = App/iOS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Mangasm;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = "#0A0612";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mangasm.app;
+				PRODUCT_NAME = Mangasm;
+				PROVISIONING_PROFILE_SPECIFIER = "Mangasm App Store 18";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A98D76131B4D512F8DCCB892 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB6E2245510C6B7EEF9D26D0 /* Secrets.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		B92F6F6709AF054F054CB7A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AB6E2245510C6B7EEF9D26D0 /* Secrets.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		08403E43A2AA84C688EFDF50 /* Build configuration list for PBXProject "MangasmiOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B92F6F6709AF054F054CB7A3 /* Debug */,
+				A98D76131B4D512F8DCCB892 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		20404E8B70E00007A0A5FC72 /* Build configuration list for PBXNativeTarget "Mangasm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1269EEE17628335DA887120 /* Debug */,
+				1262B883079479DECB4AF5ED /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3A9D71204FA372507D6CCE00 /* Build configuration list for PBXNativeTarget "MangasmUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				242AA6B386B7809166EA2A7D /* Debug */,
+				4C3070DCDC1AF233A236B812 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B9E9ED1BE03168530473B02B /* Build configuration list for PBXNativeTarget "MangasmTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				90B31FE1E33B49CA150755BA /* Debug */,
+				41BFCA87DFA15BADC1EEC9FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		A8F10DA77AA6AEE01D768A82 /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		439639961FEF326E42E622A0 /* MangasmApp */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MangasmApp;
+		};
+		ADBE1269B0EDA1C2C57E231A /* MangasmApp */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MangasmApp;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 27C5EB8FF37AB90188D34BDF /* Project object */;
+}
