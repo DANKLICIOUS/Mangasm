@@ -14,6 +14,8 @@ public final class AppEnvironment: ObservableObject {
     public let safety: any SafetyService
     public let referrals: any ReferralService
     public let dateNight: any DateNightService
+    public let weather: any WeatherProvider
+    public let location: any LocationProvider
 
     public init(
         auth: any AuthService,
@@ -24,7 +26,9 @@ public final class AppEnvironment: ObservableObject {
         reputation: any ReputationService,
         safety: any SafetyService,
         referrals: any ReferralService,
-        dateNight: any DateNightService = MockDateNightService()
+        dateNight: any DateNightService = MockDateNightService(),
+        weather: any WeatherProvider = MockWeatherProvider(),
+        location: any LocationProvider = MockLocationProvider()
     ) {
         self.auth = auth
         self.profile = profile
@@ -35,6 +39,8 @@ public final class AppEnvironment: ObservableObject {
         self.safety = safety
         self.referrals = referrals
         self.dateNight = dateNight
+        self.weather = weather
+        self.location = location
     }
 
     /// Pre-built mock environment for previews, tests, and Simulator runs.
@@ -96,7 +102,9 @@ public final class AppEnvironment: ObservableObject {
                 projectURL: config.url,
                 publishableKey: config.publishableKey
             ),
-            dateNight: dateNight
+            dateNight: dateNight,
+            weather: LiveWeatherProvider(),
+            location: LiveLocationProvider()
         )
     }
 }
