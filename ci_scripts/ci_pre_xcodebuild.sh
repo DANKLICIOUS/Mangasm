@@ -7,11 +7,11 @@
 # Environment Variables set in App Store Connect → Xcode Cloud → Environment.
 #
 # Required env vars (set in Xcode Cloud, Secret type recommended):
-#   SUPABASE_URL
-#   SUPABASE_PUBLISHABLE_KEY   (alias: SUPABASE_ANON_KEY)
+#   SUPABASE_URL                 (alias: MANGASM_SUPABASE_URL)
+#   SUPABASE_PUBLISHABLE_KEY     (aliases: SUPABASE_ANON_KEY, MANGASM_SUPABASE_PUBLISHABLE_KEY)
 # Optional:
-#   YELP_API_KEY
-#   TICKETMASTER_API_KEY
+#   YELP_API_KEY                 (alias: MANGASM_YELP_API_KEY)
+#   TICKETMASTER_API_KEY         (alias: MANGASM_TICKETMASTER_API_KEY)
 #
 # Local developers: use ./scripts/sync-secrets-from-mastermind.sh instead.
 set -euo pipefail
@@ -19,13 +19,14 @@ set -euo pipefail
 ROOT="${CI_PRIMARY_REPOSITORY_PATH:-$(cd "$(dirname "$0")/.." && pwd)}"
 XCCONFIG="$ROOT/App/iOS/Secrets.xcconfig"
 
-URL="${SUPABASE_URL:-https://dvomzrvslwdabwcwtvrg.supabase.co}"
-KEY="${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-}}"
-YELP_KEY="${YELP_API_KEY:-}"
-TM_KEY="${TICKETMASTER_API_KEY:-}"
+URL="${SUPABASE_URL:-${MANGASM_SUPABASE_URL:-https://dvomzrvslwdabwcwtvrg.supabase.co}}"
+KEY="${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-${MANGASM_SUPABASE_PUBLISHABLE_KEY:-}}}"
+YELP_KEY="${YELP_API_KEY:-${MANGASM_YELP_API_KEY:-}}"
+TM_KEY="${TICKETMASTER_API_KEY:-${MANGASM_TICKETMASTER_API_KEY:-}}"
 
 if [[ -z "$KEY" ]]; then
-  echo "error: SUPABASE_PUBLISHABLE_KEY (or SUPABASE_ANON_KEY) is not set in the Xcode Cloud environment." >&2
+  echo "error: SUPABASE_PUBLISHABLE_KEY not set in the Xcode Cloud environment." >&2
+  echo "  Accepted aliases: SUPABASE_ANON_KEY, MANGASM_SUPABASE_PUBLISHABLE_KEY" >&2
   echo "  App Store Connect → your app → Xcode Cloud → Settings → Environment" >&2
   echo "  See docs/ship/XCODE-CLOUD-SECRETS.md" >&2
   exit 1
