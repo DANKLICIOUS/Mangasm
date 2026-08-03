@@ -9,22 +9,14 @@
 /* Begin PBXBuildFile section */
 		01BE82BC0C8CA80157421AD7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 19645365FC576CE8AEBF67AC /* PrivacyInfo.xcprivacy */; };
 		1A2E3CDB7C6772463C72A121 /* Secrets.xcconfig.example in Resources */ = {isa = PBXBuildFile; fileRef = F7272258B3B396C524D7457D /* Secrets.xcconfig.example */; };
-		207497C6FD51DB7F2C306E84 /* style-hero-precisionTech.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0BCDC669C4CBA3EB8580366 /* style-hero-precisionTech.jpg */; };
 		22BFC0025D4F314884193AF4 /* StoreKitFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF2248EAED495EC7CE066B6 /* StoreKitFlowTests.swift */; };
-		262F0AEB799E40E977048374 /* MangasmReputationWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2594A0BAAED7236C0A30B9E4 /* MangasmReputationWidget.swift */; };
 		27C96F74F9B21BE7CFD00DD1 /* MangasmiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C46FF32476AD1D7AF4191 /* MangasmiOSApp.swift */; };
 		29DF38F66C0C806582ABAF08 /* MangasmApp in Frameworks */ = {isa = PBXBuildFile; productRef = ADBE1269B0EDA1C2C57E231A /* MangasmApp */; };
 		3A3D17C71C6E6B4F4659E680 /* AccessibilityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C43881DD548E43A3F438173E /* AccessibilityTests.swift */; };
 		3B0B7283C20E8C9A4929C62D /* Mangasm.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 0E2F7D0DC32658E4549295EA /* Mangasm.storekit */; };
-		65D76EE10723E44C908B9F85 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 720D8BF045F19E634F48F442 /* Info.plist */; };
-		8579330DAA11181661F63F7E /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = D449BB2DEB8C501E041E6037 /* README.md */; };
-		87859D7256016018125780D2 /* style-hero-calmStudio.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8A0A1C266C8273332878D7DA /* style-hero-calmStudio.jpg */; };
 		9DF9174A978539A07A65A343 /* OnboardingGateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91DD157383A178567B6852E7 /* OnboardingGateTests.swift */; };
-		9F27953966FF5565C8F84722 /* style-hero-digitalFlow.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2AB920D58647F54FA7CC8D61 /* style-hero-digitalFlow.jpg */; };
 		AF3E88B0C45BB7393D166FF2 /* MangasmUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03E2A9BDB35C5616905707E2 /* MangasmUITests.swift */; };
-		B2FF3CF90EF8B99196B7A380 /* style-hero-boldExpression.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 8278A2C2749995154742330F /* style-hero-boldExpression.jpg */; };
 		B3991D578F99050AEBC9676F /* AccountDeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73EF19D756023682C68055 /* AccountDeletionTests.swift */; };
-		BB8B68302C77BEC6F5C42958 /* style-hero-aspirational.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A793577705E87114025CB6E1 /* style-hero-aspirational.jpg */; };
 		D31C04FF680874347E9BE3F7 /* MangasmApp in Frameworks */ = {isa = PBXBuildFile; productRef = 439639961FEF326E42E622A0 /* MangasmApp */; };
 		E1643D1AC94016CAF142391D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 956090C6B869CD7B55EC3C46 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -50,25 +42,17 @@
 		03E2A9BDB35C5616905707E2 /* MangasmUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangasmUITests.swift; sourceTree = "<group>"; };
 		0E2F7D0DC32658E4549295EA /* Mangasm.storekit */ = {isa = PBXFileReference; path = Mangasm.storekit; sourceTree = "<group>"; };
 		19645365FC576CE8AEBF67AC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		2594A0BAAED7236C0A30B9E4 /* MangasmReputationWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangasmReputationWidget.swift; sourceTree = "<group>"; };
-		2AB920D58647F54FA7CC8D61 /* style-hero-digitalFlow.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "style-hero-digitalFlow.jpg"; sourceTree = "<group>"; };
 		40AFB0EF89FD55B8FD4A329E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		6333C84D8378CE6856AB36FF /* MangasmUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MangasmUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		640C46FF32476AD1D7AF4191 /* MangasmiOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangasmiOSApp.swift; sourceTree = "<group>"; };
 		6A73EF19D756023682C68055 /* AccountDeletionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDeletionTests.swift; sourceTree = "<group>"; };
-		720D8BF045F19E634F48F442 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7C71C546ED59CFD9C14626B4 /* mangasm */ = {isa = PBXFileReference; lastKnownFileType = folder; name = mangasm; path = .; sourceTree = SOURCE_ROOT; };
-		8278A2C2749995154742330F /* style-hero-boldExpression.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "style-hero-boldExpression.jpg"; sourceTree = "<group>"; };
-		8A0A1C266C8273332878D7DA /* style-hero-calmStudio.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "style-hero-calmStudio.jpg"; sourceTree = "<group>"; };
 		91DD157383A178567B6852E7 /* OnboardingGateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingGateTests.swift; sourceTree = "<group>"; };
 		956090C6B869CD7B55EC3C46 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9BAF78D20DC7054DCBD57279 /* Mangasm.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Mangasm.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A793577705E87114025CB6E1 /* style-hero-aspirational.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "style-hero-aspirational.jpg"; sourceTree = "<group>"; };
 		AB6E2245510C6B7EEF9D26D0 /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
-		B0BCDC669C4CBA3EB8580366 /* style-hero-precisionTech.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "style-hero-precisionTech.jpg"; sourceTree = "<group>"; };
 		BB48E013ADF3C182D2568515 /* MangasmTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MangasmTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C43881DD548E43A3F438173E /* AccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTests.swift; sourceTree = "<group>"; };
-		D449BB2DEB8C501E041E6037 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DEF2248EAED495EC7CE066B6 /* StoreKitFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitFlowTests.swift; sourceTree = "<group>"; };
 		E4075162F68D71543906C5B2 /* Mangasm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Mangasm.entitlements; sourceTree = "<group>"; };
 		F7272258B3B396C524D7457D /* Secrets.xcconfig.example */ = {isa = PBXFileReference; path = Secrets.xcconfig.example; sourceTree = "<group>"; };
@@ -94,29 +78,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0DEBADC964790E8B7DF651BA /* Widget */ = {
-			isa = PBXGroup;
-			children = (
-				720D8BF045F19E634F48F442 /* Info.plist */,
-				2594A0BAAED7236C0A30B9E4 /* MangasmReputationWidget.swift */,
-				D449BB2DEB8C501E041E6037 /* README.md */,
-				59E9C1D11032854AAA4429A8 /* Assets */,
-			);
-			path = Widget;
-			sourceTree = "<group>";
-		};
-		59E9C1D11032854AAA4429A8 /* Assets */ = {
-			isa = PBXGroup;
-			children = (
-				A793577705E87114025CB6E1 /* style-hero-aspirational.jpg */,
-				8278A2C2749995154742330F /* style-hero-boldExpression.jpg */,
-				8A0A1C266C8273332878D7DA /* style-hero-calmStudio.jpg */,
-				2AB920D58647F54FA7CC8D61 /* style-hero-digitalFlow.jpg */,
-				B0BCDC669C4CBA3EB8580366 /* style-hero-precisionTech.jpg */,
-			);
-			path = Assets;
-			sourceTree = "<group>";
-		};
 		65A3ABAB02FC5DE7D65B73C9 /* Unit */ = {
 			isa = PBXGroup;
 			children = (
@@ -160,7 +121,6 @@
 				19645365FC576CE8AEBF67AC /* PrivacyInfo.xcprivacy */,
 				AB6E2245510C6B7EEF9D26D0 /* Secrets.xcconfig */,
 				F7272258B3B396C524D7457D /* Secrets.xcconfig.example */,
-				0DEBADC964790E8B7DF651BA /* Widget */,
 			);
 			name = iOS;
 			path = App/iOS;
@@ -294,15 +254,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E1643D1AC94016CAF142391D /* Assets.xcassets in Resources */,
-				65D76EE10723E44C908B9F85 /* Info.plist in Resources */,
 				01BE82BC0C8CA80157421AD7 /* PrivacyInfo.xcprivacy in Resources */,
-				8579330DAA11181661F63F7E /* README.md in Resources */,
 				1A2E3CDB7C6772463C72A121 /* Secrets.xcconfig.example in Resources */,
-				BB8B68302C77BEC6F5C42958 /* style-hero-aspirational.jpg in Resources */,
-				B2FF3CF90EF8B99196B7A380 /* style-hero-boldExpression.jpg in Resources */,
-				87859D7256016018125780D2 /* style-hero-calmStudio.jpg in Resources */,
-				9F27953966FF5565C8F84722 /* style-hero-digitalFlow.jpg in Resources */,
-				207497C6FD51DB7F2C306E84 /* style-hero-precisionTech.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +274,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				262F0AEB799E40E977048374 /* MangasmReputationWidget.swift in Sources */,
 				27C96F74F9B21BE7CFD00DD1 /* MangasmiOSApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
