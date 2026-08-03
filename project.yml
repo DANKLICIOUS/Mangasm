@@ -14,7 +14,9 @@ targets:
     type: application
     platform: iOS
     sources:
-      - App/iOS
+      - path: App/iOS
+        excludes:
+          - Widget/**
     dependencies:
       - package: MangasmApp
         product: MangasmApp
