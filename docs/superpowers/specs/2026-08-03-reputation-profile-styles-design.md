@@ -1,7 +1,7 @@
 # Design: Community Reputation × Hybrid Profile Styles
 
 **Date:** 2026-08-03  
-**Status:** Approved in conversation; awaiting file review before implementation plan  
+**Status:** Implemented (v1 shell) — commit `65428f0`; hero assets optional  
 **App:** Mangasm (`com.mangasm.app`)  
 **Goal link:** App Store path + reviews (#1 revenue + appreciation) via differentiated, compliance-safe UX  
 **Related:** Guideline **4.3** differentiation; Guideline **1.2** UGC safety; no sexual gamification
