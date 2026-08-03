@@ -7,9 +7,9 @@ final class AppStateTests: XCTestCase {
         let s = AppState()
         XCTAssertEqual(s.phase, .launch)
     }
-    func testDefaultTabIsProfile() {
+    func testDefaultTabIsEvents() {
         let s = AppState()
-        XCTAssertEqual(s.tab, .profile)
+        XCTAssertEqual(s.tab, .events)
     }
     func testAllTabsHaveStableRawValues() {
         XCTAssertEqual(AppTab.allCases.count, 5)

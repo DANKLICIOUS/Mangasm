@@ -63,6 +63,18 @@ public struct SettingsScreen: View {
                     .padding(.top, 24)
                     .padding(.bottom, 16)
 
+                    // ── Community Reputation styles ──
+                    SectionLabel("Profile styles")
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+
+                    MGCard {
+                        ProfileStylePicker()
+                            .padding(13)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 18)
+
                     // ── Profile Fields ──
                     SectionLabel("Profile")
                         .padding(.horizontal, 16)
