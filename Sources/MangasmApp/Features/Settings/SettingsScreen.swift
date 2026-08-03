@@ -19,6 +19,7 @@ public struct SettingsScreen: View {
     @State private var ageText: String = ""
     @State private var hobbiesText: String = ""
     @State private var showDeleteConfirm: Bool = false
+    @State private var showHowTrustWorks: Bool = false
 
     public init(onClose: @escaping () -> Void) {
         self.onClose = onClose
@@ -69,11 +70,26 @@ public struct SettingsScreen: View {
                         .padding(.top, 8)
 
                     MGCard {
-                        ProfileStylePicker()
-                            .padding(13)
+                        VStack(alignment: .leading, spacing: 12) {
+                            ProfileStylePicker()
+                            Button {
+                                showHowTrustWorks = true
+                            } label: {
+                                Text("How Trust Score works")
+                                    .font(MGFont.sans(13, .semibold))
+                                    .foregroundStyle(MGColor.goldBright)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("how_trust_score_works")
+                        }
+                        .padding(13)
                     }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 18)
+                    .sheet(isPresented: $showHowTrustWorks) {
+                        HowTrustScoreWorksView()
+                    }
 
                     // ── Profile Fields ──
                     SectionLabel("Profile")

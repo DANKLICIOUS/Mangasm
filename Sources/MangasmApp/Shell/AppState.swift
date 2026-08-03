@@ -1,6 +1,6 @@
 import SwiftUI
 
-public enum AppPhase { case launch, app }
+// AppPhase lives in AppPhaseMachine.swift (FSM with legal transitions).
 
 public enum AppTab: String, CaseIterable, Identifiable {
     // Order defines the tab-bar layout (5 tabs; aiMatch is the centre raised pill).
@@ -61,9 +61,21 @@ public final class AppState: ObservableObject {
         self.profileStyle = style
     }
 
+    /// Active style via deep façade (Catalog + preferred + score).
+    public var activeStyle: ActiveStyle {
+        CommunityReputationStyle.resolve(
+            score: profile.repScore,
+            preferred: profileStyle.preferredStyleId,
+            seenUnlockIds: profileStyle.seenUnlockIds
+        )
+    }
+
     /// Call whenever `profile.repScore` may have changed (sign-in, refresh).
     public func syncProfileStyleWithReputation() {
-        let toast = profileStyle.applyScoreChange(profile.repScore)
+        let toast = CommunityReputationStyle.applyScore(
+            to: &profileStyle,
+            newScore: profile.repScore
+        )
         styleStore.saveSeenUnlockIds(profileStyle.seenUnlockIds)
         if !toast.isEmpty {
             pendingStyleUnlocks = toast
@@ -71,12 +83,12 @@ public final class AppState: ObservableObject {
         // Widget App Group bridge (no-op if group not provisioned yet)
         if let d = UserDefaults(suiteName: "group.com.mangasm.app") {
             d.set(profile.repScore, forKey: "mangasm.widget.repScore")
-            d.set(profileStyle.activeConfig.styleId.rawValue, forKey: "mangasm.widget.styleId")
+            d.set(activeStyle.styleId.rawValue, forKey: "mangasm.widget.styleId")
         }
     }
 
     public func setPreferredStyle(_ id: ProfileStyleId) {
-        if profileStyle.selectPreferred(id) {
+        if CommunityReputationStyle.selectPreferred(id, state: &profileStyle) {
             styleStore.savePreferred(id)
             objectWillChange.send()
         }
@@ -93,14 +105,16 @@ public final class AppState: ObservableObject {
     public func clearPendingReferralCode() {
         pendingReferralCode = ""
     }
-    public func enterApp() { phase = .app }
+    public func enterApp() {
+        phase = AppPhaseMachine.apply(from: phase, event: .finishLaunchFlow)
+    }
 
     /// Clears the local session after account deletion or sign-out: drops the
     /// in-memory profile/visibility, revokes premium, closes any open sheets, and
     /// returns to the launch flow. Sensitive in-memory data (fetishes, etc.) must
     /// not survive a deletion — server-side erasure is handled by the AuthService.
     public func resetForSignOut() {
-        phase = .launch
+        phase = AppPhaseMachine.apply(from: phase, event: .signOut)
         tab = .events
         premium = false
         selectedMatch = nil
