@@ -7,6 +7,7 @@
  * by @supabase/server (publishable + secret keys).
  */
 import { withSupabase } from "npm:@supabase/server";
+import { readAppleConfig, revokeToken } from "../_shared/apple.ts";
 
 export default {
   fetch: withSupabase({ auth: "user" }, async (req, ctx) => {
@@ -16,6 +17,32 @@ export default {
 
     const userId = ctx.userClaims!.id;
     const admin = ctx.supabaseAdmin;
+
+    // ── Guideline 5.1.1(v): revoke the Sign in with Apple token, if any ──────
+    // Best-effort: deletion MUST still proceed (and purge data) even if revoke
+    // fails or Apple is unconfigured. Outcome is logged only.
+    let appleRevoked: boolean | "skipped" = "skipped";
+    try {
+      const cfg = readAppleConfig();
+      if (cfg) {
+        const { data: cred } = await admin
+          .from("apple_credentials")
+          .select("refresh_token")
+          .eq("user_id", userId)
+          .maybeSingle();
+        if (cred?.refresh_token) {
+          appleRevoked = await revokeToken(cfg, cred.refresh_token);
+          console.log(`[delete-account] apple revoke for ${userId}: ${appleRevoked}`);
+        } else {
+          console.log(`[delete-account] no stored apple token for ${userId}`);
+        }
+      } else {
+        console.log("[delete-account] apple not configured; skipping revoke");
+      }
+    } catch (e) {
+      console.error("[delete-account] apple revoke error:", (e as Error).message);
+      appleRevoked = false;
+    }
 
     // Explicit purge before auth delete (block/report/DM leftovers).
     // Errors here must FAIL the deletion (B5): a swallowed purge error would
@@ -44,7 +71,7 @@ export default {
       return json({ error: deleteError.message }, 500);
     }
 
-    return json({ deleted: true, userId }, 200);
+    return json({ deleted: true, userId, appleRevoked }, 200);
   }),
 };
 

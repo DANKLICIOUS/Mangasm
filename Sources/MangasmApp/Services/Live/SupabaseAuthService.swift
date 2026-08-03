@@ -19,12 +19,18 @@ public final class SupabaseAuthService: AuthService {
     public func signInWithApple(consent: OnboardingConsent) async throws {
         guard consent.mayEnter else { throw AuthError.consentRequired }
         #if canImport(AuthenticationServices) && canImport(UIKit)
-        let (idToken, nonce) = try await apple.signIn()
+        let (idToken, nonce, authorizationCode) = try await apple.signIn()
         try await client.auth.signInWithIdToken(
             credentials: .init(provider: .apple, idToken: idToken, nonce: nonce)
         )
         try await upsertProfileFromAppleSession()
         try await logConsent(consent)
+        // Guideline 5.1.1(v): register the Apple authorization code so the
+        // server can hold a refresh token for revoke-on-delete. Best-effort —
+        // must never fail sign-in.
+        if let authorizationCode {
+            await registerAppleAuthorizationCode(authorizationCode)
+        }
         #else
         throw AuthError.notImplemented("Sign in with Apple")
         #endif
@@ -52,6 +58,28 @@ public final class SupabaseAuthService: AuthService {
 
     public func enterMock(consent: OnboardingConsent) async throws {
         guard consent.mayEnter else { throw AuthError.consentRequired }
+    }
+
+    /// Send the Apple authorization code to the `apple-register` edge function,
+    /// which exchanges it for a refresh token and stores it for revoke-on-delete.
+    /// Failures are swallowed (logged) — this must never block sign-in.
+    private func registerAppleAuthorizationCode(_ code: String) async {
+        do {
+            let session = try await client.auth.session
+            let url = projectURL.appending(path: "functions/v1/apple-register")
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            if !publishableKey.isEmpty {
+                request.setValue(publishableKey, forHTTPHeaderField: "apikey")
+            }
+            struct Body: Encodable { let authorizationCode: String }
+            request.httpBody = try JSONEncoder().encode(Body(authorizationCode: code))
+            _ = try await URLSession.shared.data(for: request)
+        } catch {
+            print("[SupabaseAuthService] apple-register failed: \(error)")
+        }
     }
 
     public func deleteAccount() async throws {
