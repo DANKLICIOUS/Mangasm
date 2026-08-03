@@ -46,4 +46,11 @@ final class ProfileStyleCatalogTests: XCTestCase {
             "style-hero-precisionTech"
         )
     }
+
+    func testLegacyThemeAliasesRoundTrip() {
+        XCTAssertEqual(ProfileStyleId.calmStudio.legacyThemeAlias, "bobRoss")
+        XCTAssertEqual(ProfileStyleId(legacyThemeAlias: "cyborg"), .precisionTech)
+        XCTAssertEqual(ProfileStyleId(legacyThemeAlias: "gothGlam"), .boldExpression)
+        XCTAssertNil(ProfileStyleId(legacyThemeAlias: "unknown"))
+    }
 }

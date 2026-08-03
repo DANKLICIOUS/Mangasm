@@ -6,6 +6,28 @@ public enum ProfileStyleId: String, CaseIterable, Codable, Sendable, Hashable {
     case precisionTech
     case digitalFlow
     case boldExpression
+
+    /// Cross-platform / RN ThemeProvider aliases (`bobRoss`, `lambo`, …).
+    public var legacyThemeAlias: String {
+        switch self {
+        case .calmStudio: return "bobRoss"
+        case .aspirational: return "lambo"
+        case .precisionTech: return "cyborg"
+        case .digitalFlow: return "matrix"
+        case .boldExpression: return "gothGlam"
+        }
+    }
+
+    public init?(legacyThemeAlias alias: String) {
+        switch alias {
+        case "bobRoss": self = .calmStudio
+        case "lambo": self = .aspirational
+        case "cyborg": self = .precisionTech
+        case "matrix": self = .digitalFlow
+        case "gothGlam": self = .boldExpression
+        default: return nil
+        }
+    }
 }
 
 public struct ProfileStyleConfig: Sendable, Equatable, Identifiable {

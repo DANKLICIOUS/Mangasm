@@ -10,8 +10,7 @@ public struct ProfileUnlockToastHost: View {
         VStack {
             if let first = state.pendingStyleUnlocks.first {
                 HStack(spacing: 10) {
-                    Image(systemName: "sparkles")
-                        .foregroundStyle(ProfileStyleTheme.theme(for: first.styleId).accent)
+                    ProfileStyleBadgeIcon(styleId: first.styleId, size: 36)
                     VStack(alignment: .leading, spacing: 2) {
                         Text("New style unlocked")
                             .font(MGFont.mono(9))
@@ -19,6 +18,9 @@ public struct ProfileUnlockToastHost: View {
                         Text(first.displayName)
                             .font(MGFont.sans(14, .bold))
                             .foregroundStyle(.white)
+                        Text(first.badgeName)
+                            .font(MGFont.mono(9))
+                            .foregroundStyle(.white.opacity(0.7))
                     }
                     Spacer()
                 }

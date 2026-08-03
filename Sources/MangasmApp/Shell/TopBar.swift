@@ -48,12 +48,12 @@ public struct TopBar: View {
                             .lineHeight(0.8)
 
                         HStack(spacing: 4) {
+                            ProfileStyleBadgeMini(styleId: state.profileStyle.activeConfig.styleId)
                             Text(styleBadgeLabel)
                                 .font(.custom("CormorantGaramond-Bold", size: 12).italic())
                                 .fontWeight(.semibold)
                                 .foregroundStyle(styleTheme.accentSecondary)
                                 .lineLimit(1)
-                            Seal(size: 12)
                         }
                     }
                 }

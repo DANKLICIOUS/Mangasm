@@ -45,15 +45,7 @@ public struct ProfileStylePicker: View {
         } label: {
             VStack(alignment: .leading, spacing: 6) {
                 HStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: theme.ringColors,
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                        .frame(width: 22, height: 22)
+                    ProfileStyleBadgeIcon(styleId: config.styleId, size: 28)
                     Spacer()
                     if active {
                         Image(systemName: "checkmark.circle.fill")
