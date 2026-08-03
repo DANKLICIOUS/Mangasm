@@ -188,6 +188,16 @@ public final class MockSafetyService: SafetyService {
         reportLog.append((userID: userID, reason: reason))
         print("[MockSafetyService] reported \(userID) for: \(reason)")
     }
+
+    public func reportContent(
+        _ type: ReportContentType,
+        contentID: String,
+        reportedUserID: String?,
+        reason: String
+    ) {
+        reportLog.append((userID: reportedUserID ?? contentID, reason: reason))
+        print("[MockSafetyService] reported \(type.rawValue) \(contentID) for: \(reason)")
+    }
 }
 
 // MARK: - MockWeatherProvider

@@ -5,10 +5,15 @@ import UIKit
 /// Presents Sign in with Apple and returns the identity token + raw nonce for Supabase.
 @MainActor
 public final class AppleSignInPresenter: NSObject {
-    private var continuation: CheckedContinuation<(idToken: String, nonce: String), Error>?
+    /// idToken/nonce feed Supabase; authorizationCode is exchanged server-side
+    /// for an Apple refresh token so the SIWA grant can later be revoked on
+    /// account deletion (Guideline 5.1.1(v)). authorizationCode is nil if Apple
+    /// did not return one.
+    public typealias Credential = (idToken: String, nonce: String, authorizationCode: String?)
+    private var continuation: CheckedContinuation<Credential, Error>?
     private var rawNonce = ""
 
-    public func signIn() async throws -> (idToken: String, nonce: String) {
+    public func signIn() async throws -> Credential {
         rawNonce = SignInNonce.make()
         let hashed = SignInNonce.sha256Hex(rawNonce)
 
@@ -26,7 +31,7 @@ public final class AppleSignInPresenter: NSObject {
         }
     }
 
-    private func finish(_ result: Result<(idToken: String, nonce: String), Error>) {
+    private func finish(_ result: Result<Credential, Error>) {
         guard let continuation else { return }
         self.continuation = nil
         continuation.resume(with: result)
@@ -45,7 +50,9 @@ extension AppleSignInPresenter: ASAuthorizationControllerDelegate {
             finish(.failure(AuthError.missingIdentityToken))
             return
         }
-        finish(.success((idToken: idToken, nonce: rawNonce)))
+        let authCode = credential.authorizationCode
+            .flatMap { String(data: $0, encoding: .utf8) }
+        finish(.success((idToken: idToken, nonce: rawNonce, authorizationCode: authCode)))
     }
 
     public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {

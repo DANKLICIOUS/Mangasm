@@ -11,6 +11,8 @@ struct EventCard: View {
 
     @EnvironmentObject var env: AppEnvironment
     @State private var rsvped: Bool = false
+    @State private var showReportReasons: Bool = false
+    @State private var showReportConfirm: Bool = false
 
     private var isApproval: Bool { event.privacy == "approval" }
 
@@ -62,6 +64,22 @@ struct EventCard: View {
 
                     // Privacy badge — approval (gold) or open (green)
                     PrivacyBadge(isApproval: isApproval)
+
+                    // Report affordance (Guideline 1.2 — events are UGC).
+                    Menu {
+                        Button {
+                            showReportReasons = true
+                        } label: {
+                            Label("Report event…", systemImage: "flag")
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(MGColor.gold)
+                            .frame(width: 28, height: 28)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
                 }
 
                 // ── Host row ─────────────────────────────────────────────────
@@ -181,6 +199,33 @@ struct EventCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 17))
             .glassBackground(17)
             .padding(1)
+        }
+        .confirmationDialog(
+            "Report \(event.title)",
+            isPresented: $showReportReasons,
+            titleVisibility: .visible
+        ) {
+            ForEach(ReportReason.allCases, id: \.self) { reason in
+                Button(reason.label) {
+                    // Events carry no host UUID on the client → reportedUserID nil;
+                    // the event id is the takedown target.
+                    env.safety.reportContent(
+                        .event,
+                        contentID: event.id,
+                        reportedUserID: nil,
+                        reason: reason.label
+                    )
+                    showReportConfirm = true
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Select a reason for your report.")
+        }
+        .alert("Report Submitted", isPresented: $showReportConfirm) {
+            Button("OK") {}
+        } message: {
+            Text("Thank you. Your report has been submitted.")
         }
     }
 }
