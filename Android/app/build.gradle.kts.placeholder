@@ -1,0 +1,4 @@
+// Placeholder — rename to build.gradle.kts when creating a real Gradle project.
+// applicationId = "app.mangasm.android"
+// minSdk = 26, targetSdk = 35
+// dependencies: supabase-kt, play-services-auth, compose-bom (TBD)

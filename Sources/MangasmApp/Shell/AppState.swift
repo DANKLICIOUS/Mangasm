@@ -68,6 +68,11 @@ public final class AppState: ObservableObject {
         if !toast.isEmpty {
             pendingStyleUnlocks = toast
         }
+        // Widget App Group bridge (no-op if group not provisioned yet)
+        if let d = UserDefaults(suiteName: "group.com.mangasm.app") {
+            d.set(profile.repScore, forKey: "mangasm.widget.repScore")
+            d.set(profileStyle.activeConfig.styleId.rawValue, forKey: "mangasm.widget.styleId")
+        }
     }
 
     public func setPreferredStyle(_ id: ProfileStyleId) {

@@ -2,6 +2,8 @@ import SwiftUI
 
 #if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 public struct ProfileStyleBackground: View {
@@ -22,8 +24,8 @@ public struct ProfileStyleBackground: View {
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
-            if Self.heroExists(config.heroAssetName) {
-                Image(config.heroAssetName)
+            if let hero = Self.heroImage(named: config.heroAssetName) {
+                hero
                     .resizable()
                     .scaledToFill()
                     .opacity(0.55)
@@ -43,12 +45,27 @@ public struct ProfileStyleBackground: View {
         .ignoresSafeArea()
     }
 
-    private static func heroExists(_ name: String) -> Bool {
+    private static func heroImage(named name: String) -> Image? {
+        // Prefer SPM resource bundle (Resources/style-hero-*.jpg), then main catalog.
+        if let url = Bundle.module.url(forResource: name, withExtension: "jpg")
+            ?? Bundle.module.url(forResource: name, withExtension: "png")
+        {
+            #if canImport(UIKit)
+            if let ui = UIImage(contentsOfFile: url.path) {
+                return Image(uiImage: ui)
+            }
+            #elseif canImport(AppKit)
+            if let ns = NSImage(contentsOf: url) {
+                return Image(nsImage: ns)
+            }
+            #endif
+        }
         #if canImport(UIKit)
-        UIImage(named: name) != nil
-        #else
-        false
+        if let ui = UIImage(named: name) {
+            return Image(uiImage: ui)
+        }
         #endif
+        return nil
     }
 }
 
