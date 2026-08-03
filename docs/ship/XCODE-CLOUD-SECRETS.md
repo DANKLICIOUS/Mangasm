@@ -38,12 +38,12 @@ into Info.plist at build time.
 1. Open **App Store Connect** → **Mangasm** → **Xcode Cloud** → **Settings** → **Environment**.
 2. Add (prefer **Secret** type):
 
-| Variable                   | Required | Notes                                                      |
-| -------------------------- | -------- | ---------------------------------------------------------- |
-| `SUPABASE_URL`             | Yes      | e.g. `https://dvomzrvslwdabwcwtvrg.supabase.co`            |
-| `SUPABASE_PUBLISHABLE_KEY` | Yes      | Publishable / anon key (`SUPABASE_ANON_KEY` also accepted) |
-| `YELP_API_KEY`             | No       | Date Night Yelp; empty → in-app fallback                   |
-| `TICKETMASTER_API_KEY`     | No       | Date Night Ticketmaster; empty → in-app fallback           |
+| Variable                   | Required | Notes                                                                                    |
+| -------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| `SUPABASE_URL`             | Yes      | e.g. `https://dvomzrvslwdabwcwtvrg.supabase.co` (alias: `MANGASM_SUPABASE_URL`)          |
+| `SUPABASE_PUBLISHABLE_KEY` | Yes      | Aliases: `SUPABASE_ANON_KEY`, `MANGASM_SUPABASE_PUBLISHABLE_KEY`                         |
+| `YELP_API_KEY`             | No       | Date Night Yelp; empty → in-app fallback (alias: `MANGASM_YELP_API_KEY`)                 |
+| `TICKETMASTER_API_KEY`     | No       | Date Night Ticketmaster; empty → in-app fallback (alias: `MANGASM_TICKETMASTER_API_KEY`) |
 
 3. Ensure the workflow that archives the app includes these env vars (all environments or the specific workflow).
 4. Re-run the Xcode Cloud build.
