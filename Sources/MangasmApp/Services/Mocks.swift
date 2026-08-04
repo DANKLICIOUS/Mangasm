@@ -8,21 +8,23 @@ public final class MockAuthService: AuthService {
 
     public init() {}
 
-    public func signInWithApple(consent: OnboardingConsent) async throws {
-        try await enterMock(consent: consent)
-    }
-
-    public func signInWithGoogle(consent: OnboardingConsent) async throws {
-        try await enterMock(consent: consent)
-    }
-
-    public func signInWithPhone(consent: OnboardingConsent) async throws {
+    public func signUpWithEmail(email: String, password: String, consent: OnboardingConsent) async throws {
         try await enterMock(consent: consent)
     }
 
     public func signInWithEmail(email: String, password: String, consent: OnboardingConsent) async throws {
         try await enterMock(consent: consent)
     }
+
+    public func sendPasswordReset(email: String) async throws {}
+
+    public func handleAuthURL(_ url: URL) async -> Bool { false }
+
+    public func updatePassword(newPassword: String) async throws {}
+
+    public func signOut() async throws {}
+
+    public func restoreSession() async -> Bool { false }
 
     public func enterMock(consent: OnboardingConsent) async throws {
         guard consent.mayEnter else { throw AuthError.consentRequired }

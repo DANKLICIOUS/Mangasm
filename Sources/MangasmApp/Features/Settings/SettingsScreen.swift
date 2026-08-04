@@ -359,10 +359,14 @@ public struct SettingsScreen: View {
 
                     MGCard {
                         VStack(spacing: 0) {
-                            // Sign Out
+                            // Sign Out — ends the Supabase session (clears the
+                            // Keychain-persisted tokens) before resetting the shell.
                             Button {
-                                onClose()
-                                state.phase = .launch
+                                Task { @MainActor in
+                                    try? await env.auth.signOut()
+                                    onClose()
+                                    state.resetForSignOut()
+                                }
                             } label: {
                                 HStack {
                                     Text("Sign Out")

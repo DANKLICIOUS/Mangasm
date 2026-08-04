@@ -22,9 +22,7 @@ targets:
         product: MangasmApp
     entitlements:
       path: App/iOS/Mangasm.entitlements
-      properties:
-        com.apple.developer.applesignin:
-          - Default
+      properties: {}
     info:
       path: App/iOS/Info.plist
       properties:
@@ -36,6 +34,12 @@ targets:
         YELP_API_KEY: $(YELP_API_KEY)
         TICKETMASTER_API_KEY: $(TICKETMASTER_API_KEY)
         NSLocationWhenInUseUsageDescription: Mangasm uses your location to find restaurants and events within 10 miles of both of you for Date Night.
+        # mangasm:// deep links — Supabase Auth redirects (email confirmation,
+        # password reset) land on mangasm://auth-callback.
+        CFBundleURLTypes:
+          - CFBundleURLName: com.mangasm.app.auth
+            CFBundleURLSchemes:
+              - mangasm
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES

@@ -20,6 +20,17 @@
 	<string>1</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Mangasm uses your location to find restaurants and events within 10 miles of both of you for Date Night.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.mangasm.app.auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>mangasm</string>
+			</array>
+		</dict>
+	</array>
 	<key>SUPABASE_PUBLISHABLE_KEY</key>
 	<string>$(SUPABASE_PUBLISHABLE_KEY)</string>
 	<key>SUPABASE_URL</key>
