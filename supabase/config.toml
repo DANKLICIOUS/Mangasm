@@ -6,3 +6,40 @@ verify_jwt = false
 
 [functions.validate-referral]
 verify_jwt = false
+
+# Email-only auth (feature/email-only-auth): Apple & Google providers off;
+# mangasm://auth-callback is the iOS deep link for confirmation + reset links.
+#
+# NOTE: `supabase config push` serializes EVERY scalar in [auth] with local
+# defaults, so all previously dashboard-managed values below are pinned here
+# explicitly — removing a line and pushing resets it to the CLI default.
+[auth]
+enabled = true
+site_url = "https://mangasm.app"
+additional_redirect_urls = [
+  "com.mangasm.app://login-callback",
+  "https://mangasm.app/**",
+  "mangasm://auth-callback",
+]
+enable_signup = true
+enable_anonymous_sign_ins = false
+minimum_password_length = 6
+password_requirements = "lower_upper_letters_digits_symbols"
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = true
+max_frequency = "1m0s"
+otp_length = 8
+
+[auth.external.apple]
+enabled = false
+
+[auth.external.google]
+enabled = false
