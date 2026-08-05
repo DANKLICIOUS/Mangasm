@@ -1,16 +1,26 @@
 import Foundation
 
 // MARK: - AuthService
-/// Handles authentication and account lifecycle (Phase 1 — Supabase Auth).
+/// Handles authentication and account lifecycle (email-only — Supabase Auth).
 @MainActor
 public protocol AuthService {
-    func signInWithApple(consent: OnboardingConsent) async throws
-    func signInWithGoogle(consent: OnboardingConsent) async throws
-    func signInWithPhone(consent: OnboardingConsent) async throws
-    /// Email/password sign-in — required so App Review can use a demo account
-    /// (reviewers cannot use Sign in with Apple). Sign-in only; accounts are
-    /// provisioned server-side (phase1-auth spec §4a, decision Q3).
+    /// Creates an account. The user must confirm via the emailed link before
+    /// the first sign-in succeeds ("Confirm email" is ON in Supabase Auth).
+    func signUpWithEmail(email: String, password: String, consent: OnboardingConsent) async throws
+    /// Email/password sign-in.
     func signInWithEmail(email: String, password: String, consent: OnboardingConsent) async throws
+    /// Emails a password-reset magic link that deep-links back into the app.
+    func sendPasswordReset(email: String) async throws
+    /// Completes the reset/confirmation deep link (`mangasm://auth-callback`).
+    /// Returns true when the URL was an auth callback and a session was established.
+    func handleAuthURL(_ url: URL) async -> Bool
+    /// Sets a new password for the recovery session established by the reset link.
+    func updatePassword(newPassword: String) async throws
+    /// Ends the current session and clears the persisted (Keychain) session.
+    func signOut() async throws
+    /// Restores a persisted session at launch. Returns true when a valid
+    /// (refreshable) session exists; false when the user must sign in.
+    func restoreSession() async -> Bool
     /// Previews/tests when no Supabase config is present.
     func enterMock(consent: OnboardingConsent) async throws
     /// Permanently deletes the current account and all associated data (Guideline 5.1.1(v)).

@@ -34,30 +34,35 @@ final class DomainLogicTests: XCTestCase {
         XCTAssertFalse(AgeGate.isAdult(birthDate: date(2030, 1, 1), now: date(2026, 6, 21)))
     }
 
-    // MARK: - Phase 1: SignInNonce (critical path)
+    // MARK: - Email-only auth: EmailAuthValidator (critical path)
 
-    func testNonceHasRequestedLengthAndCharset() {
-        let allowed = Set("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._")
-        let n = SignInNonce.make(length: 40)
-        XCTAssertEqual(n.count, 40)
-        XCTAssertTrue(n.allSatisfy { allowed.contains($0) })
+    func testValidEmailsAccepted() {
+        XCTAssertTrue(EmailAuthValidator.isValidEmail("a@b.co"))
+        XCTAssertTrue(EmailAuthValidator.isValidEmail("  user.name+tag@example.com  "))
     }
 
-    func testNoncesAreUnique() {
-        XCTAssertNotEqual(SignInNonce.make(), SignInNonce.make())
+    func testInvalidEmailsRejected() {
+        for bad in ["", "plain", "@no-local.com", "two@@ats.com", "sp ace@x.com",
+                    "user@nodot", "user@.leadingdot.com", "user@trailingdot."] {
+            XCTAssertFalse(EmailAuthValidator.isValidEmail(bad), "should reject: \(bad)")
+        }
     }
 
-    func testSha256HexMatchesKnownVector() {
-        // sha256("abc") well-known test vector
-        XCTAssertEqual(
-            SignInNonce.sha256Hex("abc"),
-            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
-        )
+    func testPasswordStrengthRules() {
+        XCTAssertNotNil(EmailAuthValidator.passwordProblem("short1"))       // < 8 chars
+        XCTAssertNotNil(EmailAuthValidator.passwordProblem("lettersonly"))  // no digit
+        XCTAssertNotNil(EmailAuthValidator.passwordProblem("12345678"))     // no letter
+        XCTAssertNil(EmailAuthValidator.passwordProblem("abcdefg1"))
     }
 
-    func testSha256HexIsDeterministic() {
-        let raw = SignInNonce.make()
-        XCTAssertEqual(SignInNonce.sha256Hex(raw), SignInNonce.sha256Hex(raw))
+    func testValidateThrowsFieldAnchoredErrors() {
+        XCTAssertThrowsError(try EmailAuthValidator.validate(email: "bad", password: "abcdefg1")) {
+            XCTAssertEqual(($0 as? AuthError)?.authField, .email)
+        }
+        XCTAssertThrowsError(try EmailAuthValidator.validate(email: "a@b.co", password: "weak")) {
+            XCTAssertEqual(($0 as? AuthError)?.authField, .password)
+        }
+        XCTAssertNoThrow(try EmailAuthValidator.validate(email: "a@b.co", password: "abcdefg1"))
     }
 
     // MARK: - Phase 4: BlockPolicy (bidirectional)

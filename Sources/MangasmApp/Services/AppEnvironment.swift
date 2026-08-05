@@ -19,6 +19,10 @@ public final class AppEnvironment: ObservableObject {
     /// Returns the current session's access token, or nil when signed out.
     /// Edge Function calls use this as the Bearer credential (auth: 'user').
     public let accessTokenProvider: (@Sendable () async -> String?)?
+    /// The live Supabase client, nil when running on mocks. Exposed so the app
+    /// shell can observe auth-state changes (sign-out on refresh failure,
+    /// password recovery) without each screen holding its own client.
+    public private(set) var supabaseClient: SupabaseClient?
 
     public init(
         auth: any AuthService,
@@ -93,8 +97,19 @@ public final class AppEnvironment: ObservableObject {
             fatalError("SupabaseConfig missing from Info.plist — Release builds must not fall back to mock services.")
             #endif
         }
-        let client = SupabaseClient(supabaseURL: config.url, supabaseKey: config.publishableKey)
-        return AppEnvironment(
+        // Session persistence: Keychain (never UserDefaults). This is
+        // supabase-swift's default storage, pinned explicitly here so a future
+        // SDK default change can't silently move tokens out of the Keychain.
+        let client = SupabaseClient(
+            supabaseURL: config.url,
+            supabaseKey: config.publishableKey,
+            options: SupabaseClientOptions(
+                auth: SupabaseClientOptions.AuthOptions(
+                    storage: KeychainLocalStorage()
+                )
+            )
+        )
+        let environment = AppEnvironment(
             auth: SupabaseAuthService(client: client, projectURL: config.url, publishableKey: config.publishableKey),
             profile: SupabaseProfileService(client: client),
             matches: SupabaseMatchService(client: client),
@@ -112,5 +127,7 @@ public final class AppEnvironment: ObservableObject {
             location: LiveLocationProvider(),
             accessTokenProvider: { (try? await client.auth.session)?.accessToken }
         )
+        environment.supabaseClient = client
+        return environment
     }
 }

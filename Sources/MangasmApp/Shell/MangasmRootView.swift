@@ -1,9 +1,13 @@
 import SwiftUI
+import Supabase
 
 public struct MangasmRootView: View {
     @StateObject private var state = AppState()
     @StateObject private var env = AppEnvironment.makeDefault()
     @StateObject private var store = StoreKitStore()
+
+    /// True while a password-recovery deep link is being completed.
+    @State private var showNewPasswordSheet = false
 
     public init() {}
 
@@ -33,12 +37,56 @@ public struct MangasmRootView: View {
                 store.verifyBaseURL = config.url.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
                 store.authTokenProvider = env.accessTokenProvider
             }
+            // Restore a Keychain-persisted Supabase session on launch: valid
+            // (refreshable) session → straight into the app; anything else stays
+            // on the launch flow.
+            if env.auth is SupabaseAuthService, await env.auth.restoreSession() {
+                state.enterApp()
+            }
             await store.loadProducts()
             await store.updatePurchasedProducts()
         }
+        // Token refresh failure / server-side revocation → back to login.
+        .task { await observeAuthState() }
+        .sheet(isPresented: $showNewPasswordSheet) {
+            NewPasswordView {
+                showNewPasswordSheet = false
+                state.enterApp()
+            }
+            .environmentObject(env)
+        }
         .onOpenURL { url in
+            if AuthDeepLink.isAuthCallback(url) {
+                Task { @MainActor in
+                    guard await env.auth.handleAuthURL(url) else { return }
+                    // Recovery links also fire the .passwordRecovery auth event
+                    // (handled in observeAuthState); confirmation links just
+                    // establish a session and proceed into the app.
+                    if !showNewPasswordSheet, state.phase == .launch {
+                        state.enterApp()
+                    }
+                }
+                return
+            }
             if let code = ReferralCode.parse(from: url) {
                 state.captureReferralCode(code)
+            }
+        }
+    }
+
+    /// Watches Supabase auth events. `.signedOut` (expired/revoked refresh
+    /// token, remote sign-out) while in the app resets to login;
+    /// `.passwordRecovery` (reset magic link) opens the new-password sheet.
+    private func observeAuthState() async {
+        guard let supabase = env.supabaseClient else { return }
+        for await (event, _) in supabase.auth.authStateChanges {
+            switch event {
+            case .signedOut:
+                if state.phase == .app { state.resetForSignOut() }
+            case .passwordRecovery:
+                showNewPasswordSheet = true
+            default:
+                break
             }
         }
     }
