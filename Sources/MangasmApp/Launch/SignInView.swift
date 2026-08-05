@@ -332,6 +332,7 @@ private struct AuthSheet: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(isLoading)
+                .accessibilityIdentifier("mock_enter_button")
             }
 
             VStack(spacing: 7) {

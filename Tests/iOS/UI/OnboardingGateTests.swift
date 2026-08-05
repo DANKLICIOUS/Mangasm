@@ -17,20 +17,20 @@ final class OnboardingGateTests: XCTestCase {
                       "18+ gate should appear after the splash")
         ageGate.tap()
 
-        let apple = app.buttons["Continue with Apple"]
-        XCTAssertTrue(apple.waitForExistence(timeout: 8),
+        let enter = app.buttons["mock_enter_button"]
+        XCTAssertTrue(enter.waitForExistence(timeout: 8),
                       "sign-in should appear after the age gate")
 
         // Age gate pre-fills consent; uncheck to verify the sign-in gate still blocks.
         app.buttons["accept_toggle"].tap()
-        apple.tap()
+        enter.tap()
         XCTAssertTrue(app.staticTexts["accept_nudge"].waitForExistence(timeout: 3),
                       "tapping before consent must show the confirm prompt")
-        XCTAssertTrue(apple.exists, "must remain on the sign-in screen before consent")
+        XCTAssertTrue(enter.exists, "must remain on the sign-in screen before consent")
 
         app.buttons["accept_toggle"].tap()
-        apple.tap()
-        XCTAssertTrue(apple.waitForNonExistence(timeout: 8),
+        enter.tap()
+        XCTAssertTrue(enter.waitForNonExistence(timeout: 8),
                       "after accepting, entering should dismiss the sign-in screen")
     }
 }
