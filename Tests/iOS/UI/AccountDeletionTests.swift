@@ -16,12 +16,15 @@ final class AccountDeletionTests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        // Enter the app through the consent gate.
-        let apple = app.buttons["Continue with Apple"]
-        XCTAssertTrue(apple.waitForExistence(timeout: 30), "sign-in should appear")
-        app.buttons["accept_toggle"].tap()
-        apple.tap()
-        XCTAssertTrue(apple.waitForNonExistence(timeout: 8), "should enter the app")
+        // Enter the app through the consent gate. Confirming the 18+ gate
+        // pre-fills consent, so the mock entry button proceeds straight in.
+        let ageGate = app.buttons["age_gate_confirm"]
+        XCTAssertTrue(ageGate.waitForExistence(timeout: 30), "18+ gate should appear after the splash")
+        ageGate.tap()
+        let enter = app.buttons["mock_enter_button"]
+        XCTAssertTrue(enter.waitForExistence(timeout: 8), "sign-in should appear")
+        enter.tap()
+        XCTAssertTrue(enter.waitForNonExistence(timeout: 8), "should enter the app")
 
         // Open Settings.
         let settings = app.buttons["settings_button"]

@@ -10,11 +10,15 @@ final class AccessibilityTests: XCTestCase {
         app.launch()
 
         // Enter the app through the consent gate, then open Settings.
-        let apple = app.buttons["Continue with Apple"]
-        XCTAssertTrue(apple.waitForExistence(timeout: 30))
-        app.buttons["accept_toggle"].tap()
-        apple.tap()
-        XCTAssertTrue(apple.waitForNonExistence(timeout: 8))
+        // Confirming the 18+ gate pre-fills consent, so the mock entry
+        // button proceeds straight in.
+        let ageGate = app.buttons["age_gate_confirm"]
+        XCTAssertTrue(ageGate.waitForExistence(timeout: 30), "18+ gate should appear after the splash")
+        ageGate.tap()
+        let enter = app.buttons["mock_enter_button"]
+        XCTAssertTrue(enter.waitForExistence(timeout: 8))
+        enter.tap()
+        XCTAssertTrue(enter.waitForNonExistence(timeout: 8))
         app.buttons["settings_button"].tap()
 
         let close = app.buttons["Close"]
