@@ -44,6 +44,22 @@ public final class SupabaseSafetyService: SafetyService {
         Task { await persistReport(userID: userID, reason: reason) }
     }
 
+    public func reportContent(
+        _ type: ReportContentType,
+        contentID: String,
+        reportedUserID: String?,
+        reason: String
+    ) {
+        Task {
+            await persistContentReport(
+                type: type,
+                contentID: contentID,
+                reportedUserID: reportedUserID,
+                reason: reason
+            )
+        }
+    }
+
     /// Hydrate local block cache from `blocks` (call after sign-in).
     public func loadFromServer() async {
         guard let viewerID = try? await currentUserID() else { return }
@@ -128,6 +144,54 @@ public final class SupabaseSafetyService: SafetyService {
                     details: reason
                 ))
                 .execute()
+        }
+    }
+
+    /// Persist a content-scoped report (photo/event/…) into `reports`, setting
+    /// `content_type` + `content_id` (migration 0011). `target_id` is nullable
+    /// there, so an event with no host UUID still records. Falls back to a
+    /// content-less insert if the columns aren't present in the live schema yet.
+    private func persistContentReport(
+        type: ReportContentType,
+        contentID: String,
+        reportedUserID: String?,
+        reason: String
+    ) async {
+        guard let reporterID = try? await currentUserID() else { return }
+        let targetID = reportedUserID.flatMap { UUID(uuidString: $0) }
+        let reasonDB = SafetyReasonMapper.dbValue(from: reason)
+
+        struct ContentReport: Encodable {
+            let reporter_id: UUID
+            let reported_id: UUID?
+            let target_id: UUID?
+            let reason: String
+            let details: String
+            let content_type: String
+            let content_id: String
+        }
+
+        do {
+            try await client
+                .from("reports")
+                .insert(ContentReport(
+                    reporter_id: reporterID,
+                    reported_id: targetID,
+                    target_id: targetID,
+                    reason: reasonDB,
+                    details: reason,
+                    content_type: type.rawValue,
+                    content_id: contentID
+                ))
+                .execute()
+        } catch {
+            // Schema without content columns / with a NOT NULL target: fall back
+            // to a plain profile report when we at least have a target user.
+            if let targetID {
+                await persistReport(userID: targetID.uuidString, reason: reason)
+            } else {
+                print("[SupabaseSafetyService] content report failed: \(error)")
+            }
         }
     }
 

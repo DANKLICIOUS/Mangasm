@@ -16,12 +16,12 @@ GitHub (source + Actions CI)
 
 ## Supabase — single source of truth
 
-| Item | Value |
-| --- | --- |
-| **Live project ref** | `dvomzrvslwdabwcwtvrg` |
-| **Project URL** | `https://dvomzrvslwdabwcwtvrg.supabase.co` |
-| **Publishable key** | `sb_publishable_*` — **public / client-safe** (NEXT_PUBLIC), safe to ship in the iOS app + web |
-| **MCP endpoint** | `https://mcp.supabase.com/mcp?project_ref=dvomzrvslwdabwcwtvrg&...` (`.mcp.json`) |
+| Item                 | Value                                                                                          |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| **Live project ref** | `dvomzrvslwdabwcwtvrg`                                                                         |
+| **Project URL**      | `https://dvomzrvslwdabwcwtvrg.supabase.co`                                                     |
+| **Publishable key**  | `sb_publishable_*` — **public / client-safe** (NEXT_PUBLIC), safe to ship in the iOS app + web |
+| **MCP endpoint**     | `https://mcp.supabase.com/mcp?project_ref=dvomzrvslwdabwcwtvrg&...`                            |
 
 **Retired refs — do NOT use anywhere:**
 
@@ -39,10 +39,10 @@ never commit it.
 Workflow: `.github/workflows/ci.yml` (triggers on push/PR to `main` +
 `workflow_dispatch`). Two deterministic, host-runnable jobs:
 
-| Job | What it does | Runner |
-| --- | --- | --- |
-| `supabase-db` | Postgres 16 service → apply migrations `0001→0007` → run RLS/trigger tests (`scripts/ci-db-test.sh`) | ubuntu |
-| `web` | Validate `vercel.json` + `apple-app-site-association` JSON, `node --check` middleware, assert required static pages exist | ubuntu |
+| Job           | What it does                                                                                                              | Runner |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `supabase-db` | Postgres 16 service → apply migrations `0001→0007` → run RLS/trigger tests (`scripts/ci-db-test.sh`)                      | ubuntu |
+| `web`         | Validate `vercel.json` + `apple-app-site-association` JSON, `node --check` middleware, assert required static pages exist | ubuntu |
 
 **CodeQL:** the repo uses CodeQL **default setup** (enabled, green). The old
 advanced `codeql.yml` was removed — it collided with default setup on SARIF

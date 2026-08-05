@@ -31,31 +31,29 @@ public struct TopBar: View {
     public var body: some View {
         HStack(alignment: .top, spacing: 0) {
 
-            // ── Left: reputation + weather ──
+            // ── Left: community reputation + weather ──
             VStack(alignment: .leading, spacing: 8) {
-                // REPUTATION label + score row
                 VStack(alignment: .leading, spacing: 3) {
                     Text("REPUTATION")
                         .font(MGFont.mono(7.5))
                         .tracking(7.5 * 0.22)
-                        .foregroundStyle(MGColor.inkSoft)
+                        .foregroundStyle(styleTheme.textSecondary)
 
                     HStack(alignment: .lastTextBaseline, spacing: 6) {
-                        // Big serif score number — goldText gradient + goldGlow
                         Text("\(state.profile.repScore)")
                             .font(MGFont.serif(38, .bold))
-                            .foregroundStyle(MGGradient.goldHeading)
-                            .shadow(color: MGColor.gold.opacity(0.30), radius: 5, x: 0, y: 1)
+                            .foregroundStyle(styleTheme.accent)
+                            .shadow(color: styleTheme.accent.opacity(0.30), radius: 5, x: 0, y: 1)
                             .shadow(color: .white.opacity(0.4), radius: 0.5, x: 0, y: 1)
                             .lineHeight(0.8)
 
-                        // Tier label (italic) + Seal
                         HStack(spacing: 4) {
-                            Text(tierLabel)
-                                .font(.custom("CormorantGaramond-Bold", size: 13).italic())
+                            ProfileStyleBadgeMini(styleId: state.profileStyle.activeConfig.styleId)
+                            Text(styleBadgeLabel)
+                                .font(.custom("CormorantGaramond-Bold", size: 12).italic())
                                 .fontWeight(.semibold)
-                                .foregroundStyle(MGColor.goldDeep)
-                            Seal(size: 12)
+                                .foregroundStyle(styleTheme.accentSecondary)
+                                .lineLimit(1)
                         }
                     }
                 }
@@ -157,8 +155,12 @@ public struct TopBar: View {
         .padding(.top, 46)
     }
 
-    private var tierLabel: String {
-        RepTier.tier(for: state.profile.repScore).rawValue.capitalized
+    private var styleBadgeLabel: String {
+        state.profileStyle.activeConfig.badgeName
+    }
+
+    private var styleTheme: ProfileStyleTheme {
+        ProfileStyleTheme.theme(for: state.profileStyle.activeConfig.styleId)
     }
 }
 

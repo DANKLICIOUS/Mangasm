@@ -1,4 +1,6 @@
 {
+  "framework": null,
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- web vercel.json package.json",
   "headers": [
     {
       "source": "/.well-known/apple-app-site-association",
@@ -86,6 +88,30 @@
     {
       "source": "/autopsy/",
       "destination": "/storybook.html"
+    },
+    {
+      "source": "/plus",
+      "destination": "/plus.html"
+    },
+    {
+      "source": "/plus/",
+      "destination": "/plus.html"
+    },
+    {
+      "source": "/plus/success",
+      "destination": "/plus-success.html"
+    },
+    {
+      "source": "/plus/success/",
+      "destination": "/plus-success.html"
+    },
+    {
+      "source": "/admin/revenue",
+      "destination": "/admin/revenue.html"
+    },
+    {
+      "source": "/admin/revenue/",
+      "destination": "/admin/revenue.html"
     },
     {
       "source": "/",

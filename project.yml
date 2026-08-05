@@ -14,7 +14,9 @@ targets:
     type: application
     platform: iOS
     sources:
-      - App/iOS
+      - path: App/iOS
+        excludes:
+          - Widget/**
     dependencies:
       - package: MangasmApp
         product: MangasmApp
@@ -46,7 +48,7 @@ targets:
         CODE_SIGN_ENTITLEMENTS: App/iOS/Mangasm.entitlements
         PRODUCT_NAME: Mangasm
         MARKETING_VERSION: "1.1.0"
-        CURRENT_PROJECT_VERSION: "28"
+        CURRENT_PROJECT_VERSION: "31"
         TARGETED_DEVICE_FAMILY: "1"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleDisplayName: Mangasm

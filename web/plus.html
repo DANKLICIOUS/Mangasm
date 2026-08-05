@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mangasm+ — Membership</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-slate-900 text-slate-200 font-sans min-h-screen p-6 md:p-12">
+  <main class="max-w-2xl mx-auto">
+    <a href="/" class="text-sm text-amber-300 hover:text-amber-200">← Mangasm</a>
+    <h1 class="font-['Playfair_Display'] text-4xl text-white mt-6 mb-2">Mangasm+</h1>
+    <p class="text-sm text-slate-400 mb-8">Event hosting · extended bio · fetishes visibility · AI matchmaking. 18+ only.</p>
+
+    <!-- setup notice (shown when the site config hasn't been filled in yet) -->
+    <div id="setup-note" class="hidden rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-200 mb-8">
+      Payments aren't switched on for the web yet. Get Mangasm+ in the iOS app, or check back soon.
+    </div>
+
+    <!-- step 1: sign in -->
+    <section id="auth" class="hidden rounded-xl border border-slate-700 bg-slate-800/60 p-6 mb-8">
+      <h2 class="text-lg font-semibold text-white mb-1">Sign in to continue</h2>
+      <p class="text-sm text-slate-400 mb-4">We'll email you a 6-digit code — same account as the app if you use the same email.</p>
+      <form id="email-form" class="flex gap-2">
+        <label class="sr-only" for="email">Email</label>
+        <input id="email" type="email" required placeholder="you@example.com" autocomplete="email"
+          class="flex-1 rounded-lg bg-slate-900 border border-slate-600 px-3 py-2 text-sm focus:outline-none focus:border-amber-300">
+        <button class="rounded-lg bg-amber-300 text-slate-900 text-sm font-semibold px-4 py-2 hover:bg-amber-200">Send code</button>
+      </form>
+      <form id="code-form" class="hidden flex gap-2 mt-3">
+        <label class="sr-only" for="code">6-digit code</label>
+        <input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required placeholder="123456"
+          class="flex-1 rounded-lg bg-slate-900 border border-slate-600 px-3 py-2 text-sm tracking-widest focus:outline-none focus:border-amber-300">
+        <button class="rounded-lg bg-amber-300 text-slate-900 text-sm font-semibold px-4 py-2 hover:bg-amber-200">Verify</button>
+      </form>
+      <p id="auth-msg" class="text-xs text-slate-400 mt-3"></p>
+    </section>
+
+    <!-- step 2: pick a plan -->
+    <section id="plans" class="hidden grid gap-4 md:grid-cols-2 mb-8">
+      <div class="rounded-xl border border-slate-700 bg-slate-800/60 p-6 flex flex-col">
+        <h3 class="text-white font-semibold">Monthly</h3>
+        <p class="text-3xl text-white mt-2">$9.99<span class="text-sm text-slate-400">/month</span></p>
+        <p class="text-sm text-slate-400 mt-2 flex-1">Full Mangasm+ access, cancel anytime.</p>
+        <button data-plan="monthly" class="subscribe mt-4 rounded-lg bg-amber-300 text-slate-900 text-sm font-semibold px-4 py-2 hover:bg-amber-200">Get Monthly</button>
+      </div>
+      <div class="rounded-xl border border-amber-400/50 bg-slate-800/60 p-6 flex flex-col">
+        <h3 class="text-white font-semibold">3-Month <span class="text-xs text-amber-300 font-normal ml-1">save 17%</span></h3>
+        <p class="text-3xl text-white mt-2">$24.99<span class="text-sm text-slate-400">/3 months</span></p>
+        <p class="text-sm text-slate-400 mt-2 flex-1">Same features, billed quarterly.</p>
+        <button data-plan="quarterly" class="subscribe mt-4 rounded-lg bg-amber-300 text-slate-900 text-sm font-semibold px-4 py-2 hover:bg-amber-200">Get 3-Month</button>
+      </div>
+    </section>
+    <p id="plan-msg" class="text-xs text-slate-400 mb-8"></p>
+
+    <p class="text-xs text-slate-500">
+      Payments are processed by Stripe; we never see your card number. Subscriptions renew automatically until canceled
+      (manage from the emailed Stripe receipt or in-app). By subscribing you agree to the
+      <a href="/terms" class="text-amber-300 hover:underline">Terms</a> and
+      <a href="/privacy" class="text-amber-300 hover:underline">Privacy Policy</a>.
+      On iOS you can also subscribe via the App Store — one membership, either door.
+    </p>
+  </main>
+
+  <script type="module">
+    // Site config — anon key is the public client key (safe to ship), set it
+    // at deploy time. Leaving it empty shows the "not switched on" notice.
+    const CONFIG = {
+      SUPABASE_URL: "https://hcpzbxplnkyythzwkovy.supabase.co",
+      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjcHpieHBsbmt5eXRoendrb3Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNTczMTMsImV4cCI6MjA5NTkzMzMxM30.iFVsBuD4gKyVEKx7D2lsqIaQOCjCzsrvYnlX062QSGc",
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    if (!CONFIG.SUPABASE_ANON_KEY) {
+      $("setup-note").classList.remove("hidden");
+    } else {
+      const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
+      const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+
+      const { data: { session } } = await supabase.auth.getSession();
+      (session ? $("plans") : $("auth")).classList.remove("hidden");
+
+      $("email-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        $("auth-msg").textContent = "Sending code…";
+        const { error } = await supabase.auth.signInWithOtp({
+          email: $("email").value,
+          options: { shouldCreateUser: true },
+        });
+        if (error) { $("auth-msg").textContent = error.message; return; }
+        $("code-form").classList.remove("hidden");
+        $("auth-msg").textContent = "Code sent — check your email.";
+      });
+
+      $("code-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const { error } = await supabase.auth.verifyOtp({
+          email: $("email").value, token: $("code").value, type: "email",
+        });
+        if (error) { $("auth-msg").textContent = error.message; return; }
+        $("auth").classList.add("hidden");
+        $("plans").classList.remove("hidden");
+      });
+
+      document.querySelectorAll(".subscribe").forEach((btn) =>
+        btn.addEventListener("click", async () => {
+          $("plan-msg").textContent = "Opening secure checkout…";
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) { $("plan-msg").textContent = "Please sign in first."; return; }
+          try {
+            const res = await fetch(`${CONFIG.SUPABASE_URL}/functions/v1/stripe-checkout`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`,
+                "apikey": CONFIG.SUPABASE_ANON_KEY,
+              },
+              body: JSON.stringify({ plan: btn.dataset.plan }),
+            });
+            const body = await res.json().catch(() => ({}));
+            if (!res.ok || !body.url) {
+              $("plan-msg").textContent = body.error ?? "Checkout is unavailable right now — try again shortly.";
+              return;
+            }
+            window.location.href = body.url;
+          } catch {
+            $("plan-msg").textContent = "Network error — check your connection and try again.";
+          }
+        }));
+    }
+  </script>
+</body>
+</html>

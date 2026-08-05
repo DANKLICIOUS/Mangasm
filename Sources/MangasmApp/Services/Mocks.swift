@@ -188,4 +188,33 @@ public final class MockSafetyService: SafetyService {
         reportLog.append((userID: userID, reason: reason))
         print("[MockSafetyService] reported \(userID) for: \(reason)")
     }
+
+    public func reportContent(
+        _ type: ReportContentType,
+        contentID: String,
+        reportedUserID: String?,
+        reason: String
+    ) {
+        reportLog.append((userID: reportedUserID ?? contentID, reason: reason))
+        print("[MockSafetyService] reported \(type.rawValue) \(contentID) for: \(reason)")
+    }
+}
+
+// MARK: - MockWeatherProvider
+/// Returns a fixed stub condition (default `.clear`) so previews/tests are deterministic.
+public struct MockWeatherProvider: WeatherProvider {
+    public var stub: Weather
+    public init(stub: Weather = .clear) { self.stub = stub }
+    public func current(at coordinate: GeoCoordinate) async -> Weather { stub }
+}
+
+// MARK: - MockLocationProvider
+/// Returns a fixed coordinate (default Miami, matching DateNight fixtures); pass `nil`
+/// to simulate a denied/unavailable location.
+public struct MockLocationProvider: LocationProvider {
+    public var coordinate: GeoCoordinate?
+    public init(coordinate: GeoCoordinate? = GeoCoordinate(latitude: 25.7617, longitude: -80.1918)) {
+        self.coordinate = coordinate
+    }
+    public func currentCoordinate() async -> GeoCoordinate? { coordinate }
 }

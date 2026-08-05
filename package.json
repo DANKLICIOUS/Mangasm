@@ -16,5 +16,9 @@
   },
   "dependencies": {
     "@vercel/analytics": "^2.0.1"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/gothamgodzilla"
   }
 }

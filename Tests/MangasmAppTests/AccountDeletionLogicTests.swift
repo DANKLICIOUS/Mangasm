@@ -17,7 +17,7 @@ final class AccountDeletionLogicTests: XCTestCase {
 
         XCTAssertEqual(s.phase, .launch, "deletion must return to the launch flow")
         XCTAssertFalse(s.premium, "premium entitlement must be dropped locally")
-        XCTAssertEqual(s.tab, .profile, "tab resets to default")
+        XCTAssertEqual(s.tab, .events, "tab resets to default (events)")
         XCTAssertFalse(s.showSettings, "open sheets must close")
         XCTAssertFalse(s.showChatList)
         XCTAssertNil(s.activeChat)

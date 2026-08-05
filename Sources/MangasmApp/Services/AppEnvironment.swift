@@ -14,6 +14,11 @@ public final class AppEnvironment: ObservableObject {
     public let safety: any SafetyService
     public let referrals: any ReferralService
     public let dateNight: any DateNightService
+    public let weather: any WeatherProvider
+    public let location: any LocationProvider
+    /// Returns the current session's access token, or nil when signed out.
+    /// Edge Function calls use this as the Bearer credential (auth: 'user').
+    public let accessTokenProvider: (@Sendable () async -> String?)?
 
     public init(
         auth: any AuthService,
@@ -24,7 +29,10 @@ public final class AppEnvironment: ObservableObject {
         reputation: any ReputationService,
         safety: any SafetyService,
         referrals: any ReferralService,
-        dateNight: any DateNightService = MockDateNightService()
+        dateNight: any DateNightService = MockDateNightService(),
+        weather: any WeatherProvider = MockWeatherProvider(),
+        location: any LocationProvider = MockLocationProvider(),
+        accessTokenProvider: (@Sendable () async -> String?)? = nil
     ) {
         self.auth = auth
         self.profile = profile
@@ -35,6 +43,9 @@ public final class AppEnvironment: ObservableObject {
         self.safety = safety
         self.referrals = referrals
         self.dateNight = dateNight
+        self.weather = weather
+        self.location = location
+        self.accessTokenProvider = accessTokenProvider
     }
 
     /// Pre-built mock environment for previews, tests, and Simulator runs.
@@ -96,7 +107,10 @@ public final class AppEnvironment: ObservableObject {
                 projectURL: config.url,
                 publishableKey: config.publishableKey
             ),
-            dateNight: dateNight
+            dateNight: dateNight,
+            weather: LiveWeatherProvider(),
+            location: LiveLocationProvider(),
+            accessTokenProvider: { (try? await client.auth.session)?.accessToken }
         )
     }
 }

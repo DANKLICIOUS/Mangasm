@@ -34,6 +34,10 @@ struct MainTabView: View {
             GlassTabBar()
         }
         .ignoresSafeArea()
+        // Resolve weather from the device's location once, when the app shell appears.
+        .task {
+            await state.refreshWeather(weather: env.weather, location: env.location)
+        }
         // Match detail sheet — shared entry point for AIMatch and Discover taps.
         // Candidate is Identifiable, so .sheet(item:) drives presentation automatically.
         .sheet(item: $state.selectedMatch) { candidate in
@@ -99,8 +103,8 @@ struct MainTabView: View {
     @ViewBuilder
     private var currentScreen: some View {
         switch state.tab {
+        case .events:   EventsScreen()
         case .discover: DiscoverScreen(mode: .nearby)
-        case .search:   DiscoverScreen(mode: .nearby)
         case .aiMatch:  AIMatchScreen()
         case .likes:    DiscoverScreen(mode: .likes)
         case .profile:  ProfileScreen()
@@ -111,13 +115,13 @@ struct MainTabView: View {
 // MARK: - GlassTabBar
 // Prototype ref: mangasm-shell.jsx TabBar()
 // Layout: left 14pt, right 14pt, bottom 14pt insets; radius 24; glass; shadow.
-// Items: Discover / Search / AI Match (raised gold pill) / Likes / Profile.
+// Items: Events / Discover / AI Match (raised gold pill) / Likes / Profile.
 // Active icon + label = MGColor.goldDeep + glow; inactive = inkSoft.
 // AI Match: raised gold-gradient pill (MGGradient.goldButton), negative Y offset.
 //
 // Approximation: SF Symbols used instead of prototype SVG path data.
+//   Events   → "sparkles"
 //   Discover → "square.grid.2x2"
-//   Search   → "magnifyingglass"
 //   AI Match → "lightbulb" (lamp icon per prototype d-string)
 //   Likes    → "heart"
 //   Profile  → "person"
@@ -200,8 +204,8 @@ private struct RegularTabButton: View {
 
     private var icon: String {
         switch tab {
+        case .events:   return "sparkles"
         case .discover: return "square.grid.2x2"
-        case .search:   return "magnifyingglass"
         case .aiMatch:  return "lightbulb"     // unreachable — handled by AIMatchTabButton
         case .likes:    return "heart"
         case .profile:  return "person"
@@ -210,8 +214,8 @@ private struct RegularTabButton: View {
 
     private var label: String {
         switch tab {
+        case .events:   return "Events"
         case .discover: return "Discover"
-        case .search:   return "Search"
         case .aiMatch:  return "AI Match"
         case .likes:    return "Likes"
         case .profile:  return "Profile"

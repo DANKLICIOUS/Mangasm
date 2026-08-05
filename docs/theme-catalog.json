@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "product": "Mangasm",
+  "framing": "Community Reputation",
+  "explainer": "Community Reputation grows when you complete verification, receive positive feedback, finish safety education, and help keep Mangasm safe. Higher reputation unlocks cosmetic profile styles only — never messages, adult visibility, or sexual features.",
+  "styles": [
+    {
+      "swiftId": "calmStudio",
+      "rnId": "bobRoss",
+      "minScore": 0,
+      "badgeName": "New Member",
+      "displayName": "Calm Studio",
+      "heroAsset": "style-hero-calmStudio",
+      "badgeSymbol": "leaf"
+    },
+    {
+      "swiftId": "aspirational",
+      "rnId": "lambo",
+      "minScore": 21,
+      "badgeName": "Rising Member",
+      "displayName": "Aspirational",
+      "heroAsset": "style-hero-aspirational",
+      "badgeSymbol": "arrow.up.right"
+    },
+    {
+      "swiftId": "precisionTech",
+      "rnId": "cyborg",
+      "minScore": 41,
+      "badgeName": "Trusted Member",
+      "displayName": "Precision Tech",
+      "heroAsset": "style-hero-precisionTech",
+      "badgeSymbol": "checkmark.shield"
+    },
+    {
+      "swiftId": "digitalFlow",
+      "rnId": "matrix",
+      "minScore": 61,
+      "badgeName": "Community Leader",
+      "displayName": "Digital Flow",
+      "heroAsset": "style-hero-digitalFlow",
+      "badgeSymbol": "point.3.connected.trianglepath.dotted"
+    },
+    {
+      "swiftId": "boldExpression",
+      "rnId": "gothGlam",
+      "minScore": 81,
+      "badgeName": "Elite Verified",
+      "displayName": "Bold Expression",
+      "heroAsset": "style-hero-boldExpression",
+      "badgeSymbol": "star.circle"
+    }
+  ],
+  "allowedScoreDrivers": [
+    "verification_complete",
+    "positive_rating_received",
+    "helpful_report",
+    "safety_module_complete",
+    "clean_tenure_bonus"
+  ],
+  "forbiddenScoreDrivers": [
+    "match_count",
+    "message_volume",
+    "sexual_activity",
+    "romantic_engagement"
+  ]
+}

@@ -17,6 +17,19 @@ public protocol AuthService {
     func deleteAccount() async throws
 }
 
+// MARK: - WeatherProvider
+/// Resolves the ambient `Weather` from a coordinate — WeatherKit-backed when live,
+/// deterministic heuristic as fallback. Non-throwing: weather must never break the UI.
+public protocol WeatherProvider: Sendable {
+    func current(at coordinate: GeoCoordinate) async -> Weather
+}
+
+// MARK: - LocationProvider
+/// One-shot, best-effort device coordinate; `nil` when unavailable or permission denied.
+public protocol LocationProvider: Sendable {
+    func currentCoordinate() async -> GeoCoordinate?
+}
+
 // MARK: - ReferralService
 /// Records a cartoon referral code after sign-up (validate-referral edge function).
 @MainActor
@@ -87,6 +100,44 @@ public protocol SafetyService {
     func unblock(_ userID: String)
     func isBlocked(_ userID: String) -> Bool
     func report(_ userID: String, reason: String)
+
+    /// Report a specific piece of content (a photo, an event, …) rather than a
+    /// whole profile. `reportedUserID` is the owner/host when known (a UUID
+    /// string), else nil (e.g. an event whose host UUID isn't on the client).
+    /// `contentID` is an opaque id/URL identifying the exact item — it is what a
+    /// moderator takes down. Guideline 1.2.
+    func reportContent(
+        _ type: ReportContentType,
+        contentID: String,
+        reportedUserID: String?,
+        reason: String
+    )
+}
+
+// MARK: - ReportContentType
+/// What kind of thing a report targets. Mirrors the `reports.content_type`
+/// CHECK constraint (migration 0011) and `content_reports.content_type` (0009).
+public enum ReportContentType: String, Sendable {
+    case profile
+    case photo
+    case event
+    case message
+    case bio
+    case other
+}
+
+public extension SafetyService {
+    /// Back-compat default: routes content reports through the profile-level
+    /// `report` when a target user is known. Live/mock services override this to
+    /// persist the content type + id.
+    func reportContent(
+        _ type: ReportContentType,
+        contentID: String,
+        reportedUserID: String?,
+        reason: String
+    ) {
+        if let reportedUserID { report(reportedUserID, reason: reason) }
+    }
 }
 
 // MARK: - ReportReason

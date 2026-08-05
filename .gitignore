@@ -5,6 +5,9 @@ build/
 
 # xcodegen output
 *.xcodeproj
+# ...except the app project, committed so the "root" is always present
+# (avoids the "missing root object" error when the generated project is stale/absent)
+!MangasmiOS.xcodeproj
 
 # local secrets
 *.env.local
@@ -22,3 +25,6 @@ mcp/outreach/node_modules/
 
 # npm pre-commit tooling
 node_modules/
+**/xcuserdata/
+.claude/worktrees/
+.swiftpm/

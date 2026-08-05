@@ -29,6 +29,11 @@ public final class StoreKitStore: ObservableObject {
     /// Set to a real value when the Edge Function is deployed. An empty string disables the POST.
     public var verifyBaseURL: String = ""
 
+    /// Supplies the signed-in user's access token for the verify-purchase call.
+    /// The edge function requires a verified user JWT (auth: 'user'); when this
+    /// is nil or returns nil (signed out), the POST is skipped.
+    public var authTokenProvider: (@Sendable () async -> String?)?
+
     // MARK: Private
 
     private var updatesTask: Task<Void, Never>?
@@ -140,10 +145,16 @@ public final class StoreKitStore: ObservableObject {
             print("[StoreKitStore] verifyBaseURL is not a valid URL: \(verifyBaseURL)")
             return
         }
+        let tokenProvider = authTokenProvider
         Task {
             do {
+                guard let token = await tokenProvider?() else {
+                    print("[StoreKitStore] no session token — skipping verify-purchase POST")
+                    return
+                }
                 var request = URLRequest(url: url)
                 request.httpMethod = "POST"
+                request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
                 let body = ["signedTransaction": jwsRepresentation]
                 request.httpBody = try JSONSerialization.data(withJSONObject: body)

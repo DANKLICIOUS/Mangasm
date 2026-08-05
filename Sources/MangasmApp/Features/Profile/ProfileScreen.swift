@@ -8,13 +8,20 @@ struct ProfileScreen: View {
     @EnvironmentObject var state: AppState
     @EnvironmentObject var env: AppEnvironment
 
+    private var styleId: ProfileStyleId {
+        state.profileStyle.activeConfig.styleId
+    }
+
     var body: some View {
         ZStack {
-            // ── Backdrop ──────────────────────────────────────────────────
+            // Hybrid: style fallback gradient + optional hero plate (+ rain for digitalFlow)
+            ProfileStyleBackground(styleId: styleId)
+            // Legacy Lambo plate under low opacity when style is aspirational-adjacent
             LamborghiniBackground(night: state.night)
+                .opacity(styleId == .aspirational || styleId == .calmStudio ? 0.35 : 0.12)
             WeatherFX(kind: state.weather, night: state.night)
+                .opacity(0.55)
 
-            // ── Scroll content ───────────────────────────────────────────
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 14) {
                     VouchesAIStrip(
@@ -40,8 +47,14 @@ struct ProfileScreen: View {
                 .padding(.horizontal, 14)
                 .padding(.bottom, 96)
             }
+
+            ProfileUnlockToastHost()
         }
         .ignoresSafeArea()
+        .onAppear { state.syncProfileStyleWithReputation() }
+        .onChange(of: state.profile.repScore) { _, _ in
+            state.syncProfileStyleWithReputation()
+        }
     }
 }
 

@@ -24,6 +24,12 @@ struct DiscoverScreen: View {
 
     @State private var subTab: SubTab = .nearby
 
+    // Search query folded in from the retired standalone Search tab. Filters the
+    // Nearby people grid by name. (The bespoke shell has no NavigationStack/TabView
+    // to host SwiftUI's `.searchable`, and the fixed custom TopBar would occlude a
+    // native search bar, so search is surfaced as an inline field styled to match.)
+    @State private var searchText: String = ""
+
     enum SubTab: String, CaseIterable { case nearby, communities, events }
 
     // Prototype PINS — percentage coords on the fake map (mangasm-profile.jsx PINS array).
@@ -41,7 +47,10 @@ struct DiscoverScreen: View {
     }
 
     private var listCandidates: [Candidate] {
-        mode == .likes ? Array(candidates.prefix(4)) : candidates
+        let base = mode == .likes ? Array(candidates.prefix(4)) : candidates
+        let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else { return base }
+        return base.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
 
     private var mapPins: [MapPinData] {
@@ -65,6 +74,13 @@ struct DiscoverScreen: View {
                     if mode != .likes {
                         DiscoverTabsControl(selected: $subTab)
                             .padding(.bottom, 14)
+
+                        // Search field — folded in from the retired Search tab.
+                        // Only relevant to the people (Nearby) grid.
+                        if subTab == .nearby {
+                            DiscoverSearchField(text: $searchText)
+                                .padding(.bottom, 14)
+                        }
                     }
 
                     // Sub-tab content
@@ -243,6 +259,50 @@ private struct UserGridCard: View {
             }
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - DiscoverSearchField
+// Inline search field folded in from the retired standalone Search tab. Glass-styled
+// to match the shell (the custom TopBar overlay precludes a native `.searchable` bar).
+private struct DiscoverSearchField: View {
+    @Binding var text: String
+
+    var body: some View {
+        HStack(spacing: 9) {
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(MGColor.inkSoft)
+
+            TextField(
+                "",
+                text: $text,
+                prompt: Text("Search people nearby")
+                    .foregroundColor(MGColor.inkFaint)
+            )
+            .font(MGFont.sans(12, .regular))
+            .foregroundStyle(MGColor.ink)
+            #if os(iOS)
+            .textInputAutocapitalization(.never)
+            .submitLabel(.search)
+            #endif
+            .autocorrectionDisabled(true)
+            .accessibilityIdentifier("discover_search_field")
+
+            if !text.isEmpty {
+                Button {
+                    text = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 14))
+                        .foregroundStyle(MGColor.inkFaint)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .glassBackground(14)
     }
 }
 

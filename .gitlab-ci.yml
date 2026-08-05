@@ -1,0 +1,62 @@
+# GitLab CI — ported 1:1 from .github/workflows/ci.yml
+#
+# Same two host-runnable surfaces, no secrets required:
+#   * supabase-db — apply the migration chain to a throwaway Postgres, run RLS/trigger tests
+#   * web         — validate static site JSON config + edge middleware syntax + required pages
+# The iOS (Xcode) suite is intentionally NOT in CI; it runs on Apple hardware via
+# scripts/run-all-tests.sh — same as under GitHub Actions.
+
+stages:
+  - test
+
+# Equivalent of: on.push[main] + on.pull_request[main] + workflow_dispatch,
+# plus concurrency.cancel-in-progress.
+default:
+  interruptible: true
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"' # ~ pull_request
+    - if: '$CI_COMMIT_BRANCH == "main"' # ~ push: main
+    - if: '$CI_PIPELINE_SOURCE == "web"' # ~ workflow_dispatch
+
+supabase-db:
+  stage: test
+  # psql client lives in the postgres image; entrypoint cleared so GitLab runs our script,
+  # not the DB init. The actual database is the `services` container below.
+  image:
+    name: postgres:16-alpine
+    entrypoint: [""]
+  services:
+    - name: postgres:16-alpine
+      alias: postgres
+  variables:
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_DB: postgres
+    # ci-db-test.sh reads libpq env vars; point them at the service alias (not 127.0.0.1).
+    PGHOST: postgres
+    PGPORT: "5432"
+    PGUSER: postgres
+    PGPASSWORD: postgres
+    PGDATABASE: postgres
+  script:
+    - apk add --no-cache bash # script is #!/usr/bin/env bash; alpine has no bash
+    - bash scripts/ci-db-test.sh
+
+web:
+  stage: test
+  image: node:20-alpine
+  script:
+    - |
+      for f in web/vercel.json web/.well-known/apple-app-site-association; do
+        node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('OK: $f')"
+      done
+    - node --check web/middleware.js
+    - |
+      missing=0
+      for f in index.html ios.html privacy.html terms.html moderation.html promo.html; do
+        if [ ! -f "web/$f" ]; then echo "MISSING: web/$f"; missing=1; fi
+      done
+      [ "$missing" -eq 0 ] && echo "All required static pages present"
+      exit "$missing"

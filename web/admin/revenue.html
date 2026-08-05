@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Mangasm — Revenue</title>
+<style>
+  /* Dark-committed monitoring surface; palette = validated dataviz reference (dark steps). */
+  :root {
+    color-scheme: dark;
+    --plane: #0d0d0d;
+    --surface-1: #1a1a19;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted: #898781;
+    --grid: #2c2c2a;
+    --baseline: #383835;
+    --ring: rgba(255,255,255,0.10);
+    --series-new: #3987e5;      /* categorical slot 1 (dark) */
+    --series-canceled: #d95926; /* categorical slot 2 (dark) */
+    --series-failed: #e66767;   /* categorical slot 8 (dark) */
+    --status-warning: #fab219;
+    --status-good: #0ca30c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--plane); color: var(--text-secondary);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 24px; min-height: 100vh;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; }
+  header { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  h1 { color: var(--text-primary); font-size: 20px; font-weight: 600; margin: 0; }
+  .badge {
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px;
+    border: 1px solid var(--ring);
+  }
+  .badge.test { color: var(--status-warning); }
+  .badge.live { color: var(--status-good); }
+  #updated { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+  header button {
+    background: none; border: 1px solid var(--ring); color: var(--text-secondary);
+    border-radius: 8px; padding: 4px 12px; font-size: 12px; cursor: pointer;
+  }
+  header button:hover { border-color: var(--text-muted); }
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 12px; }
+  .tile { background: var(--surface-1); border: 1px solid var(--ring); border-radius: 12px; padding: 14px 16px; }
+  .tile .k { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+  .tile .dot { width: 8px; height: 8px; border-radius: 2px; display: inline-block; }
+  .tile .v { font-size: 26px; color: var(--text-primary); margin-top: 4px; }
+  .tile .s { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 820px) { .cards { grid-template-columns: 1fr; } }
+  .card { background: var(--surface-1); border: 1px solid var(--ring); border-radius: 12px; padding: 16px; }
+  .card h2 { font-size: 13px; font-weight: 600; color: var(--text-primary); margin: 0 0 2px; }
+  .card .sub { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+  .legend { display: flex; gap: 14px; font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  svg text { font-family: inherit; }
+
+  #tooltip {
+    position: fixed; pointer-events: none; display: none; z-index: 10;
+    background: var(--plane); border: 1px solid var(--ring); border-radius: 8px;
+    padding: 8px 10px; font-size: 12px; color: var(--text-secondary);
+    box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  }
+  #tooltip b { color: var(--text-primary); font-weight: 600; }
+
+  #state { text-align: center; padding: 60px 20px; }
+  #state h2 { color: var(--text-primary); font-weight: 600; }
+  #state code { color: var(--text-secondary); }
+
+  dialog {
+    background: var(--surface-1); color: var(--text-secondary); border: 1px solid var(--ring);
+    border-radius: 12px; padding: 20px; max-width: 460px; width: 90vw;
+  }
+  dialog::backdrop { background: rgba(0,0,0,.6); }
+  dialog h2 { color: var(--text-primary); font-size: 15px; margin: 0 0 12px; }
+  dialog label { display: block; font-size: 12px; color: var(--text-muted); margin: 10px 0 4px; }
+  dialog input {
+    width: 100%; background: var(--plane); color: var(--text-primary);
+    border: 1px solid var(--ring); border-radius: 8px; padding: 8px 10px; font-size: 13px;
+  }
+  dialog .row { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+  dialog button { border-radius: 8px; padding: 6px 14px; font-size: 13px; cursor: pointer; border: 1px solid var(--ring); background: none; color: var(--text-secondary); }
+  dialog button.primary { background: var(--text-primary); color: var(--plane); border: none; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Mangasm Revenue</h1>
+    <span id="mode" class="badge" hidden></span>
+    <span id="updated"></span>
+    <button id="refresh">Refresh</button>
+    <button id="open-settings">Settings</button>
+  </header>
+
+  <div id="state"><h2>Connect the metrics endpoint</h2>
+    <p>Open <b>Settings</b> and enter the <code>revenue-metrics</code> URL and the admin token
+    (the <code>ADMIN_DASHBOARD_TOKEN</code> secret). Stored only in this browser.</p>
+  </div>
+
+  <div id="dash" hidden>
+    <div class="tiles">
+      <div class="tile"><div class="k">MRR</div><div class="v" id="t-mrr">—</div><div class="s" id="t-mrr-sub"></div></div>
+      <div class="tile"><div class="k"><span class="dot" style="background:var(--series-new)"></span>Active subscribers</div><div class="v" id="t-active">—</div><div class="s" id="t-plans"></div></div>
+      <div class="tile"><div class="k"><span class="dot" style="background:var(--series-failed)"></span>Failed payments</div><div class="v" id="t-failed">—</div><div class="s">attempted &amp; unpaid</div></div>
+      <div class="tile"><div class="k">Past due</div><div class="v" id="t-pastdue">—</div><div class="s">in retry / grace</div></div>
+      <div class="tile"><div class="k">Plus members (DB)</div><div class="v" id="t-db">—</div><div class="s">profiles cross-check</div></div>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <h2>Subscriptions per week</h2><div class="sub">last 8 weeks</div>
+        <div class="legend">
+          <span><i style="background:var(--series-new)"></i>New</span>
+          <span><i style="background:var(--series-canceled)"></i>Canceled</span>
+        </div>
+        <div id="chart-subs"></div>
+      </div>
+      <div class="card">
+        <h2>Failed payments per week</h2><div class="sub">invoices attempted &amp; unpaid, last 8 weeks</div>
+        <div id="chart-failed"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="tooltip"></div>
+
+<dialog id="settings">
+  <h2>Dashboard settings</h2>
+  <label for="cfg-url">Metrics endpoint URL</label>
+  <input id="cfg-url" placeholder="https://hcpzbxplnkyythzwkovy.supabase.co/functions/v1/revenue-metrics">
+  <label for="cfg-token">Admin token</label>
+  <input id="cfg-token" type="password" placeholder="ADMIN_DASHBOARD_TOKEN value">
+  <div class="row">
+    <button id="cfg-cancel" type="button">Cancel</button>
+    <button id="cfg-save" class="primary" type="button">Save &amp; load</button>
+  </div>
+</dialog>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const LS = "mangasm-revenue-cfg";
+  const DEFAULT_URL = "https://hcpzbxplnkyythzwkovy.supabase.co/functions/v1/revenue-metrics";
+  const cfg = () => { try { return JSON.parse(localStorage.getItem(LS)) ?? {}; } catch { return {}; } };
+
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const money = (cents) => "$" + (cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 });
+
+  // --- settings dialog ---
+  $("open-settings").onclick = () => {
+    $("cfg-url").value = cfg().url ?? DEFAULT_URL;
+    $("cfg-token").value = cfg().token ?? "";
+    $("settings").showModal();
+  };
+  $("cfg-cancel").onclick = () => $("settings").close();
+  $("cfg-save").onclick = () => {
+    localStorage.setItem(LS, JSON.stringify({ url: $("cfg-url").value.trim(), token: $("cfg-token").value.trim() }));
+    $("settings").close();
+    load();
+  };
+  $("refresh").onclick = () => load();
+
+  // --- tooltip ---
+  const tip = $("tooltip");
+  const showTip = (evt, html) => {
+    tip.innerHTML = html; tip.style.display = "block";
+    const pad = 14, w = tip.offsetWidth;
+    let x = evt.clientX + pad;
+    if (x + w > innerWidth - 8) x = evt.clientX - w - pad;
+    tip.style.left = x + "px"; tip.style.top = (evt.clientY + pad) + "px";
+  };
+  const hideTip = () => (tip.style.display = "none");
+
+  // Grouped weekly bar chart: thin marks, 4px rounded data-ends anchored to the
+  // baseline, 2px surface gaps, hairline grid, hover column tooltips.
+  function barChart(mount, weeks, series) {
+    const W = 460, H = 190, m = { t: 12, r: 8, b: 24, l: 30 };
+    const iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const raw = Math.max(1, ...weeks.flatMap((w) => series.map((s) => w[s.key])));
+    // nice-step axis: 1/2/5×10ⁿ steps, at most 5 ticks
+    const step = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000]
+      .find((s) => Math.ceil(raw / s) <= 5) ?? Math.ceil(raw / 5);
+    const ticks = Math.ceil(raw / step);
+    const max = step * ticks;
+    const y = (v) => m.t + ih - (v / max) * ih;
+    const groupW = iw / weeks.length;
+    const barW = Math.min(18, (groupW - 8) / series.length - 2);
+    const fmt = (d) => new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+    const roundedBar = (x, v, color) => {
+      const top = y(v), base = m.t + ih, r = v > 0 ? Math.min(4, (base - top) / 2, barW / 2) : 0;
+      return v === 0
+        ? `<rect x="${x}" y="${base - 1}" width="${barW}" height="1" fill="${color}" opacity=".35"/>`
+        : `<path d="M${x},${base} V${top + r} Q${x},${top} ${x + r},${top} H${x + barW - r} Q${x + barW},${top} ${x + barW},${top + r} V${base} Z" fill="${color}"/>`;
+    };
+
+    let g = "", labels = "", bars = "", hits = [];
+    for (let t = 0; t <= ticks; t++) {
+      const v = step * t, yy = y(v);
+      g += `<line x1="${m.l}" y1="${yy}" x2="${W - m.r}" y2="${yy}" stroke="${css("--grid")}" stroke-width="1"/>`
+         + `<text x="${m.l - 6}" y="${yy + 3}" text-anchor="end" font-size="10" fill="${css("--text-muted")}">${v}</text>`;
+    }
+    weeks.forEach((wk, i) => {
+      const gx = m.l + i * groupW;
+      const total = series.length * (barW + 2) - 2;
+      let bx = gx + (groupW - total) / 2;
+      series.forEach((s) => {
+        bars += roundedBar(bx, wk[s.key], s.color);
+        if (wk[s.key] > 0)
+          labels += `<text x="${bx + barW / 2}" y="${y(wk[s.key]) - 4}" text-anchor="middle" font-size="9" fill="${css("--text-secondary")}">${wk[s.key]}</text>`;
+        bx += barW + 2;
+      });
+      if (i % 2 === 0)
+        labels += `<text x="${gx + groupW / 2}" y="${H - 8}" text-anchor="middle" font-size="10" fill="${css("--text-muted")}">${fmt(wk.week_start)}</text>`;
+      hits.push({ x: gx, wk });
+    });
+
+    mount.innerHTML =
+      `<svg viewBox="0 0 ${W} ${H}" role="img" style="width:100%;height:auto;display:block">${g}` +
+      `<line x1="${m.l}" y1="${m.t + ih}" x2="${W - m.r}" y2="${m.t + ih}" stroke="${css("--baseline")}" stroke-width="1"/>` +
+      bars + labels +
+      hits.map((h, i) => `<rect data-i="${i}" x="${h.x}" y="${m.t}" width="${groupW}" height="${ih}" fill="transparent"/>`).join("") +
+      `</svg>`;
+
+    mount.querySelectorAll("rect[data-i]").forEach((r) => {
+      const wk = hits[+r.dataset.i].wk;
+      const rows = series.map((s) =>
+        `<span style="color:${s.color}">●</span> ${s.label}: <b>${wk[s.key]}</b>`).join("<br>");
+      r.addEventListener("mousemove", (e) => showTip(e, `<b>Week of ${fmt(wk.week_start)}</b><br>${rows}`));
+      r.addEventListener("mouseleave", hideTip);
+    });
+  }
+
+  async function load() {
+    const { url, token } = cfg();
+    if (!url || !token) return;
+    $("state").innerHTML = "<h2>Loading…</h2>";
+    $("state").hidden = false; $("dash").hidden = true;
+    let data;
+    try {
+      const res = await fetch(url, { headers: { "x-admin-token": token } });
+      if (!res.ok) throw new Error(res.status === 401 ? "Unauthorized — check the admin token." : `HTTP ${res.status}`);
+      data = await res.json();
+    } catch (e) {
+      $("state").innerHTML = `<h2>Couldn't load metrics</h2><p>${e.message}</p>
+        <p style="font-size:12px">If the Supabase project is paused, restore it and redeploy <code>revenue-metrics</code>.</p>`;
+      return;
+    }
+
+    $("state").hidden = true; $("dash").hidden = false;
+    const mode = $("mode");
+    mode.hidden = false;
+    mode.textContent = data.livemode ? "● LIVE" : "▲ TEST MODE";
+    mode.className = "badge " + (data.livemode ? "live" : "test");
+    $("updated").textContent = "Updated " + new Date(data.generated_at).toLocaleTimeString();
+
+    $("t-mrr").textContent = money(data.mrr_cents);
+    $("t-mrr-sub").textContent = "≈ " + money(data.mrr_cents * 12) + "/yr run-rate";
+    $("t-active").textContent = data.active_subscriptions;
+    $("t-plans").textContent = Object.entries(data.by_plan).map(([k, v]) => `${v} ${k}`).join(" · ");
+    $("t-failed").textContent = data.failed_payments_open;
+    $("t-pastdue").textContent = data.past_due;
+    $("t-db").textContent = data.plus_members_in_db;
+
+    barChart($("chart-subs"), data.weeks, [
+      { key: "new_subs", label: "New", color: css("--series-new") },
+      { key: "canceled", label: "Canceled", color: css("--series-canceled") },
+    ]);
+    barChart($("chart-failed"), data.weeks, [
+      { key: "failed_payments", label: "Failed payments", color: css("--series-failed") },
+    ]);
+  }
+
+  const c = cfg();
+  if (c.url && c.token) load();
+  setInterval(load, 5 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

@@ -19,6 +19,7 @@ public struct SettingsScreen: View {
     @State private var ageText: String = ""
     @State private var hobbiesText: String = ""
     @State private var showDeleteConfirm: Bool = false
+    @State private var showHowTrustWorks: Bool = false
 
     public init(onClose: @escaping () -> Void) {
         self.onClose = onClose
@@ -62,6 +63,33 @@ public struct SettingsScreen: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 24)
                     .padding(.bottom, 16)
+
+                    // ── Community Reputation styles ──
+                    SectionLabel("Profile styles")
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+
+                    MGCard {
+                        VStack(alignment: .leading, spacing: 12) {
+                            ProfileStylePicker()
+                            Button {
+                                showHowTrustWorks = true
+                            } label: {
+                                Text("How Trust Score works")
+                                    .font(MGFont.sans(13, .semibold))
+                                    .foregroundStyle(MGColor.goldBright)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("how_trust_score_works")
+                        }
+                        .padding(13)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 18)
+                    .sheet(isPresented: $showHowTrustWorks) {
+                        HowTrustScoreWorksView()
+                    }
 
                     // ── Profile Fields ──
                     SectionLabel("Profile")
@@ -288,22 +316,16 @@ public struct SettingsScreen: View {
                             Divider().opacity(0.2).padding(.horizontal, 13)
                             #endif
 
-                            // Weather picker
-                            HStack {
+                            // Weather — now resolved automatically from your location
+                            // (WeatherKit). Read-only readout; no longer a manual picker.
+                            VStack(alignment: .leading, spacing: 9) {
                                 Text("WEATHER")
                                     .font(MGFont.mono(8.5))
                                     .tracking(8.5 * 0.1)
                                     .foregroundStyle(MGColor.inkFaint)
-                                Spacer()
-                                Picker("Weather", selection: $state.weather) {
-                                    ForEach(Weather.allCases, id: \.self) { w in
-                                        Text(w.settingsLabel).tag(w)
-                                    }
-                                }
-                                .pickerStyle(.menu)
-                                .tint(MGColor.goldDeep)
-                                .font(MGFont.sans(12))
+                                CurrentWeatherReadout(weather: state.weather)
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.vertical, 13)
                             .padding(.horizontal, 13)
                         }
@@ -553,6 +575,39 @@ func parseHobbies(_ text: String) -> [String] {
     text.split(separator: ",")
         .map { $0.trimmingCharacters(in: .whitespaces) }
         .filter { !$0.isEmpty }
+}
+
+// MARK: - Current weather readout
+// Read-only pill showing the weather resolved from the device's location.
+// Replaced the manual chip picker — weather is now automatic (WeatherKit).
+private struct CurrentWeatherReadout: View {
+    let weather: Weather
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: weather.sfSymbol)
+                .font(.system(size: 13, weight: .semibold))
+                .symbolRenderingMode(.monochrome)
+                .foregroundStyle(MGColor.goldText)
+            Text(weather.settingsLabel)
+                .font(MGFont.mono(9, .medium))
+                .tracking(0.6)
+                .foregroundStyle(MGColor.goldText)
+            Spacer(minLength: 0)
+            Text("AUTO · YOUR LOCATION")
+                .font(MGFont.mono(7.5))
+                .tracking(0.8)
+                .foregroundStyle(MGColor.inkFaint)
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background {
+            Capsule().fill(MGColor.ink.opacity(0.05))
+                .overlay(Capsule().strokeBorder(MGColor.inkFaint.opacity(0.25), lineWidth: 1))
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Current weather: \(weather.settingsLabel), from your location")
+    }
 }
 
 // MARK: - Weather display label

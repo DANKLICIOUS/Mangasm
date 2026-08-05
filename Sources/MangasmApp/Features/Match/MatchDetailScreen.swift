@@ -22,6 +22,8 @@ public struct MatchDetailScreen: View {
     @State private var showReportReasons: Bool = false
     @State private var reportConfirmMessage: String = ""
     @State private var showReportConfirm: Bool = false
+    @State private var showPhotoReportReasons: Bool = false
+    @State private var showPhotoReportConfirm: Bool = false
 
     public init(candidate: Candidate, onMessage: @escaping () -> Void) {
         self.candidate = candidate
@@ -176,6 +178,27 @@ public struct MatchDetailScreen: View {
                 // Match % badge top-right
                 VStack {
                     HStack {
+                        // Report this photo (Guideline 1.2 — individual photo UGC).
+                        Menu {
+                            Button {
+                                showPhotoReportReasons = true
+                            } label: {
+                                Label("Report photo…", systemImage: "flag")
+                            }
+                        } label: {
+                            Image(systemName: "flag")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(MGColor.gold)
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 9)
+                                .glassBackground(12, glow: false)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .stroke(MGColor.gold.opacity(0.66), lineWidth: 1)
+                                )
+                        }
+                        .buttonStyle(.plain)
+
                         Spacer()
                         HStack(spacing: 4) {
                             Text("\(candidate.matchPct)%")
@@ -224,6 +247,31 @@ public struct MatchDetailScreen: View {
                 .padding(.bottom, 13)
             }
             .clipShape(RoundedRectangle(cornerRadius: 23))
+        }
+        .confirmationDialog(
+            "Report this photo",
+            isPresented: $showPhotoReportReasons,
+            titleVisibility: .visible
+        ) {
+            ForEach(ReportReason.allCases, id: \.self) { reason in
+                Button(reason.label) {
+                    env.safety.reportContent(
+                        .photo,
+                        contentID: candidate.avatarURL ?? candidate.id,
+                        reportedUserID: candidate.id,
+                        reason: reason.label
+                    )
+                    showPhotoReportConfirm = true
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Select a reason for reporting this photo.")
+        }
+        .alert("Report Submitted", isPresented: $showPhotoReportConfirm) {
+            Button("OK") {}
+        } message: {
+            Text("Thank you. Your report has been submitted.")
         }
     }
 
