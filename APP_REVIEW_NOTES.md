@@ -10,7 +10,7 @@
 
 ## Demo Account (Sign-In required: YES)
 
-> ⚠️ The app is login-gated. Sign-in has **Email + Password** (and Sign in with Apple).  
+> ⚠️ The app is login-gated. Sign-in is **Email + Password only** — there is no Sign in with Apple.  
 > There is **no username-only field** and **no phone OTP** on the live sheet.  
 > Giving a bare name like `Opal` or an OTP path causes **Guideline 2.1** rejection.
 
@@ -43,7 +43,7 @@ Mangasm is a safety-first social app for adult gay men (18+).
 ### HOW TO TEST (email + password — there is NO phone OTP field)
 
 1. Launch the app. Affirm 18+ / Terms on the sign-in sheet if prompted.
-2. On Sign In, use **Email + Password** (not Sign in with Apple — reviewers cannot use SIWA for this demo).
+2. On Sign In, use **Email + Password** — it is the only sign-in method.
 3. Use the demo account from App Review Information (Username = full email).
 4. After sign-in, open **Discover** and browse profiles.
 5. Open **AI Match** (center lamp tab) → scroll to **RSVP A FIRST DATE** (DateNight). Enter a ZIP or Allow location → **Find**.
