@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - MainTabView
 // Replaces the default TabView with a ZStack layout:
-//   bottom-layer: current feature screen (PlaceholderScreen for Tasks 11–16)
+//   bottom-layer: current feature screen
 //   top overlay:  GlassTabBar pinned to bottom
 //   top overlay:  TopBar pinned to top
 

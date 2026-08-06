@@ -1,9 +1,9 @@
 /**
  * Shared Sign in with Apple server helpers (Guideline 5.1.1(v)).
  *
- * Used by:
- *   - apple-register  — exchange the sign-in authorization code for a refresh token.
- *   - delete-account  — revoke that refresh token when the user deletes their account.
+ * Sign in with Apple is no longer offered — the app is email-only. These helpers
+ * remain solely so `delete-account` can revoke the refresh token of a legacy
+ * account that still has a row in `apple_credentials`.
  *
  * Required environment (set via `supabase secrets set …`; NEVER hardcode):
  *   APPLE_TEAM_ID     — 10-char Apple Developer Team ID.
@@ -88,34 +88,6 @@ export async function makeClientSecret(cfg: AppleConfig): Promise<string> {
   );
   // Web Crypto returns raw r||s (64 bytes) — exactly the JOSE ES256 format.
   return `${signingInput}.${b64url(sig)}`;
-}
-
-/**
- * Exchange a sign-in authorization code for Apple tokens.
- * Returns the provider refresh_token (needed later for revoke), or null.
- */
-export async function exchangeAuthorizationCode(
-  cfg: AppleConfig,
-  authorizationCode: string
-): Promise<string | null> {
-  const clientSecret = await makeClientSecret(cfg);
-  const body = new URLSearchParams({
-    client_id: cfg.clientId,
-    client_secret: clientSecret,
-    grant_type: "authorization_code",
-    code: authorizationCode,
-  });
-  const res = await fetch(`${APPLE_AUD}/auth/token`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body,
-  });
-  if (!res.ok) {
-    console.error("[apple] token exchange failed:", res.status, await res.text());
-    return null;
-  }
-  const json = await res.json();
-  return typeof json.refresh_token === "string" ? json.refresh_token : null;
 }
 
 /**
