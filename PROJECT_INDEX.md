@@ -1,5 +1,10 @@
 # Project Index: Mangasm (iOS / SwiftUI)
 
+> **Structure section is stale (2026-07-19).** File counts, the migration range,
+> and the Domain listing have drifted. See `docs/STRUCTURE.md` (2026-08-11) for
+> verified layout and inventory. The entry-point, module, and service tables
+> below are hand-maintained and still current.
+
 Generated: 2026-07-19  
 Path: `~/dev/mangasm/Mangasm` · remote: `gothamgodzilla/Mangasm`  
 Last ship note: `c74de2a` Block dissolves chat then purges thread
