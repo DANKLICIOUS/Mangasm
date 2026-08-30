@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		01BE82BC0C8CA80157421AD7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 19645365FC576CE8AEBF67AC /* PrivacyInfo.xcprivacy */; };
-		1A2E3CDB7C6772463C72A121 /* Secrets.xcconfig.example in Resources */ = {isa = PBXBuildFile; fileRef = F7272258B3B396C524D7457D /* Secrets.xcconfig.example */; };
 		22BFC0025D4F314884193AF4 /* StoreKitFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF2248EAED495EC7CE066B6 /* StoreKitFlowTests.swift */; };
 		27C96F74F9B21BE7CFD00DD1 /* MangasmiOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640C46FF32476AD1D7AF4191 /* MangasmiOSApp.swift */; };
 		29DF38F66C0C806582ABAF08 /* MangasmApp in Frameworks */ = {isa = PBXBuildFile; productRef = ADBE1269B0EDA1C2C57E231A /* MangasmApp */; };
@@ -255,7 +254,6 @@
 			files = (
 				E1643D1AC94016CAF142391D /* Assets.xcassets in Resources */,
 				01BE82BC0C8CA80157421AD7 /* PrivacyInfo.xcprivacy in Resources */,
-				1A2E3CDB7C6772463C72A121 /* Secrets.xcconfig.example in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,7 +318,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/iOS/Mangasm.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Mark Webster (854XZ2543V)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = 854XZ2543V;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = App/iOS/Info.plist;
@@ -422,7 +420,7 @@
 				CODE_SIGN_ENTITLEMENTS = App/iOS/Mangasm.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Mark Webster (854XZ2543V)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 32;
+				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_TEAM = 854XZ2543V;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = App/iOS/Info.plist;

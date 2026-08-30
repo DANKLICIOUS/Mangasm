@@ -185,6 +185,21 @@ private struct AuthSheet: View {
             .accessibilityLabel(mode == .signUp ? "Choose a password" : "Password")
             fieldError(passwordError)
 
+            if usesLiveAuth {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("INVITE CODE · OPTIONAL")
+                        .font(MGFont.mono(7.5))
+                        .tracking(7.5 * 0.16)
+                        .foregroundStyle(cream.opacity(0.5))
+                    authTextField(
+                        TextField("TWEETY, TAZ…", text: $inviteCode),
+                        identifier: "referral_code_field",
+                        contentKind: .email
+                    )
+                    .accessibilityLabel("Optional invite code")
+                }
+            }
+
             if mode == .signUp {
                 Text("At least 8 characters, with a letter and a number.")
                     .font(MGFont.mono(7.5))
@@ -244,15 +259,16 @@ private struct AuthSheet: View {
     private func authTextField(_ field: some View, identifier: String, contentKind: FieldContentKind) -> some View {
         let styled = field
             .font(MGFont.mono(13))
-            .foregroundStyle(Color.white)
+            .foregroundStyle(cream)
+            .tint(MGColor.gold)
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white.opacity(0.08))
+                    .fill(Color.black.opacity(0.38))
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.white.opacity(0.18), lineWidth: 0.8)
+                            .stroke(Color.white.opacity(0.28), lineWidth: 0.8)
                     )
             )
             .accessibilityIdentifier(identifier)
@@ -281,7 +297,8 @@ private struct AuthSheet: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 0) {
             Capsule()
                 .fill(Color.white.opacity(0.4))
                 .frame(width: 38, height: 4)
@@ -295,19 +312,26 @@ private struct AuthSheet: View {
                     .foregroundStyle(MGGradient.goldHeading)
                     .shadow(color: MGColor.gold.opacity(0.4), radius: 7, x: 0, y: 1)
 
+                Text("SIGN IN TO CONTINUE")
+                    .font(MGFont.mono(8.5))
+                    .tracking(8.5 * 0.28)
+                    .foregroundStyle(cream.opacity(0.78))
+                    .padding(.top, 7)
+
                 Text("BY INVITATION · MEMBERS ONLY")
                     .font(MGFont.mono(8.5))
                     .tracking(8.5 * 0.28)
                     .foregroundStyle(cream.opacity(0.66))
-                    .padding(.top, 7)
+                    .padding(.top, 4)
             }
             .padding(.bottom, 18)
 
             if usesLiveAuth {
                 emailPasswordSection
             } else {
-                // Mock-only fast entry for previews/dev. Never rendered with live
-                // auth — the live app is login-gated (App Review notes claim).
+                #if DEBUG
+                // Mock-only fast entry for previews/dev. Compiled out of Release
+                // so App Review never sees a hidden bypass.
                 Button(action: attemptMockEnter) {
                     Text(isLoading ? "Signing in…" : "Enter the community →")
                         .font(MGFont.serif(16, .bold))
@@ -333,6 +357,7 @@ private struct AuthSheet: View {
                 .buttonStyle(.plain)
                 .disabled(isLoading)
                 .accessibilityIdentifier("mock_enter_button")
+                #endif
             }
 
             VStack(spacing: 7) {
@@ -386,7 +411,9 @@ private struct AuthSheet: View {
             }
             .padding(.top, 14)
             .padding(.bottom, 30)
+            }
         }
+        .scrollDismissesKeyboard(.interactively)
         .onAppear {
             if state.ageGateAffirmed { accepted = true }
             if inviteCode.isEmpty, !state.pendingReferralCode.isEmpty {
@@ -398,15 +425,18 @@ private struct AuthSheet: View {
                 .environmentObject(env)
         }
         .padding(.horizontal, 22)
-        .background(
-            UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30)
+        .background {
+            let shape = UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30)
+            shape
                 .fill(.ultraThinMaterial)
+                .opacity(GlassMorphosis.materialOpacity)
+                .overlay { shape.fill(Color.black.opacity(0.18)) }
                 .overlay(
-                    UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30)
+                    shape
                         .stroke(Color.white.opacity(0.4), lineWidth: 1)
                         .allowsHitTesting(false)
                 )
-                .shadow(color: .black.opacity(0.75), radius: 30, x: 0, y: -20)
-        )
+                .shadow(color: .black.opacity(0.55), radius: 30, x: 0, y: -20)
+        }
     }
 }
