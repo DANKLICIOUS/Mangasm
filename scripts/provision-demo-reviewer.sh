@@ -43,12 +43,18 @@ PY
 fi
 
 echo "→ Creating/updating confirmed Auth user: $EMAIL"
+
+# Export before the payload heredoc — the python below reads these from the
+# environment, so exporting afterwards raised KeyError: 'EMAIL' and sent an
+# empty body. The create call still appeared to succeed because of `|| true`.
+export EMAIL DEMO_PASSWORD
+
 # Admin create user (email_confirm true) — idempotent via list+update if exists
 RESP="$(curl -sS -X POST "$URL/auth/v1/admin/users" \
   -H "apikey: $SERVICE_KEY" \
   -H "Authorization: Bearer $SERVICE_KEY" \
   -H "Content-Type: application/json" \
-  -d "$(python3 - <<PY
+  -d "$(python3 - <<'PY'
 import json, os
 print(json.dumps({
   "email": os.environ["EMAIL"],
@@ -58,15 +64,7 @@ print(json.dumps({
 }))
 PY
 )" 2>&1)" || true
-
-# Export for python snippet
-export EMAIL DEMO_PASSWORD RESP
-python3 - <<'PY'
-import json, os, urllib.request, urllib.error
-
-url = os.environ.get("URL") or ""
-# re-read from parent via env passed below
-PY
+export RESP
 
 # Simpler pure-curl flow with python helper
 URL="$URL" SERVICE_KEY="$SERVICE_KEY" EMAIL="$EMAIL" DEMO_PASSWORD="$DEMO_PASSWORD" python3 - <<'PY'
