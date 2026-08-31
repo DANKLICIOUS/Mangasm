@@ -62,7 +62,7 @@ can't do without signing secrets. Run it on Apple hardware:
   `ios.mangasm.app`, `/privacy`, `/terms`, `/moderation`, `/promo`, AASA
   content-type header) and `web/middleware.js`.
 - Static pages served: `index.html`, `ios.html`, `privacy.html`, `terms.html`,
-  `moderation.html`, `promo.html`.
+  `moderation.html`, `promo.html`, `plus.html` (web Stripe at `/plus`).
 
 ## Database migrations
 

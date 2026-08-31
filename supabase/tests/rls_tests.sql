@@ -105,4 +105,28 @@ begin
   raise notice 'T5 profiles delete RLS: OK';
 end $$;
 
+-- ── T6: Stripe billing trigger flips profiles.premium (web rail) ───────────
+do $$
+begin
+  insert into billing_subscriptions (id, user_id, source, status, current_period_end)
+  values (
+    'sub_test_bob',
+    '22222222-2222-2222-2222-222222222222',
+    'stripe',
+    'active',
+    now() + interval '30 days'
+  );
+  assert (select premium from profiles
+          where id = '22222222-2222-2222-2222-222222222222') = true,
+         'an active Stripe subscription must grant profiles.premium';
+
+  update billing_subscriptions
+     set status = 'canceled', current_period_end = now() - interval '1 day'
+   where id = 'sub_test_bob';
+  assert (select premium from profiles
+          where id = '22222222-2222-2222-2222-222222222222') = false,
+         'a canceled / expired subscription must revoke profiles.premium';
+  raise notice 'T6 billing → premium sync: OK';
+end $$;
+
 rollback;

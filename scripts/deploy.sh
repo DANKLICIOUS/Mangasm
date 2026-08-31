@@ -35,6 +35,9 @@ fi
 echo "── deploy edge functions ──"
 "$SUPABASE_GO" functions deploy verify-purchase --no-verify-jwt --project-ref "$SUPABASE_PROJECT_REF"
 "$SUPABASE_GO" functions deploy delete-account --no-verify-jwt --project-ref "$SUPABASE_PROJECT_REF"
+"$SUPABASE_GO" functions deploy stripe-checkout --no-verify-jwt --project-ref "$SUPABASE_PROJECT_REF"
+"$SUPABASE_GO" functions deploy stripe-webhook --no-verify-jwt --project-ref "$SUPABASE_PROJECT_REF"
+"$SUPABASE_GO" functions deploy revenue-metrics --no-verify-jwt --project-ref "$SUPABASE_PROJECT_REF"
 
 echo ""
 echo "Done."
