@@ -69,12 +69,17 @@ jobs:
             node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('OK: $f')"
           done
       - name: Syntax-check edge middleware
-        run: node --check web/middleware.js
+        run: |
+          node --check web/middleware.js
+          node --check web/api/public-config.js
+          node --check web/api/waitlist.js
       - name: Verify required static pages exist
         run: |
           missing=0
-          for f in index.html ios.html privacy.html terms.html moderation.html promo.html; do
+          for f in index.html ios.html privacy.html terms.html moderation.html promo.html plus.html plus-success.html; do
             if [ ! -f "web/$f" ]; then echo "MISSING: web/$f"; missing=1; fi
           done
           [ "$missing" -eq 0 ] && echo "All required static pages present"
           exit "$missing"
+      - name: Assert /plus billing aims at the live Supabase host
+        run: node scripts/check-web-billing-config.cjs

@@ -21,7 +21,7 @@
     <!-- step 1: sign in -->
     <section id="auth" class="hidden rounded-xl border border-slate-700 bg-slate-800/60 p-6 mb-8">
       <h2 class="text-lg font-semibold text-white mb-1">Sign in to continue</h2>
-      <p class="text-sm text-slate-400 mb-4">We'll email you a 6-digit code — same account as the app if you use the same email.</p>
+      <p class="text-sm text-slate-400 mb-4">We'll email you a code — same account as the app if you use the same email.</p>
       <form id="email-form" class="flex gap-2">
         <label class="sr-only" for="email">Email</label>
         <input id="email" type="email" required placeholder="you@example.com" autocomplete="email"
@@ -29,8 +29,8 @@
         <button class="rounded-lg bg-amber-300 text-slate-900 text-sm font-semibold px-4 py-2 hover:bg-amber-200">Send code</button>
       </form>
       <form id="code-form" class="hidden flex gap-2 mt-3">
-        <label class="sr-only" for="code">6-digit code</label>
-        <input id="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required placeholder="123456"
+        <label class="sr-only" for="code">Email code</label>
+        <input id="code" inputmode="numeric" pattern="[0-9]{6,8}" maxlength="8" required placeholder="123456"
           class="flex-1 rounded-lg bg-slate-900 border border-slate-600 px-3 py-2 text-sm tracking-widest focus:outline-none focus:border-amber-300">
         <button class="rounded-lg bg-amber-300 text-slate-900 text-sm font-semibold px-4 py-2 hover:bg-amber-200">Verify</button>
       </form>
@@ -64,14 +64,41 @@
   </main>
 
   <script type="module">
-    // Site config — anon key is the public client key (safe to ship), set it
-    // at deploy time. Leaving it empty shows the "not switched on" notice.
-    const CONFIG = {
-      SUPABASE_URL: "https://hcpzbxplnkyythzwkovy.supabase.co",
-      SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjcHpieHBsbmt5eXRoendrb3Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzNTczMTMsImV4cCI6MjA5NTkzMzMxM30.iFVsBuD4gKyVEKx7D2lsqIaQOCjCzsrvYnlX062QSGc",
-    };
+    // Live project (docs/handoff/INFRA_SYNC.md). Retired hosts must never be used
+    // on this payment path: hcpzbxplnkyythzwkovy, zfwzrloxqqkkikedpruf, pwmddvigardiyhqtihdw.
+    const LIVE_SUPABASE_URL = "https://dvomzrvslwdabwcwtvrg.supabase.co";
+
+    // The matching live publishable/anon key is NOT in this repo. Leave empty here
+    // (shows the setup notice). At deploy, set a Vercel env var and /api/public-config
+    // will fill it in:
+    //   SUPABASE_ANON_KEY  or  SUPABASE_PUBLISHABLE_KEY
+    // (NEXT_PUBLIC_ aliases also accepted). Never put service_role or Stripe secrets here.
+    const EMBEDDED_ANON_KEY = "";
 
     const $ = (id) => document.getElementById(id);
+
+    async function loadConfig() {
+      let url = LIVE_SUPABASE_URL;
+      let key = EMBEDDED_ANON_KEY;
+      try {
+        const res = await fetch("/api/public-config", { headers: { Accept: "application/json" } });
+        if (res.ok) {
+          const cfg = await res.json();
+          if (typeof cfg.supabaseUrl === "string" && cfg.supabaseUrl.includes("dvomzrvslwdabwcwtvrg.supabase.co")) {
+            url = cfg.supabaseUrl.replace(/\/$/, "");
+          }
+          if (typeof cfg.supabaseAnonKey === "string" && cfg.supabaseAnonKey.trim()) {
+            key = cfg.supabaseAnonKey.trim();
+          }
+        }
+      } catch {
+        // Static preview / missing API route — fall back to embedded values.
+      }
+      if (url.includes("hcpzbxplnkyythzwkovy")) url = LIVE_SUPABASE_URL;
+      return { SUPABASE_URL: url, SUPABASE_ANON_KEY: key };
+    }
+
+    const CONFIG = await loadConfig();
 
     if (!CONFIG.SUPABASE_ANON_KEY) {
       $("setup-note").classList.remove("hidden");

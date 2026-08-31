@@ -7,6 +7,15 @@ verify_jwt = false
 [functions.validate-referral]
 verify_jwt = false
 
+[functions.stripe-checkout]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.revenue-metrics]
+verify_jwt = false
+
 # Email-only auth (feature/email-only-auth): Apple & Google providers off;
 # mangasm://auth-callback is the iOS deep link for confirmation + reset links.
 #

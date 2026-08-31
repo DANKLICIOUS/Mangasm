@@ -134,7 +134,7 @@
 <dialog id="settings">
   <h2>Dashboard settings</h2>
   <label for="cfg-url">Metrics endpoint URL</label>
-  <input id="cfg-url" placeholder="https://hcpzbxplnkyythzwkovy.supabase.co/functions/v1/revenue-metrics">
+  <input id="cfg-url" placeholder="https://dvomzrvslwdabwcwtvrg.supabase.co/functions/v1/revenue-metrics">
   <label for="cfg-token">Admin token</label>
   <input id="cfg-token" type="password" placeholder="ADMIN_DASHBOARD_TOKEN value">
   <div class="row">
@@ -147,7 +147,7 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const LS = "mangasm-revenue-cfg";
-  const DEFAULT_URL = "https://hcpzbxplnkyythzwkovy.supabase.co/functions/v1/revenue-metrics";
+  const DEFAULT_URL = "https://dvomzrvslwdabwcwtvrg.supabase.co/functions/v1/revenue-metrics";
   const cfg = () => { try { return JSON.parse(localStorage.getItem(LS)) ?? {}; } catch { return {}; } };
 
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
