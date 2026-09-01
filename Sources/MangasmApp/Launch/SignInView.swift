@@ -186,7 +186,7 @@ private struct AuthSheet: View {
             fieldError(passwordError)
 
             if mode == .signUp {
-                Text("At least 8 characters, with a letter and a number.")
+                Text("At least 8 characters, with a lowercase letter, an uppercase letter, a number, and a symbol.")
                     .font(MGFont.mono(7.5))
                     .foregroundStyle(cream.opacity(0.55))
                     .frame(maxWidth: .infinity, alignment: .leading)

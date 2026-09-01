@@ -179,7 +179,7 @@ struct NewPasswordView: View {
                 .foregroundStyle(MGGradient.goldHeading)
                 .padding(.top, 8)
 
-            Text("At least 8 characters, with a letter and a number.")
+            Text("At least 8 characters, with a lowercase letter, an uppercase letter, a number, and a symbol.")
                 .font(MGFont.mono(9))
                 .foregroundStyle(cream.opacity(0.6))
 

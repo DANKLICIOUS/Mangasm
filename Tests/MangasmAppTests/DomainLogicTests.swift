@@ -50,19 +50,21 @@ final class DomainLogicTests: XCTestCase {
 
     func testPasswordStrengthRules() {
         XCTAssertNotNil(EmailAuthValidator.passwordProblem("short1"))       // < 8 chars
-        XCTAssertNotNil(EmailAuthValidator.passwordProblem("lettersonly"))  // no digit
+        XCTAssertNotNil(EmailAuthValidator.passwordProblem("lettersonly"))  // no digit/upper/symbol
         XCTAssertNotNil(EmailAuthValidator.passwordProblem("12345678"))     // no letter
-        XCTAssertNil(EmailAuthValidator.passwordProblem("abcdefg1"))
+        XCTAssertNotNil(EmailAuthValidator.passwordProblem("abcdefg1"))     // no uppercase or symbol
+        XCTAssertNotNil(EmailAuthValidator.passwordProblem("Abcdefg1"))     // no symbol
+        XCTAssertNil(EmailAuthValidator.passwordProblem("Abcdefg1!"))
     }
 
     func testValidateThrowsFieldAnchoredErrors() {
-        XCTAssertThrowsError(try EmailAuthValidator.validate(email: "bad", password: "abcdefg1")) {
+        XCTAssertThrowsError(try EmailAuthValidator.validate(email: "bad", password: "Abcdefg1!")) {
             XCTAssertEqual(($0 as? AuthError)?.authField, .email)
         }
         XCTAssertThrowsError(try EmailAuthValidator.validate(email: "a@b.co", password: "weak")) {
             XCTAssertEqual(($0 as? AuthError)?.authField, .password)
         }
-        XCTAssertNoThrow(try EmailAuthValidator.validate(email: "a@b.co", password: "abcdefg1"))
+        XCTAssertNoThrow(try EmailAuthValidator.validate(email: "a@b.co", password: "Abcdefg1!"))
     }
 
     // MARK: - Phase 4: BlockPolicy (bidirectional)
