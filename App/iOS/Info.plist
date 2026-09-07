@@ -17,7 +17,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>36</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Mangasm uses your location to find restaurants and events within 10 miles of both of you for Date Night.</string>
 	<key>CFBundleURLTypes</key>
