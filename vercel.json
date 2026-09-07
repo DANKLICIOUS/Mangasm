@@ -114,6 +114,22 @@
       "destination": "/admin/revenue.html"
     },
     {
+      "source": "/things-to-do",
+      "destination": "/things-to-do.html"
+    },
+    {
+      "source": "/things-to-do/",
+      "destination": "/things-to-do.html"
+    },
+    {
+      "source": "/things",
+      "destination": "/things-to-do.html"
+    },
+    {
+      "source": "/things/",
+      "destination": "/things-to-do.html"
+    },
+    {
       "source": "/",
       "destination": "/index.html"
     }

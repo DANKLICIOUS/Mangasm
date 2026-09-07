@@ -2,48 +2,166 @@
   "headers": [
     {
       "source": "/.well-known/apple-app-site-association",
-      "headers": [{ "key": "Content-Type", "value": "application/json" }]
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json"
+        }
+      ]
     }
   ],
   "rewrites": [
     {
       "source": "/",
-      "has": [{ "type": "host", "value": "ios.mangasm.app" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "ios.mangasm.app"
+        }
+      ],
       "destination": "/ios.html"
     },
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "ios.mangasm.app" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "ios.mangasm.app"
+        }
+      ],
       "destination": "/ios.html"
     },
-    { "source": "/promo", "destination": "/promo.html" },
-    { "source": "/promo/", "destination": "/promo.html" },
-    { "source": "/waitlist", "destination": "/promo.html" },
-    { "source": "/waitlist/", "destination": "/promo.html" },
-    { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/privacy/", "destination": "/privacy.html" },
-    { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/terms/", "destination": "/terms.html" },
-    { "source": "/moderation", "destination": "/moderation.html" },
-    { "source": "/moderation/", "destination": "/moderation.html" },
-    { "source": "/storybook", "destination": "/storybook.html" },
-    { "source": "/storybook/", "destination": "/storybook.html" },
-    { "source": "/autopsy", "destination": "/storybook.html" },
-    { "source": "/autopsy/", "destination": "/storybook.html" },
-    { "source": "/plus", "destination": "/plus.html" },
-    { "source": "/plus/", "destination": "/plus.html" },
-    { "source": "/plus/success", "destination": "/plus-success.html" },
-    { "source": "/plus/success/", "destination": "/plus-success.html" },
-    { "source": "/admin/revenue", "destination": "/admin/revenue.html" },
-    { "source": "/admin/revenue/", "destination": "/admin/revenue.html" },
-    { "source": "/status", "destination": "/index.html" },
-    { "source": "/status/", "destination": "/index.html" },
-    { "source": "/story", "destination": "/index.html" },
-    { "source": "/story/", "destination": "/index.html" },
-    { "source": "/patterns", "destination": "/index.html" },
-    { "source": "/patterns/", "destination": "/index.html" },
-    { "source": "/honesty", "destination": "/index.html" },
-    { "source": "/honesty/", "destination": "/index.html" },
-    { "source": "/", "destination": "/index.html" }
+    {
+      "source": "/promo",
+      "destination": "/promo.html"
+    },
+    {
+      "source": "/promo/",
+      "destination": "/promo.html"
+    },
+    {
+      "source": "/waitlist",
+      "destination": "/promo.html"
+    },
+    {
+      "source": "/waitlist/",
+      "destination": "/promo.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/privacy/",
+      "destination": "/privacy.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/terms/",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/moderation",
+      "destination": "/moderation.html"
+    },
+    {
+      "source": "/moderation/",
+      "destination": "/moderation.html"
+    },
+    {
+      "source": "/storybook",
+      "destination": "/storybook.html"
+    },
+    {
+      "source": "/storybook/",
+      "destination": "/storybook.html"
+    },
+    {
+      "source": "/autopsy",
+      "destination": "/storybook.html"
+    },
+    {
+      "source": "/autopsy/",
+      "destination": "/storybook.html"
+    },
+    {
+      "source": "/plus",
+      "destination": "/plus.html"
+    },
+    {
+      "source": "/plus/",
+      "destination": "/plus.html"
+    },
+    {
+      "source": "/plus/success",
+      "destination": "/plus-success.html"
+    },
+    {
+      "source": "/plus/success/",
+      "destination": "/plus-success.html"
+    },
+    {
+      "source": "/admin/revenue",
+      "destination": "/admin/revenue.html"
+    },
+    {
+      "source": "/admin/revenue/",
+      "destination": "/admin/revenue.html"
+    },
+    {
+      "source": "/things-to-do",
+      "destination": "/things-to-do.html"
+    },
+    {
+      "source": "/things-to-do/",
+      "destination": "/things-to-do.html"
+    },
+    {
+      "source": "/things",
+      "destination": "/things-to-do.html"
+    },
+    {
+      "source": "/things/",
+      "destination": "/things-to-do.html"
+    },
+    {
+      "source": "/status",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/status/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/story",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/story/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/patterns",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/patterns/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/honesty",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/honesty/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/",
+      "destination": "/index.html"
+    }
   ]
 }

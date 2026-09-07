@@ -1,0 +1,47 @@
+{
+  "version": "2026-09-07",
+  "surface": "things-to-do",
+  "facets": [
+    { "id": "all", "label": "All" },
+    { "id": "format", "label": "Format / clean files" },
+    { "id": "dev-help", "label": "Dev help" }
+  ],
+  "items": [
+    {
+      "id": "format-json-yaml-1h",
+      "title": "Format broken JSON or YAML — clean file in 1 hour",
+      "promise": "Messy JSON/YAML → clean, parse-valid, consistently indented file within 1 hour after intake + snippet.",
+      "priceUsd": 8,
+      "priceBand": "$5–$15",
+      "turnaround": "1 hour after intake + snippet",
+      "cap": "One file, ≤200 lines / ~20 KB, 1 revision",
+      "facets": ["format", "dev-help"],
+      "tags": ["json", "yaml", "format", "indent", "parse", "clean"],
+      "inScope": [
+        "Format + syntax repair on one JSON/YAML snippet so it parse-checks",
+        "Indent, quotes, commas/braces, parse-blocking typos",
+        "Keys/values otherwise unchanged"
+      ],
+      "outOfScope": [
+        "Schema / OpenAPI / JSON Schema",
+        "Architecture, migrations, ETL, refactors",
+        "Multi-file, repos, git, CI, Docker, K8s",
+        "Runtime debug / app code beyond the snippet",
+        "Live secrets or PII",
+        ">200 lines or exploding minified blobs",
+        "Retainers / unlimited revisions"
+      ],
+      "intake": [
+        "JSON or YAML?",
+        "Paste or attach redacted snippet",
+        "Indent: 2 / 4 / tabs?",
+        "Optional must-keep quirks"
+      ],
+      "channel": "fiverr",
+      "ctaLabel": "Order on Fiverr",
+      "ctaUrl": "",
+      "status": "draft-listing",
+      "operator": "Miracle Money"
+    }
+  ]
+}
