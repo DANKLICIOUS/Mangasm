@@ -10,6 +10,9 @@
 !/web
 !/vercel.json
 
+# Serverless must live at repo-root /api (outputDirectory only ships static web/).
+!/api
+
 # package.json must ship: without it Vercel's zero-config detection cannot
 # identify the project and falls back to a Node server, failing with
 # "No entrypoint found". The lockfile keeps the install deterministic.

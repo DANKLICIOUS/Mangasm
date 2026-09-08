@@ -175,7 +175,8 @@ function setupForm() {
     if (btn) btn.disabled = true;
 
     try {
-      const res = await fetch("/api/waitlist", {
+      // Always hit www so apex→www redirects cannot drop POST bodies.
+      const res = await fetch("https://www.mangasm.app/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, source: "mangasm-landing" }),

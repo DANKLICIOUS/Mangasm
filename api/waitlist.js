@@ -1,9 +1,14 @@
 /**
- * NOTE: Production serverless entry is repo-root `/api/waitlist.js`.
- * Root vercel.json uses outputDirectory: "web", so this path is NOT deployed
- * as a function. Kept for reference / if Root Directory is set to web/.
+ * Vercel serverless — Mangasm rebuild waitlist
+ * Lives at repo-root /api so it deploys with root vercel.json
+ * (outputDirectory: "web" only ships static files from web/).
  *
- * Original handler body retained below for local reference.
+ * Env (Vercel project):
+ *   RESEND_API_KEY (required)
+ *   WAITLIST_NOTIFY_TO (default bae@slay.llc)
+ *   WAITLIST_FROM (default Resend onboarding sender until mangasm.app domain verified)
+ *   SUPABASE_URL (required for persist — live: https://dvomzrvslwdabwcwtvrg.supabase.co)
+ *   SUPABASE_ANON_KEY (required for persist — legacy anon JWT or sb_publishable_*)
  */
 
 const RATE = new Map();
@@ -33,6 +38,36 @@ function clientIp(req) {
   const xf = req.headers["x-forwarded-for"];
   if (typeof xf === "string") return xf.split(",")[0].trim();
   return req.socket?.remoteAddress || "unknown";
+}
+
+async function persistSignup(email, source) {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  if (!url || !key) {
+    return { ok: false, skipped: true, error: "SUPABASE_URL/SUPABASE_ANON_KEY not configured" };
+  }
+  const res = await fetch(`${url.replace(/\/$/, "")}/rest/v1/waitlist_signups`, {
+    method: "POST",
+    headers: {
+      apikey: key,
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      Prefer: "resolution=merge-duplicates,return=minimal",
+    },
+    body: JSON.stringify({ email, source: source || null }),
+  });
+  if (res.status === 409 || res.status === 200 || res.status === 201) {
+    return { ok: true };
+  }
+  // unique violation often 409; PostgREST may return 23505 in body with 409
+  if (res.ok) return { ok: true };
+  const detail = await res.text().catch(() => "");
+  // Treat duplicate email as success (idempotent join)
+  if (res.status === 409 || /duplicate|unique/i.test(detail)) {
+    return { ok: true, duplicate: true };
+  }
+  console.error("waitlist persist failed", res.status, detail);
+  return { ok: false, error: detail || String(res.status) };
 }
 
 module.exports = async function handler(req, res) {
@@ -70,11 +105,20 @@ module.exports = async function handler(req, res) {
   const email = String(body?.email || "")
     .trim()
     .toLowerCase();
+  const source = String(body?.source || "mangasm-landing").slice(0, 80);
   if (!validEmail(email)) {
     return json(res, 400, { ok: false, error: "Valid email required" });
   }
 
-  // Default from Resend test sender until slay.llc / mangasm.app verified on resend.com/domains
+  const stored = await persistSignup(email, source);
+  if (!stored.ok && !stored.skipped) {
+    return json(res, 502, { ok: false, error: "Could not save signup", detail: stored.error });
+  }
+  if (stored.skipped) {
+    console.warn("waitlist persist skipped:", stored.error);
+  }
+
+  // Default from Resend test sender until mangasm.app / slay.llc verified on resend.com/domains
   const from =
     process.env.WAITLIST_FROM || "Mangasm Rebuild <onboarding@resend.dev>";
   const notifyTo = process.env.WAITLIST_NOTIFY_TO || "bae@slay.llc";
@@ -91,8 +135,7 @@ module.exports = async function handler(req, res) {
         from,
         to: [notifyTo],
         subject: `[Mangasm] Rebuild waitlist: ${email}`,
-        // Do not include visitor IP in email body (operator privacy + minimize PII in mail)
-        text: `New rebuild waitlist signup\n\nEmail: ${email}\nWhen: ${stamp}\n\n(IP used only for rate-limit in memory, not stored in this email.)`,
+        text: `New rebuild waitlist signup\n\nEmail: ${email}\nSource: ${source}\nWhen: ${stamp}\nPersisted: ${stored.skipped ? "no (env missing)" : stored.duplicate ? "already had row" : "yes"}\n`,
       }),
     });
     const notifyJson = await notify.json().catch(() => ({}));
@@ -127,6 +170,7 @@ module.exports = async function handler(req, res) {
     return json(res, 200, {
       ok: true,
       message: "You're on the rebuild list. Check your inbox.",
+      persisted: !stored.skipped,
     });
   } catch (e) {
     console.error(e);

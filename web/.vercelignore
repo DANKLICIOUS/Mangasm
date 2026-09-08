@@ -1,5 +1,4 @@
-../**
-!*.html
-!vercel.json
-!middleware.js
-!.well-known/**
+# If Root Directory is ever set to web/, keep api + static assets.
+.env
+.env.*
+*.pem
