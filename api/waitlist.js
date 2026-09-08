@@ -6,7 +6,7 @@
  * Env (Vercel project):
  *   RESEND_API_KEY (required)
  *   WAITLIST_NOTIFY_TO (default bae@slay.llc)
- *   WAITLIST_FROM (default Resend onboarding sender until mangasm.app domain verified)
+ *   WAITLIST_FROM (default Mangasm Rebuild <bae@slay.llc> — slay.llc Resend until mangasm.app added)
  *   SUPABASE_URL (required for persist — live: https://dvomzrvslwdabwcwtvrg.supabase.co)
  *   SUPABASE_ANON_KEY (required for persist — legacy anon JWT or sb_publishable_*)
  */
@@ -118,9 +118,9 @@ module.exports = async function handler(req, res) {
     console.warn("waitlist persist skipped:", stored.error);
   }
 
-  // Default from Resend test sender until mangasm.app / slay.llc verified on resend.com/domains
+  // slay.llc Resend (Matryx 2026-09-08) — do not block on mangasm.app domain
   const from =
-    process.env.WAITLIST_FROM || "Mangasm Rebuild <onboarding@resend.dev>";
+    process.env.WAITLIST_FROM || "Mangasm Rebuild <bae@slay.llc>";
   const notifyTo = process.env.WAITLIST_NOTIFY_TO || "bae@slay.llc";
   const stamp = new Date().toISOString();
 
