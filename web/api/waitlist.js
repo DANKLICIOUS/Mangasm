@@ -1,8 +1,9 @@
 /**
- * Vercel serverless — Mangasm rebuild waitlist via Resend
- * Env: RESEND_API_KEY (required)
- * Optional: WAITLIST_NOTIFY_TO (default bae@slay.llc)
- * Optional: WAITLIST_FROM (verified domain sender)
+ * NOTE: Production serverless entry is repo-root `/api/waitlist.js`.
+ * Root vercel.json uses outputDirectory: "web", so this path is NOT deployed
+ * as a function. Kept for reference / if Root Directory is set to web/.
+ *
+ * Original handler body retained below for local reference.
  */
 
 const RATE = new Map();

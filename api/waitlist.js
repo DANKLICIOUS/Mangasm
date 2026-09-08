@@ -59,8 +59,10 @@ async function persistSignup(email, source) {
   if (res.status === 409 || res.status === 200 || res.status === 201) {
     return { ok: true };
   }
+  // unique violation often 409; PostgREST may return 23505 in body with 409
   if (res.ok) return { ok: true };
   const detail = await res.text().catch(() => "");
+  // Treat duplicate email as success (idempotent join)
   if (res.status === 409 || /duplicate|unique/i.test(detail)) {
     return { ok: true, duplicate: true };
   }
@@ -116,6 +118,7 @@ module.exports = async function handler(req, res) {
     console.warn("waitlist persist skipped:", stored.error);
   }
 
+  // Default from Resend test sender until mangasm.app / slay.llc verified on resend.com/domains
   const from =
     process.env.WAITLIST_FROM || "Mangasm Rebuild <onboarding@resend.dev>";
   const notifyTo = process.env.WAITLIST_NOTIFY_TO || "bae@slay.llc";

@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- web vercel.json package.json",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- web api vercel.json package.json .vercelignore",
   "headers": [
     {
       "source": "/.well-known/apple-app-site-association",
@@ -10,6 +10,19 @@
           "value": "application/json"
         }
       ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "mangasm.app"
+        }
+      ],
+      "destination": "https://www.mangasm.app/:path*",
+      "statusCode": 307
     }
   ],
   "rewrites": [
