@@ -43,9 +43,15 @@ assert(
   plus.includes(`LIVE_SUPABASE_URL = "https://${LIVE}.supabase.co"`),
   "plus.html must hardcode the live host as LIVE_SUPABASE_URL",
 );
+const embedded = plus.match(/const EMBEDDED_ANON_KEY = "([^"]*)"/);
+assert(embedded, "plus.html must declare EMBEDDED_ANON_KEY");
 assert(
-  /const EMBEDDED_ANON_KEY = ""/.test(plus),
-  "plus.html must not embed a guessed anon key; leave EMBEDDED_ANON_KEY empty",
+  /^sb_publishable_[A-Za-z0-9_]+$/.test(embedded[1]),
+  "plus.html must embed the live sb_publishable_ client key (not empty, not a JWT)",
+);
+assert(
+  !/^(sb_secret_|sk_|whsec_|eyJ)/.test(embedded[1]),
+  "plus.html must not embed service_role or Stripe secrets",
 );
 
 const handlerPath = path.join(root, "web/api/public-config.js");

@@ -68,12 +68,10 @@
     // on this payment path: hcpzbxplnkyythzwkovy, zfwzrloxqqkkikedpruf, pwmddvigardiyhqtihdw.
     const LIVE_SUPABASE_URL = "https://dvomzrvslwdabwcwtvrg.supabase.co";
 
-    // The matching live publishable/anon key is NOT in this repo. Leave empty here
-    // (shows the setup notice). At deploy, set a Vercel env var and /api/public-config
-    // will fill it in:
-    //   SUPABASE_ANON_KEY  or  SUPABASE_PUBLISHABLE_KEY
-    // (NEXT_PUBLIC_ aliases also accepted). Never put service_role or Stripe secrets here.
-    const EMBEDDED_ANON_KEY = "";
+    // Public client key for dvomzrvslwdabwcwtvrg (already on www.mangasm.app/plus).
+    // Safe to ship. Never put service_role or Stripe secrets here.
+    // /api/public-config can override via Vercel SUPABASE_ANON_KEY / SUPABASE_PUBLISHABLE_KEY.
+    const EMBEDDED_ANON_KEY = "sb_publishable_cB_tH2bM7ihpLKWxauGEhw_R9aJ9_Fl";
 
     const $ = (id) => document.getElementById(id);
 
@@ -106,8 +104,20 @@
       const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2");
       const supabase = createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
-      const { data: { session } } = await supabase.auth.getSession();
-      (session ? $("plans") : $("auth")).classList.remove("hidden");
+      async function freshAccessToken() {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error || !session) return null;
+        const expMs = (session.expires_at ?? 0) * 1000;
+        if (expMs && expMs - Date.now() < 60_000) {
+          const { data, error: refreshError } = await supabase.auth.refreshSession();
+          if (refreshError || !data.session) return null;
+          return data.session.access_token;
+        }
+        return session.access_token;
+      }
+
+      const initialToken = await freshAccessToken();
+      (initialToken ? $("plans") : $("auth")).classList.remove("hidden");
 
       $("email-form").addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -134,14 +144,14 @@
       document.querySelectorAll(".subscribe").forEach((btn) =>
         btn.addEventListener("click", async () => {
           $("plan-msg").textContent = "Opening secure checkout…";
-          const { data: { session } } = await supabase.auth.getSession();
-          if (!session) { $("plan-msg").textContent = "Please sign in first."; return; }
+          const accessToken = await freshAccessToken();
+          if (!accessToken) { $("plan-msg").textContent = "Please sign in first."; return; }
           try {
             const res = await fetch(`${CONFIG.SUPABASE_URL}/functions/v1/stripe-checkout`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${session.access_token}`,
+                "Authorization": `Bearer ${accessToken}`,
                 "apikey": CONFIG.SUPABASE_ANON_KEY,
               },
               body: JSON.stringify({ plan: btn.dataset.plan }),
