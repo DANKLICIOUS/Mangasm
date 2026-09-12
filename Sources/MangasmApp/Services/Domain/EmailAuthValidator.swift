@@ -15,14 +15,20 @@ public enum EmailAuthValidator {
         return true
     }
 
-    /// Password strength: ≥8 chars with at least one letter and one digit.
-    /// Mirrors the Supabase project's minimum so client and server agree.
+    /// Password strength: ≥8 chars with a lowercase letter, an uppercase
+    /// letter, a digit, and a symbol. Mirrors the Supabase project's
+    /// `password_requirements = "lower_upper_letters_digits_symbols"` policy
+    /// (supabase/config.toml) so client and server agree.
     public static func passwordProblem(_ password: String) -> String? {
         if password.count < 8 {
             return "Password must be at least 8 characters."
         }
-        if !password.contains(where: { $0.isLetter }) || !password.contains(where: { $0.isNumber }) {
-            return "Password must include at least one letter and one number."
+        guard password.contains(where: { $0.isLowercase }),
+              password.contains(where: { $0.isUppercase }),
+              password.contains(where: { $0.isNumber }),
+              password.contains(where: { $0.isPunctuation || $0.isSymbol })
+        else {
+            return "Password must include a lowercase letter, an uppercase letter, a number, and a symbol."
         }
         return nil
     }
