@@ -55,7 +55,7 @@ public enum AuthErrorMapper {
             return .field(.email, "An account with this email already exists. Try signing in instead.")
         }
         if text.contains("password should be") || text.contains("weak password") {
-            return .field(.password, "That password is too weak. Use at least 8 characters with a number.")
+            return .field(.password, "That password is too weak. Use at least 8 characters with a lowercase letter, an uppercase letter, a number, and a symbol.")
         }
         if text.contains("rate limit") || text.contains("too many requests") || text.contains("429") {
             return .field(.general, "Too many attempts. Please wait a minute and try again.")
