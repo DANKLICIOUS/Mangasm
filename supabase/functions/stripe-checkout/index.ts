@@ -93,6 +93,8 @@ export default {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       customer: customerId,
+      client_reference_id: userId,
+      metadata: { mangasm_user_id: userId },
       line_items: [{ price, quantity: 1 }],
       allow_promotion_codes: true,
       ...(pmc ? { payment_method_configuration: pmc } : {}),

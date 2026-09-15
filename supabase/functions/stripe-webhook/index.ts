@@ -86,13 +86,16 @@ Deno.serve(async (req) => {
       console.error(`[stripe-webhook] no Mangasm user for Stripe customer ${sub.customer}`);
       return;
     }
+    const periodEnd = sub.current_period_end
+      ? new Date(sub.current_period_end * 1000).toISOString()
+      : null;
     const { error } = await supabase.from("billing_subscriptions").upsert({
       id: sub.id,
       user_id: userId,
       source: "stripe",
       status: sub.status,
       price_id: sub.items.data[0]?.price?.id ?? null,
-      current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
+      current_period_end: periodEnd,
       cancel_at_period_end: sub.cancel_at_period_end,
     });
     if (error) {
@@ -103,11 +106,28 @@ Deno.serve(async (req) => {
 
   try {
     switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const userId = session.metadata?.mangasm_user_id || session.client_reference_id;
+        const customerId = session.customer as string | null;
+        if (userId && customerId) {
+          await supabase.from("billing_customers").upsert(
+            { user_id: userId, stripe_customer_id: customerId },
+            { onConflict: "user_id" },
+          );
+        }
+        if (session.subscription) {
+          const sub = await stripe.subscriptions.retrieve(session.subscription as string);
+          await upsertSubscription(sub);
+        }
+        break;
+      }
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
         await upsertSubscription(event.data.object as Stripe.Subscription);
         break;
+      case "invoice.payment_succeeded":
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
         if (invoice.subscription) {

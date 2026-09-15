@@ -19,6 +19,7 @@ const root = path.join(__dirname, "..");
 const plus = fs.readFileSync(path.join(root, "web/plus.html"), "utf8");
 const revenue = fs.readFileSync(path.join(root, "web/admin/revenue.html"), "utf8");
 const publicConfig = fs.readFileSync(path.join(root, "web/api/public-config.js"), "utf8");
+const rootPublicConfig = fs.readFileSync(path.join(root, "api/public-config.js"), "utf8");
 
 function supabaseHosts(src) {
   return [...src.matchAll(/https:\/\/([a-z0-9]+)\.supabase\.co/g)].map((m) => m[1]);
@@ -28,6 +29,7 @@ for (const [name, src] of [
   ["web/plus.html", plus],
   ["web/admin/revenue.html", revenue],
   ["web/api/public-config.js", publicConfig],
+  ["api/public-config.js", rootPublicConfig],
 ]) {
   const hosts = supabaseHosts(src);
   const bad = hosts.filter((h) => RETIRED.includes(h));
