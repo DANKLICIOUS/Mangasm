@@ -7,7 +7,14 @@
 	<key>teamID</key>
 	<string>854XZ2543V</string>
 	<key>signingStyle</key>
-	<string>automatic</string>
+	<string>manual</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.mangasm.app</key>
+		<string>Mangasm App Store 18</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>iPhone Distribution: Mark Webster (854XZ2543V)</string>
 	<key>uploadSymbols</key>
 	<true/>
 	<key>stripSwiftSymbols</key>
