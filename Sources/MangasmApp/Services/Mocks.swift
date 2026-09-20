@@ -152,16 +152,60 @@ public final class MockEventService: EventService {
 }
 
 // MARK: - MockReputationService
-public final class MockReputationService: ReputationService {
-    public init() {}
+public final class MockReputationService: ReputationService, @unchecked Sendable {
+    public var defaultScore: Int
+    public var defaultPhotoGate: Int
+    public var snapshots: [UUID: ReputationSnapshot]
+    public var selectedStyleId: ProfileStyleId?
+    public var rejectNextSelect = false
+    public private(set) var selectStyleCalls: [ProfileStyleId] = []
+    public private(set) var loadCallCount = 0
+
+    public init(
+        defaultScore: Int = Profile.sample.repScore,
+        defaultPhotoGate: Int = 50,
+        snapshots: [UUID: ReputationSnapshot] = [:]
+    ) {
+        self.defaultScore = defaultScore
+        self.defaultPhotoGate = defaultPhotoGate
+        self.snapshots = snapshots
+    }
 
     public func score(for profileID: UUID) -> Int {
-        // Returns the sample profile's score as a stand-in for any ID
-        Profile.sample.repScore
+        snapshots[profileID]?.score ?? defaultScore
     }
 
     public func canViewPhotos(viewerScore: Int, targetGate: Int) -> Bool {
         viewerScore >= targetGate
+    }
+
+    public func photoGate(for profileID: UUID) -> Int {
+        snapshots[profileID]?.photoGate ?? defaultPhotoGate
+    }
+
+    public func snapshot(for profileID: UUID) -> ReputationSnapshot? {
+        snapshots[profileID]
+    }
+
+    public func loadFromServer() async {
+        loadCallCount += 1
+    }
+
+    public func selectStyle(_ id: ProfileStyleId) async throws {
+        selectStyleCalls.append(id)
+        let score = defaultScore
+        guard ProfileStyleCatalog.isUnlocked(id, score: score) else {
+            throw ReputationError.styleLocked
+        }
+        if rejectNextSelect {
+            rejectNextSelect = false
+            throw ReputationError.styleLocked
+        }
+        selectedStyleId = id
+        if var snap = snapshots.values.first {
+            snap.selectedStyleId = id
+            snapshots[snap.userId] = snap
+        }
     }
 }
 

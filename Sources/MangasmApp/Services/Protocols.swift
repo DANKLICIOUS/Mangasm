@@ -96,10 +96,25 @@ public protocol EventService {
 }
 
 // MARK: - ReputationService
-/// Reputation scoring and photo-gating logic.
-public protocol ReputationService {
+/// Reputation scoring, photo-gating, and cosmetic style persistence.
+/// Live impl prefers `my_profile_style()` + `profiles.selected_style_id`. Mocks stay in-memory.
+public protocol ReputationService: Sendable {
     func score(for profileID: UUID) -> Int
     func canViewPhotos(viewerScore: Int, targetGate: Int) -> Bool
+    func photoGate(for profileID: UUID) -> Int
+    func snapshot(for profileID: UUID) -> ReputationSnapshot?
+    /// Hydrates the cache from Supabase. No-op for mocks.
+    func loadFromServer() async
+    /// Persists `selected_style_id` when unlocked. Throws `ReputationError.styleLocked`
+    /// when the client or server rejects a locked style.
+    func selectStyle(_ id: ProfileStyleId) async throws
+}
+
+public extension ReputationService {
+    func photoGate(for profileID: UUID) -> Int { 50 }
+    func snapshot(for profileID: UUID) -> ReputationSnapshot? { nil }
+    func loadFromServer() async {}
+    func selectStyle(_ id: ProfileStyleId) async throws {}
 }
 
 // MARK: - SafetyService

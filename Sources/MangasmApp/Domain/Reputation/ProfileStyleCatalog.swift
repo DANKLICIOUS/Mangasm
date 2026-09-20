@@ -53,39 +53,42 @@ public struct ProfileStyleConfig: Sendable, Equatable, Identifiable {
     }
 }
 
+/// Local catalog for previews, lock-row copy, and offline fallback.
+/// When a live session is available, `my_profile_style().unlocked_style_ids` is
+/// canonical — do not treat these minScores as write-time truth.
 public enum ProfileStyleCatalog {
     public static let all: [ProfileStyleConfig] = [
         .init(
             styleId: .calmStudio,
-            minScore: 0,
+            minScore: ReputationUnlockTier.new.minScore,
             badgeName: "New Member",
             displayName: "Calm Studio",
             heroAssetName: "style-hero-calmStudio"
         ),
         .init(
             styleId: .aspirational,
-            minScore: 21,
+            minScore: ReputationUnlockTier.building.minScore,
             badgeName: "Rising Member",
             displayName: "Aspirational",
             heroAssetName: "style-hero-aspirational"
         ),
         .init(
             styleId: .precisionTech,
-            minScore: 41,
+            minScore: ReputationUnlockTier.reliable.minScore,
             badgeName: "Trusted Member",
             displayName: "Precision Tech",
             heroAssetName: "style-hero-precisionTech"
         ),
         .init(
             styleId: .digitalFlow,
-            minScore: 61,
+            minScore: ReputationUnlockTier.reliable.minScore,
             badgeName: "Community Leader",
             displayName: "Digital Flow",
             heroAssetName: "style-hero-digitalFlow"
         ),
         .init(
             styleId: .boldExpression,
-            minScore: 81,
+            minScore: ReputationUnlockTier.verified.minScore,
             badgeName: "Elite Verified",
             displayName: "Bold Expression",
             heroAssetName: "style-hero-boldExpression"
@@ -97,8 +100,8 @@ public enum ProfileStyleCatalog {
     }
 
     public static func available(score: Int) -> [ProfileStyleConfig] {
-        let s = clampScore(score)
-        return all.filter { s >= $0.minScore }
+        let ids = Set(ReputationUnlockTier.from(score: score).unlockedStyleIds)
+        return all.filter { ids.contains($0.styleId) }
     }
 
     public static func defaultStyle(score: Int) -> ProfileStyleConfig {
@@ -110,7 +113,15 @@ public enum ProfileStyleCatalog {
     }
 
     public static func isUnlocked(_ id: ProfileStyleId, score: Int) -> Bool {
-        clampScore(score) >= config(id: id).minScore
+        ReputationUnlockTier.from(score: score).unlockedStyleIds.contains(id)
+    }
+
+    /// Lock-row copy: "Unlocks at Building · 40+".
+    public static func unlockHint(for id: ProfileStyleId) -> String {
+        let cfg = config(id: id)
+        if cfg.minScore <= 0 { return "Available to every member" }
+        let tier = ReputationUnlockTier.from(score: cfg.minScore)
+        return "Unlocks at \(tier.displayName) · \(cfg.minScore)+"
     }
 
     /// Canonical App Review / settings explainer (cosmetic unlocks only).

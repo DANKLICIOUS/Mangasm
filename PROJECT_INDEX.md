@@ -75,7 +75,7 @@ open Package.swift         # Xcode
 | Match | Mock | SupabaseMatchService ✅ |
 | **Chat** | Mock | **SupabaseChatService** ✅ (2026-07-19) |
 | Events | Mock | ❌ |
-| Reputation | Mock | ❌ |
+| Reputation | Mock | **SupabaseReputationService** ✅ (2026-09-20; falls back if `selected_style_id` / RPC missing) |
 | Safety | Mock | SupabaseSafetyService ✅ |
 | Referrals | Mock | SupabaseReferralService ✅ |
 
@@ -136,7 +136,7 @@ Live `makeDefault()` wires **SupabaseChatService**. Block purge = local clear + 
 3. **Dual migration trees** — backend is DB SoT; reconcile before dual push  
 4. **Codesign** — human gate (0 identities) — see `~/mastermind-ai/mangasm/ASC-CODESIGN-UNLOCK.md`  
 5. **IAP first $** — ASC product IDs + Apple IAP key env — `IAP-PATH-CHECKLIST.md`  
-6. **Events / reputation** still mock in live DI
+6. **Events** still mock in live DI; reputation is live (`reputation_scores` + gated ProfileStyle picker)
 
 ## 🔗 Related repos / ops
 

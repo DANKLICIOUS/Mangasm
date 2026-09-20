@@ -22,10 +22,10 @@ data class ProfileStyleConfig(
 object ProfileStyleCatalog {
     val all: List<ProfileStyleConfig> = listOf(
         ProfileStyleConfig(ProfileStyleId.CALM_STUDIO, 0, "New Member", "Calm Studio"),
-        ProfileStyleConfig(ProfileStyleId.ASPIRATIONAL, 21, "Rising Member", "Aspirational"),
-        ProfileStyleConfig(ProfileStyleId.PRECISION_TECH, 41, "Trusted Member", "Precision Tech"),
-        ProfileStyleConfig(ProfileStyleId.DIGITAL_FLOW, 61, "Community Leader", "Digital Flow"),
-        ProfileStyleConfig(ProfileStyleId.BOLD_EXPRESSION, 81, "Elite Verified", "Bold Expression"),
+        ProfileStyleConfig(ProfileStyleId.ASPIRATIONAL, 40, "Rising Member", "Aspirational"),
+        ProfileStyleConfig(ProfileStyleId.PRECISION_TECH, 65, "Trusted Member", "Precision Tech"),
+        ProfileStyleConfig(ProfileStyleId.DIGITAL_FLOW, 65, "Community Leader", "Digital Flow"),
+        ProfileStyleConfig(ProfileStyleId.BOLD_EXPRESSION, 85, "Elite Verified", "Bold Expression"),
     )
 
     fun clampScore(score: Int): Int = score.coerceIn(0, 100)

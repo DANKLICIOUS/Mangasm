@@ -39,7 +39,7 @@ struct ProfileScreen: View {
                         premium: state.premium,
                         canSeePhotos: env.reputation.canViewPhotos(
                             viewerScore: state.profile.repScore,
-                            targetGate: 50
+                            targetGate: env.reputation.photoGate(for: state.profile.id)
                         )
                     )
                 }

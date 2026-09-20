@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "product": "Mangasm",
   "framing": "Community Reputation",
   "explainer": "Community Reputation grows when you complete verification, receive positive feedback, finish safety education, and help keep Mangasm safe. Higher reputation unlocks cosmetic profile styles only — never messages, adult visibility, or sexual features.",
@@ -16,7 +16,7 @@
     {
       "swiftId": "aspirational",
       "rnId": "lambo",
-      "minScore": 21,
+      "minScore": 40,
       "badgeName": "Rising Member",
       "displayName": "Aspirational",
       "heroAsset": "style-hero-aspirational",
@@ -25,7 +25,7 @@
     {
       "swiftId": "precisionTech",
       "rnId": "cyborg",
-      "minScore": 41,
+      "minScore": 65,
       "badgeName": "Trusted Member",
       "displayName": "Precision Tech",
       "heroAsset": "style-hero-precisionTech",
@@ -34,7 +34,7 @@
     {
       "swiftId": "digitalFlow",
       "rnId": "matrix",
-      "minScore": 61,
+      "minScore": 65,
       "badgeName": "Community Leader",
       "displayName": "Digital Flow",
       "heroAsset": "style-hero-digitalFlow",
@@ -43,7 +43,7 @@
     {
       "swiftId": "boldExpression",
       "rnId": "gothGlam",
-      "minScore": 81,
+      "minScore": 85,
       "badgeName": "Elite Verified",
       "displayName": "Bold Expression",
       "heroAsset": "style-hero-boldExpression",

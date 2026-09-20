@@ -48,7 +48,9 @@ public struct HowTrustScoreWorksView: View {
 
                     section("Cosmetic styles") {
                         Text(
-                            "At scores 0 / 21 / 41 / 61 / 81 you unlock profile looks. "
+                            "New members start with Calm Studio. Building (40+) adds Aspirational. "
+                                + "Reliable (65+) adds Precision Tech and Digital Flow. "
+                                + "Verified (85+) unlocks Bold Expression. "
                                 + "You may freely switch among any unlocked styles. "
                                 + "Styles never unlock messaging or private content."
                         )
