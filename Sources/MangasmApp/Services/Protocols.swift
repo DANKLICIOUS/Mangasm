@@ -97,7 +97,7 @@ public protocol EventService {
 
 // MARK: - ReputationService
 /// Reputation scoring, photo-gating, and cosmetic style persistence.
-/// Live impl reads `reputation_scores` (server SoT). Mocks stay in-memory.
+/// Live impl prefers `my_profile_style()` + `profiles.selected_style_id`. Mocks stay in-memory.
 public protocol ReputationService: Sendable {
     func score(for profileID: UUID) -> Int
     func canViewPhotos(viewerScore: Int, targetGate: Int) -> Bool

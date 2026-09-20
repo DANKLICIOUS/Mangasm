@@ -1,7 +1,7 @@
 import Foundation
 
 /// Classifies PostgREST / Postgres errors so live reputation can fall back when
-/// `selected_style_id` or `set_selected_style` are not deployed yet.
+/// `my_profile_style` or `profiles.selected_style_id` are not deployed yet.
 public enum ReputationBackendIssue: Sendable, Equatable {
     case styleLocked
     case missingColumn
@@ -47,7 +47,14 @@ public enum ReputationSchemaProbe {
     }
 
     private static func isStyleLocked(_ text: String) -> Bool {
-        if containsAny(text, ["style_locked", "style is locked", "style not unlocked"]) {
+        if containsAny(text, [
+            "style_locked",
+            "style is locked",
+            "style not unlocked",
+            "is not unlocked",
+            "23514",
+            "check_violation",
+        ]) {
             return true
         }
         return text.contains("p0001") && text.contains("style")

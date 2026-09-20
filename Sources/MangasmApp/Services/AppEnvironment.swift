@@ -65,8 +65,8 @@ public final class AppEnvironment: ObservableObject {
         dateNight: MockDateNightService()
     )
 
-    /// Live auth + profile + chat + safety + reputation when Supabase keys are configured.
-    /// Events remain mock until a live EventService ships.
+    /// Live auth + profile + chat + safety + reputation (`my_profile_style`) when
+    /// Supabase keys are configured. Events remain mock until a live EventService ships.
     /// DateNight uses Yelp + Ticketmaster when keys are present; otherwise mock fixtures.
     public static func makeDefault() -> AppEnvironment {
         let dateNight: any DateNightService = {

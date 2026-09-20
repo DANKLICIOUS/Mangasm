@@ -92,12 +92,12 @@ final class CommunityReputationStyleFacadeTests: XCTestCase {
         XCTAssertEqual(active.badgeName, "New Member")
     }
 
-    func testResolveFallsBackWhenPreferredLocked() {
+    func testResolveGrandfathersPreferredAfterDemotion() {
         let active = CommunityReputationStyle.resolve(
             score: 10,
             preferred: .boldExpression
         )
-        XCTAssertEqual(active.styleId, .calmStudio)
+        XCTAssertEqual(active.styleId, .boldExpression)
     }
 }
 

@@ -14,7 +14,7 @@ public struct ProfileStylePicker: View {
                 .foregroundStyle(MGColor.goldBright)
                 .tracking(0.8)
 
-            let tier = ReputationUnlockTier.from(score: state.profile.repScore)
+            let tier = state.reputationTier ?? ReputationUnlockTier.from(score: state.profile.repScore)
             Text("Score \(state.profile.repScore) · \(tier.displayName) · \(state.profileStyle.activeConfig.badgeName)")
                 .font(MGFont.mono(10))
                 .foregroundStyle(MGColor.inkSoft)

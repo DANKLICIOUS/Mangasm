@@ -37,8 +37,10 @@ public final class AppState: ObservableObject {
     @Published public var profileStyle: ProfileStyleState
     /// One-shot unlock toast queue (cleared by UI after display).
     @Published public var pendingStyleUnlocks: [ProfileStyleConfig] = []
-    /// Server-authored unlock list when `reputation_scores` / RPC returns one.
+    /// Server-authored unlock list from `my_profile_style().unlocked_style_ids`.
     @Published public var serverUnlockedStyleIds: [ProfileStyleId]?
+    /// Cached tier from `my_profile_style()` when live.
+    @Published public var reputationTier: ReputationUnlockTier?
     /// User-visible persist / rejection message for the style picker.
     @Published public var lastStylePersistMessage: String?
 
@@ -105,6 +107,7 @@ public final class AppState: ObservableObject {
     /// false unlock celebration when hydrating over the sample seed score.
     public func applyReputationSnapshot(_ snap: ReputationSnapshot, suppressToast: Bool = false) {
         profile.repScore = snap.score
+        reputationTier = snap.tier
         serverUnlockedStyleIds = snap.unlocksFromServer ? snap.unlockedStyleIds : nil
         if suppressToast {
             profileStyle.reputationScore = ProfileStyleCatalog.clampScore(snap.score)
@@ -118,10 +121,9 @@ public final class AppState: ObservableObject {
                 pendingStyleUnlocks = toast
             }
         }
-        if let selected = snap.selectedStyleId,
-           isStyleUnlocked(selected),
-           CommunityReputationStyle.selectPreferred(selected, state: &profileStyle)
-        {
+        if let selected = snap.selectedStyleId {
+            // Demotion does not wipe an already-chosen style (backend contract).
+            profileStyle.preferredStyleId = selected
             styleStore.savePreferred(selected)
         }
         styleStore.saveSeenUnlockIds(profileStyle.seenUnlockIds)
@@ -134,10 +136,9 @@ public final class AppState: ObservableObject {
             lastStylePersistMessage = ProfileStyleCatalog.unlockHint(for: id)
             return
         }
-        if CommunityReputationStyle.selectPreferred(id, state: &profileStyle) {
-            styleStore.savePreferred(id)
-            objectWillChange.send()
-        }
+        profileStyle.preferredStyleId = id
+        styleStore.savePreferred(id)
+        objectWillChange.send()
     }
 
     /// Client gate, local persist, then server persist. Reverts on `styleLocked`.
@@ -191,6 +192,7 @@ public final class AppState: ObservableObject {
         clearPendingReferralCode()
         pendingStyleUnlocks = []
         serverUnlockedStyleIds = nil
+        reputationTier = nil
         lastStylePersistMessage = nil
         syncProfileStyleWithReputation()
     }

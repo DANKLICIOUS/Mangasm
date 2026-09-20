@@ -2,6 +2,13 @@
 
 **Cosmetic only.** Never gate messaging or adult content on these columns.
 
+> **2026-09-20 — live contract (mangasm-backend #10):** writes go to
+> `profiles.selected_style_id` (enum, default `calmStudio`). Reads go through
+> `my_profile_style()` (`score`, `tier`, `unlocked_style_ids`, `selected_style_id`).
+> Do **not** apply this iOS `supabase/` tree to the same project as
+> `mangasm-backend`. See `docs/reputation-live.md` and backend
+> `docs/PROFILE_STYLE.md`. The SQL below is historical / additive sketch only.
+
 ## Postgres (Supabase)
 
 ```sql

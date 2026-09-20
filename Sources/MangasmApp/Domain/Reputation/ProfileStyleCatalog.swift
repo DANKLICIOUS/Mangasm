@@ -53,6 +53,9 @@ public struct ProfileStyleConfig: Sendable, Equatable, Identifiable {
     }
 }
 
+/// Local catalog for previews, lock-row copy, and offline fallback.
+/// When a live session is available, `my_profile_style().unlocked_style_ids` is
+/// canonical — do not treat these minScores as write-time truth.
 public enum ProfileStyleCatalog {
     public static let all: [ProfileStyleConfig] = [
         .init(

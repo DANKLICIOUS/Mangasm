@@ -1,28 +1,30 @@
 import Foundation
 import Supabase
 
-/// Live Community Reputation: reads `reputation_scores`, persists `selected_style_id`.
+/// Live Community Reputation aligned to mangasm-backend `docs/PROFILE_STYLE.md`.
 ///
-/// Intended backend contract (sibling `mangasm-backend`; may land after this client):
-/// - Table `reputation_scores` (`user_id`, `score`, `tier`, `photo_gate`, `selected_style_id`)
-/// - RPC `set_selected_style(p_style_id text)` — rejects locked styles
+/// Canonical contract (backend PR #10 / migration `0009_profile_style.sql`):
+/// - Read: RPC `my_profile_style()` → `score`, `tier`, `unlocked_style_ids`, `selected_style_id`
+/// - Write: `UPDATE profiles.selected_style_id` (enum; default `calmStudio`)
+/// - Unlocks come from the RPC list, not the local 0/21/41/61/81 catalog
+/// - Illegal writes raise `check_violation` / RLS; demotion does not clear a chosen style
 ///
-/// Missing columns / RPC / table are probed once per session and fall back:
-/// RPC → `reputation_scores.selected_style_id` → `profiles.selected_style_id` /
-/// `profiles.preferred_style` → local-only (UserDefaults via AppState).
+/// Do **not** `db push` this repo’s `supabase/` tree onto the same project as
+/// `DANKLICIOUS/mangasm-backend` (divergent migration lineage).
+///
+/// If the RPC / column are not deployed yet, fall back to `reputation_scores`
+/// (read-only score/tier/photo_gate) + local unlock map, then UserDefaults.
 public final class SupabaseReputationService: ReputationService, @unchecked Sendable {
-    public static let setStyleRPC = "set_selected_style"
+    public static let myProfileStyleRPC = "my_profile_style"
     public static let scoresTable = "reputation_scores"
 
     private let client: SupabaseClient
     private let lock = NSLock()
     private var cache: [UUID: ReputationSnapshot] = [:]
 
-    private var hasReputationTable = true
-    private var hasSelectedStyleOnScores = true
-    private var hasSetStyleRPC = true
+    private var hasMyProfileStyleRPC = true
     private var hasSelectedStyleOnProfiles = true
-    private var hasPreferredStyleOnProfiles = true
+    private var hasReputationTable = true
 
     public init(client: SupabaseClient) {
         self.client = client
@@ -48,20 +50,16 @@ public final class SupabaseReputationService: ReputationService, @unchecked Send
     public func loadFromServer() async {
         guard let userID = try? await currentUserID() else { return }
 
-        if hasReputationTable {
-            if hasSelectedStyleOnScores,
-               let snap = await fetchScoreRow(userID: userID, includeSelectedStyle: true)
-            {
-                store(snap)
-                return
+        if hasMyProfileStyleRPC, let snap = await fetchMyProfileStyle(userID: userID) {
+            var hydrated = snap
+            if let gate = await fetchPhotoGate(userID: userID) {
+                hydrated.photoGate = gate
             }
-            if let snap = await fetchScoreRow(userID: userID, includeSelectedStyle: false) {
-                store(snap)
-                return
-            }
+            store(hydrated)
+            return
         }
 
-        if let snap = await fetchProfileFallback(userID: userID) {
+        if let snap = await fetchFallbackSnapshot(userID: userID) {
             store(snap)
         }
     }
@@ -69,192 +67,149 @@ public final class SupabaseReputationService: ReputationService, @unchecked Send
     public func selectStyle(_ id: ProfileStyleId) async throws {
         let userID = try await currentUserID()
         let cached = snapshot(for: userID)
-        // No snapshot yet (load pending / table missing): skip the local lock
-        // and let the server or column fallbacks decide. An empty cache must
-        // not pretend the member is New (score 0) and revert a valid pick.
         if let cached, !cached.isUnlocked(id) {
             throw ReputationError.styleLocked
         }
-        let current = cached ?? ReputationSnapshot(userId: userID, score: 0)
 
-        if hasSetStyleRPC {
-            do {
-                try await invokeSetStyleRPC(id)
-                updateCache(userID: userID, selected: id, score: current.score, photoGate: current.photoGate)
-                return
-            } catch {
-                switch ReputationSchemaProbe.diagnose(error) {
-                case .styleLocked:
-                    throw ReputationError.styleLocked
-                case .missingRPC:
-                    hasSetStyleRPC = false
-                case .missingColumn, .missingTable, .other:
-                    // RPC may exist but write path failed; try column updates.
-                    if ReputationSchemaProbe.diagnose(error) == .other {
-                        throw ReputationError.server(error.localizedDescription)
-                    }
-                    hasSetStyleRPC = false
-                }
-            }
+        guard hasSelectedStyleOnProfiles else {
+            updateCacheSelected(userID: userID, id: id)
+            return
         }
 
-        if hasReputationTable && hasSelectedStyleOnScores {
-            do {
-                try await updateScoresSelectedStyle(userID: userID, id: id)
-                updateCache(userID: userID, selected: id, score: current.score, photoGate: current.photoGate)
-                return
-            } catch {
-                switch ReputationSchemaProbe.diagnose(error) {
-                case .styleLocked:
-                    throw ReputationError.styleLocked
-                case .missingColumn:
-                    hasSelectedStyleOnScores = false
-                case .missingTable:
-                    hasReputationTable = false
-                case .missingRPC, .other:
-                    throw ReputationError.server(error.localizedDescription)
-                }
+        do {
+            try await persistSelectedStyle(userID: userID, id: id)
+            updateCacheSelected(userID: userID, id: id)
+        } catch {
+            switch ReputationSchemaProbe.diagnose(error) {
+            case .styleLocked:
+                throw ReputationError.styleLocked
+            case .missingColumn:
+                hasSelectedStyleOnProfiles = false
+                updateCacheSelected(userID: userID, id: id)
+            case .missingRPC, .missingTable, .other:
+                throw ReputationError.server(error.localizedDescription)
             }
         }
-
-        if hasSelectedStyleOnProfiles {
-            do {
-                try await updateProfileStyleColumn(userID: userID, column: "selected_style_id", id: id)
-                updateCache(userID: userID, selected: id, score: current.score, photoGate: current.photoGate)
-                return
-            } catch {
-                switch ReputationSchemaProbe.diagnose(error) {
-                case .styleLocked:
-                    throw ReputationError.styleLocked
-                case .missingColumn:
-                    hasSelectedStyleOnProfiles = false
-                case .missingRPC, .missingTable, .other:
-                    break
-                }
-            }
-        }
-
-        if hasPreferredStyleOnProfiles {
-            do {
-                try await updateProfileStyleColumn(userID: userID, column: "preferred_style", id: id)
-                updateCache(userID: userID, selected: id, score: current.score, photoGate: current.photoGate)
-                return
-            } catch {
-                switch ReputationSchemaProbe.diagnose(error) {
-                case .styleLocked:
-                    throw ReputationError.styleLocked
-                case .missingColumn:
-                    hasPreferredStyleOnProfiles = false
-                case .missingRPC, .missingTable, .other:
-                    throw ReputationError.server(error.localizedDescription)
-                }
-            }
-        }
-
-        // Schema not deployed yet — local persist (AppState / UserDefaults) still applies.
-        updateCache(userID: userID, selected: id, score: current.score, photoGate: current.photoGate)
     }
 
     // MARK: - Fetch
 
-    private func fetchScoreRow(userID: UUID, includeSelectedStyle: Bool) async -> ReputationSnapshot? {
-        let columns = includeSelectedStyle
-            ? "user_id,score,tier,photo_gate,selected_style_id"
-            : "user_id,score,tier,photo_gate"
+    private func fetchMyProfileStyle(userID: UUID) async -> ReputationSnapshot? {
         do {
-            let row: ReputationScoreMapper.ScoreRow = try await client
-                .from(Self.scoresTable)
-                .select(columns)
-                .eq("user_id", value: userID.uuidString)
+            let row: ReputationScoreMapper.MyProfileStyleRow = try await client
+                .rpc(Self.myProfileStyleRPC)
                 .single()
                 .execute()
                 .value
-            return ReputationScoreMapper.snapshot(from: row)
+            return ReputationScoreMapper.snapshot(from: row, userId: userID)
         } catch {
+            if let rows: [ReputationScoreMapper.MyProfileStyleRow] = try? await client
+                .rpc(Self.myProfileStyleRPC)
+                .execute()
+                .value,
+               let row = rows.first
+            {
+                return ReputationScoreMapper.snapshot(from: row, userId: userID)
+            }
             switch ReputationSchemaProbe.diagnose(error) {
-            case .missingColumn:
-                if includeSelectedStyle { hasSelectedStyleOnScores = false }
-            case .missingTable:
-                hasReputationTable = false
-            case .missingRPC, .styleLocked, .other:
+            case .missingRPC, .missingTable:
+                hasMyProfileStyleRPC = false
+            case .missingColumn, .styleLocked, .other:
                 break
             }
             return nil
         }
     }
 
-    private func fetchProfileFallback(userID: UUID) async -> ReputationSnapshot? {
-        let selects = [
-            hasSelectedStyleOnProfiles
-                ? "id,rep_score,selected_style_id,preferred_style,preferred_style_id"
-                : "id,rep_score,preferred_style,preferred_style_id",
-            "id,rep_score,preferred_style",
-            "id,rep_score",
-        ]
-        for select in selects {
+    private func fetchPhotoGate(userID: UUID) async -> Int? {
+        guard hasReputationTable else { return nil }
+        do {
+            let row: ReputationScoreMapper.PhotoGateRow = try await client
+                .from(Self.scoresTable)
+                .select("photo_gate")
+                .eq("user_id", value: userID.uuidString)
+                .single()
+                .execute()
+                .value
+            return row.photo_gate
+        } catch {
+            if ReputationSchemaProbe.diagnose(error) == .missingTable {
+                hasReputationTable = false
+            }
+            return nil
+        }
+    }
+
+    private func fetchFallbackSnapshot(userID: UUID) async -> ReputationSnapshot? {
+        var score = 0
+        var tier: String?
+        var photoGate = 50
+
+        if hasReputationTable {
+            struct ScoreOnly: Decodable, Sendable {
+                var score: Int?
+                var tier: String?
+                var photo_gate: Int?
+            }
+            do {
+                let row: ScoreOnly = try await client
+                    .from(Self.scoresTable)
+                    .select("score,tier,photo_gate")
+                    .eq("user_id", value: userID.uuidString)
+                    .single()
+                    .execute()
+                    .value
+                score = row.score ?? 0
+                tier = row.tier
+                photoGate = row.photo_gate ?? 50
+            } catch {
+                if ReputationSchemaProbe.diagnose(error) == .missingTable {
+                    hasReputationTable = false
+                }
+            }
+        }
+
+        if hasSelectedStyleOnProfiles {
             do {
                 let row: ReputationScoreMapper.ProfileFallbackRow = try await client
                     .from("profiles")
-                    .select(select)
+                    .select("id,selected_style_id")
                     .eq("id", value: userID.uuidString)
                     .single()
                     .execute()
                     .value
-                return ReputationScoreMapper.snapshot(from: row)
+                var snap = ReputationScoreMapper.snapshot(from: row, score: score, tier: tier)
+                snap.photoGate = photoGate
+                return snap
             } catch {
                 if ReputationSchemaProbe.diagnose(error) == .missingColumn {
-                    if select.contains("selected_style_id") {
-                        hasSelectedStyleOnProfiles = false
-                    }
-                    if select.contains("preferred_style") {
-                        hasPreferredStyleOnProfiles = false
-                    }
-                    continue
+                    hasSelectedStyleOnProfiles = false
                 }
-                return nil
             }
         }
-        return nil
+
+        return ReputationSnapshot(userId: userID, score: score, photoGate: photoGate, tier: ReputationUnlockTier.parse(tier))
     }
 
     // MARK: - Persist
 
-    private func invokeSetStyleRPC(_ id: ProfileStyleId) async throws {
-        struct Params: Encodable, Sendable {
-            let p_style_id: String
-        }
-        _ = try await client
-            .rpc(Self.setStyleRPC, params: Params(p_style_id: id.rawValue))
-            .execute()
-    }
-
-    private func updateScoresSelectedStyle(userID: UUID, id: ProfileStyleId) async throws {
+    private func persistSelectedStyle(userID: UUID, id: ProfileStyleId) async throws {
         struct Payload: Encodable, Sendable {
             let selected_style_id: String
         }
-        try await client
-            .from(Self.scoresTable)
+        struct Written: Decodable, Sendable {
+            let selected_style_id: String
+        }
+        let written: Written = try await client
+            .from("profiles")
             .update(Payload(selected_style_id: id.rawValue))
-            .eq("user_id", value: userID.uuidString)
+            .eq("id", value: userID.uuidString)
+            .select("selected_style_id")
+            .single()
             .execute()
-    }
-
-    private func updateProfileStyleColumn(userID: UUID, column: String, id: ProfileStyleId) async throws {
-        // Encode a single known column without inventing dynamic CodingKeys.
-        if column == "preferred_style" {
-            struct Payload: Encodable, Sendable { let preferred_style: String }
-            try await client
-                .from("profiles")
-                .update(Payload(preferred_style: id.rawValue))
-                .eq("id", value: userID.uuidString)
-                .execute()
-        } else {
-            struct Payload: Encodable, Sendable { let selected_style_id: String }
-            try await client
-                .from("profiles")
-                .update(Payload(selected_style_id: id.rawValue))
-                .eq("id", value: userID.uuidString)
-                .execute()
+            .value
+        if written.selected_style_id != id.rawValue {
+            throw ReputationError.styleLocked
         }
     }
 
@@ -266,15 +221,9 @@ public final class SupabaseReputationService: ReputationService, @unchecked Send
         lock.unlock()
     }
 
-    private func updateCache(userID: UUID, selected: ProfileStyleId, score: Int, photoGate: Int) {
-        var snap = snapshot(for: userID) ?? ReputationSnapshot(userId: userID, score: score, photoGate: photoGate)
-        snap.selectedStyleId = selected
-        snap.score = ProfileStyleCatalog.clampScore(score)
-        snap.photoGate = photoGate
-        if !snap.unlocksFromServer {
-            snap.unlockedStyleIds = ReputationUnlockTier.from(score: snap.score).unlockedStyleIds
-            snap.tier = ReputationUnlockTier.from(score: snap.score)
-        }
+    private func updateCacheSelected(userID: UUID, id: ProfileStyleId) {
+        var snap = snapshot(for: userID) ?? ReputationSnapshot(userId: userID, score: 0)
+        snap.selectedStyleId = id
         store(snap)
     }
 

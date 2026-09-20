@@ -16,9 +16,9 @@ public struct ProfileStyleState: Sendable, Equatable {
     }
 
     public var activeConfig: ProfileStyleConfig {
-        if let preferred = preferredStyleId,
-           ProfileStyleCatalog.isUnlocked(preferred, score: reputationScore)
-        {
+        // Grandfather a previously chosen style after demotion — server keeps
+        // `selected_style_id`; new picks still go through `selectPreferred`.
+        if let preferred = preferredStyleId {
             return ProfileStyleCatalog.config(id: preferred)
         }
         return ProfileStyleCatalog.defaultStyle(score: reputationScore)

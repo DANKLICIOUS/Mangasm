@@ -7,9 +7,9 @@ final class ProfileStyleStateTests: XCTestCase {
         XCTAssertEqual(state.activeConfig.styleId, .calmStudio)
     }
 
-    func testPreferredNotUnlockedFallsBackToDefault() {
+    func testPreferredGrandfatheredAfterDemotion() {
         let state = ProfileStyleState(reputationScore: 10, preferredStyleId: .digitalFlow)
-        XCTAssertEqual(state.activeConfig.styleId, .calmStudio)
+        XCTAssertEqual(state.activeConfig.styleId, .digitalFlow)
     }
 
     func testScoreIncreaseDetectsNewUnlocks() {

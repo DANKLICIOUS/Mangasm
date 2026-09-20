@@ -1,74 +1,82 @@
 # Live Community Reputation + gated ProfileStyle themes
 
-Client contract for `SupabaseReputationService`. Server remains the source of truth
-for unlocks. This is **cosmetic only** — it does not change App Review Guideline 1.2
-claims (block/report/delete), StoreKit IAP, or photo-gate math.
+Client contract for `SupabaseReputationService`. **Server is the source of truth
+for unlocks.** Cosmetic only — does not change App Review Guideline 1.2 claims,
+StoreKit IAP, or photo-gate math.
 
 Build 38 (1.1.1) is already in TestFlight. This work is for a later build.
 
-## Unlock map
+Canonical backend doc: [`DANKLICIOUS/mangasm-backend` `docs/PROFILE_STYLE.md`](https://github.com/DANKLICIOUS/mangasm-backend/blob/cursor/reputation-gated-profile-style-b83a/docs/PROFILE_STYLE.md)
+(draft PR [#10](https://github.com/DANKLICIOUS/mangasm-backend/pull/10)).
 
-| Tier (`reputation_scores.tier`) | Score | Unlocked styles |
-| ------------------------------- | ----- | --------------- |
+## Dual-tree hazard
+
+Canonical migrations live in **`DANKLICIOUS/mangasm-backend`**
+(`0009_profile_style.sql` and earlier). This iOS repo has a **divergent**
+`supabase/migrations/` tree (`0001_mangasm_init.sql`, denormalized
+`profiles.rep_score`, different RLS). Those files are not a copy of the backend.
+
+**Do not `supabase db push` this repo’s `supabase/` tree onto the same project
+as mangasm-backend.** Point `supabase link` / `db push` at the backend repo only.
+
+## Round-trip + persist
+
+| Direction | Surface |
+| --------- | ------- |
+| Read | RPC `my_profile_style()` → `score`, `tier`, `unlocked_style_ids[]`, `selected_style_id` |
+| Write | `UPDATE profiles.selected_style_id` (enum, default `calmStudio`) |
+| Score cache | `reputation_scores` is **read-only** from the client (`recalculate-score` writes it) |
+
+```swift
+let row: MyProfileStyle = try await client.rpc("my_profile_style").single().execute().value
+
+try await client
+    .from("profiles")
+    .update(["selected_style_id": styleId.rawValue])
+    .eq("id", value: session.user.id.uuidString)
+    .execute()
+```
+
+When the RPC is present, treat `unlocked_style_ids` as canonical. Do not recompute
+write-time unlocks from the old local 0 / 21 / 41 / 61 / 81 catalog. Local
+`ProfileStyleCatalog` minScores (0 / 40 / 65 / 65 / 85) are UX hints + offline
+fallback only.
+
+Illegal updates raise `check_violation` (`23514`) / RLS. A later demotion does
+**not** clear `selected_style_id` — the member keeps the look they already
+picked and cannot switch to a newly locked style.
+
+If the RPC or column is not deployed yet, the client falls back to a read of
+`reputation_scores` (score/tier/`photo_gate`) plus local UserDefaults.
+
+## Unlock map (`recalculate-score` tiers)
+
+| Tier | Score | Unlocked styles |
+| ---- | ----- | --------------- |
 | `new` | &lt; 40 | `calmStudio` |
 | `building` | 40+ | + `aspirational` |
 | `reliable` | 65+ | + `precisionTech`, `digitalFlow` |
 | `verified` | 85+ | + `boldExpression` (all five) |
 
-## Intended backend contract
-
-Sibling repo `DANKLICIOUS/mangasm-backend` owns schema. Expected surface:
-
-```
-reputation_scores
-  user_id uuid PK
-  score int            -- 0…100
-  tier text            -- new | building | reliable | verified
-  photo_gate int       -- min viewer score to see photos (default 50)
-  selected_style_id    -- calmStudio | aspirational | precisionTech | digitalFlow | boldExpression
-  vouch_count int
-  updated_at timestamptz
-
-RPC set_selected_style(p_style_id text)
-  -- auth.uid() only; reject locked styles (raise style_locked)
-  -- writes selected_style_id; may return { selected_style_id, score, unlocked }
-
-Edge recalculate-score
-  -- server-only score writes; client never writes score
-```
-
-If `selected_style_id` / the RPC are not deployed yet, the iOS client:
-
-1. Tries `set_selected_style`
-2. Falls back to `UPDATE reputation_scores.selected_style_id`
-3. Then `profiles.selected_style_id` / `profiles.preferred_style`
-4. Then **local-only** persist (UserDefaults via `ProfileStyleStore`)
-
-Missing-schema errors (`PGRST202/204/205`, `42703`, `42883`, `42P01`) are probed once per session.
+IDs must match Swift `ProfileStyleId` raw values (not RN aliases).
 
 ## Smoke test (live Supabase)
 
-Requires a signed-in member and Info.plist `SUPABASE_URL` + publishable key (never commit secrets).
+Requires a signed-in member and Info.plist `SUPABASE_URL` + publishable key
+(never commit secrets). Backend `0009` must be applied **from mangasm-backend**.
 
-1. Sign in. Confirm Settings → Profile styles shows **Score N · {New\|Building\|Reliable\|Verified}**.
+1. Sign in. Settings → Profile styles shows **Score N · {New\|Building\|Reliable\|Verified}**.
 2. Locked cells show a lock + “Unlocks at {tier} · {score}+” and are not tappable.
-3. Tap an unlocked style. Profile + TopBar badge/theme update immediately.
-4. Force-quit and relaunch: selected style still applied (UserDefaults + server when deployed).
-5. With RPC deployed: pick a style you have not unlocked (or lower `score` in SQL as a service role). Client should show the rejection message and revert.
-6. Photos on Profile still use `canViewPhotos(viewerScore, photo_gate)` — style choice must not reveal photos.
-
-SQL checks (dashboard / `supabase db query`):
-
-```sql
-select user_id, score, tier, photo_gate, selected_style_id
-from reputation_scores
-where user_id = auth.uid();  -- or paste the member uuid
-```
-
-After a successful picker tap (when the column exists):
+3. Tap an unlocked style. Profile + TopBar update. Relaunch keeps the pick.
+4. As service role, set `reputation_scores.score/tier` to `new` after picking
+   `boldExpression`. Relaunch: theme stays Bold Expression; Aspirational stays locked.
+5. `update profiles set selected_style_id = 'boldExpression'` while still `new`
+   must fail (`check_violation`); picker shows the rejection and reverts.
+6. Photos still use `canViewPhotos(viewerScore, photo_gate)` — style does not reveal photos.
 
 ```sql
-select selected_style_id from reputation_scores where user_id = '<member-uuid>';
+select * from public.my_profile_style();  -- JWT required
+select selected_style_id from profiles where id = '<member-uuid>';
 ```
 
 ## Mocks

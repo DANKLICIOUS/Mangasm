@@ -64,6 +64,43 @@ final class ReputationServiceTests: XCTestCase {
         XCTAssertTrue(state.isStyleUnlocked(.digitalFlow))
     }
 
+    func testServerUnlockListIsWriteTimeTruthNotLocalCatalog() {
+        let state = AppState(styleStore: InMemoryProfileStyleStore())
+        let snap = ReputationSnapshot(
+            userId: state.profile.id,
+            score: 99,
+            selectedStyleId: .calmStudio,
+            unlockedStyleIds: [.calmStudio, .aspirational],
+            unlocksFromServer: true
+        )
+        state.applyReputationSnapshot(snap, suppressToast: true)
+        XCTAssertTrue(ProfileStyleCatalog.isUnlocked(.boldExpression, score: 99))
+        XCTAssertFalse(state.isStyleUnlocked(.boldExpression))
+        XCTAssertTrue(state.isStyleUnlocked(.aspirational))
+        state.setPreferredStyle(.boldExpression)
+        XCTAssertEqual(state.profileStyle.preferredStyleId, .calmStudio)
+    }
+
+    func testAppStateGrandfathersSelectedStyleAfterDemotion() {
+        let store = InMemoryProfileStyleStore()
+        let state = AppState(styleStore: store)
+        let snap = ReputationSnapshot(
+            userId: state.profile.id,
+            score: 0,
+            selectedStyleId: .boldExpression,
+            unlockedStyleIds: [.calmStudio],
+            unlocksFromServer: true
+        )
+        state.applyReputationSnapshot(snap, suppressToast: true)
+        XCTAssertEqual(state.profile.repScore, 0)
+        XCTAssertEqual(state.profileStyle.preferredStyleId, .boldExpression)
+        XCTAssertEqual(state.profileStyle.activeConfig.styleId, .boldExpression)
+        XCTAssertFalse(state.isStyleUnlocked(.aspirational))
+        XCTAssertTrue(state.isStyleUnlocked(.calmStudio))
+        state.setPreferredStyle(.aspirational)
+        XCTAssertEqual(state.profileStyle.preferredStyleId, .boldExpression)
+    }
+
     func testAppStateClientGateBlocksLockedTap() {
         let state = AppState(styleStore: InMemoryProfileStyleStore())
         state.profile.repScore = 10
