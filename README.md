@@ -140,7 +140,7 @@ Version numbers live in `project.yml` (`MARKETING_VERSION` / `CURRENT_PROJECT_VE
 
 _Updated 2026-07-23 — the earlier "mock-only prototype" description was stale. See `SPEC_INDEX.md` for the authoritative claim/blocker status._
 
-- **Live/mock split** — real Supabase services live in `Sources/MangasmApp/Services/Live/` (auth, profile, match, chat, safety, referral) and are selected when `SupabaseConfig` is present in Info.plist; otherwise the app falls back to the mock environment (`AppEnvironment.swift`). Previews and tests intentionally use mocks. ⚠️ The fallback is currently unconditional — a Release archive without config silently ships all-mock services (review-polish blocker B3).
+- **Live/mock split** — real Supabase services live in `Sources/MangasmApp/Services/Live/` (auth, profile, match, chat, safety, referral, reputation) and are selected when `SupabaseConfig` is present in Info.plist; otherwise the app falls back to the mock environment (`AppEnvironment.swift`). Previews and tests intentionally use mocks. ⚠️ The fallback is currently unconditional — a Release archive without config silently ships all-mock services (review-polish blocker B3).
 - **Live auth is email/password only** — sign-up with email confirmation, sign-in, and password reset run on Supabase (`SupabaseAuthService.swift`, `EmailAuthValidator.swift`). Sign in with Apple and the Google/phone buttons have been removed.
 - **No content filter yet** — moderation/filtering on messages and profiles is not implemented (blocker B1).
 - **Map is stylized, not functional** — `FakeMap` renders gradient streets and pinned avatars; no MapKit, no GPS, no location collection of any kind. Live Discover currently backfills `Candidate.samples` when the DB returns few rows (blocker B4).

@@ -40,7 +40,7 @@ final class TrustScoreFormulaTests: XCTestCase {
 
     func testProgressToNextStyle() {
         let (next, p) = TrustScoreFormula.progressToNextStyle(score: 42)
-        XCTAssertEqual(next?.styleId, .digitalFlow)
+        XCTAssertEqual(next?.styleId, .precisionTech)
         XCTAssertGreaterThan(p, 0)
         XCTAssertLessThan(p, 1)
         let (done, full) = TrustScoreFormula.progressToNextStyle(score: 100)

@@ -65,8 +65,8 @@ public final class AppEnvironment: ObservableObject {
         dateNight: MockDateNightService()
     )
 
-    /// Live auth + profile + chat + safety when Supabase keys are configured.
-    /// Events / reputation remain mock until their live services ship.
+    /// Live auth + profile + chat + safety + reputation when Supabase keys are configured.
+    /// Events remain mock until a live EventService ships.
     /// DateNight uses Yelp + Ticketmaster when keys are present; otherwise mock fixtures.
     public static func makeDefault() -> AppEnvironment {
         let dateNight: any DateNightService = {
@@ -115,7 +115,7 @@ public final class AppEnvironment: ObservableObject {
             matches: SupabaseMatchService(client: client),
             chat: SupabaseChatService(client: client),
             events: MockEventService(),
-            reputation: MockReputationService(),
+            reputation: SupabaseReputationService(client: client),
             safety: SupabaseSafetyService(client: client),
             referrals: SupabaseReferralService(
                 client: client,
