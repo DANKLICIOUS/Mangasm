@@ -68,11 +68,14 @@ public final class SupabaseReputationService: ReputationService, @unchecked Send
 
     public func selectStyle(_ id: ProfileStyleId) async throws {
         let userID = try await currentUserID()
-        let current = snapshot(for: userID) ?? ReputationSnapshot(userId: userID, score: 0)
-
-        guard current.isUnlocked(id) else {
+        let cached = snapshot(for: userID)
+        // No snapshot yet (load pending / table missing): skip the local lock
+        // and let the server or column fallbacks decide. An empty cache must
+        // not pretend the member is New (score 0) and revert a valid pick.
+        if let cached, !cached.isUnlocked(id) {
             throw ReputationError.styleLocked
         }
+        let current = cached ?? ReputationSnapshot(userId: userID, score: 0)
 
         if hasSetStyleRPC {
             do {
