@@ -205,7 +205,20 @@ function setupForm() {
   });
 }
 
+
+async function ensureArt() {
+  const layer = document.querySelector(".art-layer");
+  if (!layer) return;
+  try {
+    const { applyPanoramaArt } = await import("./panorama-assemble.js");
+    await applyPanoramaArt(layer);
+  } catch (e) {
+    console.warn("panorama art fallback", e);
+  }
+}
+
 function main() {
+  ensureArt();
   const stage = $("#stage");
   const canvas = $("#wave-canvas");
   setupReputation();
