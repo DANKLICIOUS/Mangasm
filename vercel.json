@@ -47,6 +47,30 @@
       "destination": "/ios.html"
     },
     {
+      "source": "/slay",
+      "destination": "/slay-dist/index.html"
+    },
+    {
+      "source": "/slay/",
+      "destination": "/slay-dist/index.html"
+    },
+    {
+      "source": "/grove",
+      "destination": "/slay-dist/index.html"
+    },
+    {
+      "source": "/grove/",
+      "destination": "/slay-dist/index.html"
+    },
+    {
+      "source": "/grow",
+      "destination": "/slay-dist/index.html"
+    },
+    {
+      "source": "/grow/",
+      "destination": "/slay-dist/index.html"
+    },
+    {
       "source": "/promo",
       "destination": "/promo.html"
     },

@@ -6,7 +6,8 @@
     "prepare": "husky",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "echo 'No TS typecheck at repo root (Swift package)'",
+    "typecheck": "cd slay-app && npm run typecheck",
+    "build:slay": "cd slay-app && npm run build",
     "test": "swift test --parallel"
   },
   "devDependencies": {
