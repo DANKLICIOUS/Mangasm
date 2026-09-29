@@ -88,11 +88,14 @@ public struct ProfileStylePicker: View {
                 RoundedRectangle(cornerRadius: 14)
                     .fill(Color.white.opacity(unlocked ? 0.12 : 0.05))
             )
+            .mgPolishEdge(radius: 14, glow: active)
+            .mgPolishLift(.lift)
+            // Preserve active accent (theme tint) over polish edge
             .overlay(
                 RoundedRectangle(cornerRadius: 14)
                     .stroke(
-                        active ? theme.accent.opacity(0.8) : Color.white.opacity(unlocked ? 0.15 : 0.08),
-                        lineWidth: active ? 1.5 : 0.7
+                        active ? theme.accent.opacity(0.8) : Color.clear,
+                        lineWidth: active ? 1.5 : 0
                     )
             )
             .opacity(unlocked ? 1 : 0.5)
