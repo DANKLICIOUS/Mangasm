@@ -50,11 +50,7 @@ struct Anthem: View {
         }
         .padding(.horizontal, 11)
         .padding(.vertical, 9)
-        .background(.ultraThinMaterial.opacity(0.5), in: RoundedRectangle(cornerRadius: 14))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(MGColor.spotify.opacity(0.33), lineWidth: 1)
-        )
+        .mgPolishGlass(radius: 14, glow: false, lift: .lift)
         .padding(.top, 12)
     }
 }
@@ -77,11 +73,7 @@ struct SocialRow: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 11)
         .padding(.vertical, 7)
-        .background(.ultraThinMaterial.opacity(0.3), in: RoundedRectangle(cornerRadius: 11))
-        .overlay(
-            RoundedRectangle(cornerRadius: 11)
-                .stroke(MGColor.gold.opacity(0.2), lineWidth: 1)
-        )
+        .mgPolishGlass(radius: 11, glow: false, lift: .contact)
     }
 
     @ViewBuilder

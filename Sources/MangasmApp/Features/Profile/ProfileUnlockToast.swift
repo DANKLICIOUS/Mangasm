@@ -26,14 +26,7 @@ public struct ProfileUnlockToastHost: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 12)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .stroke(
-                            ProfileStyleTheme.theme(for: first.styleId).accent.opacity(0.5),
-                            lineWidth: 1
-                        )
-                )
+                .mgPolishGlass(radius: 14, glow: true, lift: .float)
                 .padding(.horizontal, 16)
                 .padding(.top, 56)
                 .transition(.move(edge: .top).combined(with: .opacity))
