@@ -18,13 +18,13 @@ final class StoreKitFlowTests: XCTestCase {
 
     private var session: SKTestSession!
 
-    override func setUpWithError() throws {
+    override func setUp() async throws {
         session = try SKTestSession(configurationFileNamed: "Mangasm")
         session.disableDialogs = true
         session.clearTransactions()
     }
 
-    override func tearDownWithError() throws {
+    override func tearDown() async throws {
         session?.clearTransactions()
         session = nil
     }
