@@ -34,6 +34,7 @@ private struct AuthSheet: View {
 
     @State private var mode: Mode = .signIn
     @State private var accepted = false
+    @State private var didApplyAgeGatePrefill = false
     @State private var nudge = false
     @State private var isLoading = false
     @State private var emailError: String?
@@ -418,7 +419,12 @@ private struct AuthSheet: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .onAppear {
-            if state.ageGateAffirmed { accepted = true }
+            // Prefill once. Re-applying on every appear would fight the user
+            // (and XCUITest) when they uncheck the consent box.
+            if !didApplyAgeGatePrefill, state.ageGateAffirmed {
+                accepted = true
+                didApplyAgeGatePrefill = true
+            }
             if inviteCode.isEmpty, !state.pendingReferralCode.isEmpty {
                 inviteCode = state.pendingReferralCode
             }
