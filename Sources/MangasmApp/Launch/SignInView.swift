@@ -376,8 +376,11 @@ private struct AuthSheet: View {
                     }
                 }
                 .buttonStyle(.plain)
+                .accessibilityElement(children: .ignore)
                 .accessibilityIdentifier("accept_toggle")
                 .accessibilityLabel("Confirm you are 18 or older and accept the community guidelines")
+                .accessibilityValue(accepted ? "accepted" : "not_accepted")
+                .accessibilityAddTraits(.isButton)
 
                 if nudge {
                     Text("Please confirm to continue.")

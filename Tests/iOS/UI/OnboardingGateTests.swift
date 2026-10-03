@@ -18,14 +18,31 @@ final class OnboardingGateTests: XCTestCase {
         XCTAssertTrue(enter.waitForExistence(timeout: 8),
                       "sign-in should appear after the age gate")
 
-        // Age gate pre-fills consent; uncheck to verify the sign-in gate still blocks.
-        app.buttons["accept_toggle"].tap()
+        // Age gate pre-fills consent; wait for that, then uncheck to verify
+        // the sign-in gate still blocks.
+        let toggle = app.buttons["accept_toggle"]
+        XCTAssertTrue(toggle.waitForExistence(timeout: 4), "consent toggle should be on sign-in")
+        let prefilled = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", "accepted"),
+            object: toggle
+        )
+        XCTAssertEqual(
+            XCTWaiter().wait(for: [prefilled], timeout: 4),
+            .completed,
+            "age-gate confirm should pre-fill the sign-in consent toggle"
+        )
+        toggle.tap()
+        XCTAssertEqual(toggle.value as? String, "not_accepted", "toggle must revoke consent")
         enter.tap()
-        XCTAssertTrue(app.staticTexts["accept_nudge"].waitForExistence(timeout: 3),
-                      "tapping before consent must show the confirm prompt")
+        let nudge = app.staticTexts["accept_nudge"]
+        let nudgeByLabel = app.staticTexts["Please confirm to continue."]
+        XCTAssertTrue(
+            nudge.waitForExistence(timeout: 4) || nudgeByLabel.waitForExistence(timeout: 2),
+            "tapping before consent must show the confirm prompt"
+        )
         XCTAssertTrue(enter.exists, "must remain on the sign-in screen before consent")
 
-        app.buttons["accept_toggle"].tap()
+        toggle.tap()
         enter.tap()
         XCTAssertTrue(enter.waitForNonExistence(timeout: 8),
                       "after accepting, entering should dismiss the sign-in screen")
