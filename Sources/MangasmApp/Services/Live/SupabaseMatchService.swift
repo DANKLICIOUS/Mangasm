@@ -1,5 +1,5 @@
 import Foundation
-import Supabase
+@preconcurrency import Supabase
 
 // MARK: - MatchError
 public enum MatchError: LocalizedError, Sendable {

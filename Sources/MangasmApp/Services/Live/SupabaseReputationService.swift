@@ -1,5 +1,5 @@
 import Foundation
-import Supabase
+@preconcurrency import Supabase
 
 /// Live Community Reputation aligned to mangasm-backend `docs/PROFILE_STYLE.md`.
 ///

@@ -1,5 +1,5 @@
 import Foundation
-import Supabase
+@preconcurrency import Supabase
 
 /// Dependency injection container. Screens receive this as an EnvironmentObject.
 /// Real implementations replace each mock when Supabase/Stripe are wired in.

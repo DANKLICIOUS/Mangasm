@@ -1,5 +1,5 @@
 import Foundation
-import Supabase
+@preconcurrency import Supabase
 
 public enum ReferralError: LocalizedError, Sendable {
     case notAuthenticated

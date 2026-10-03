@@ -1,5 +1,5 @@
 import Foundation
-import Supabase
+@preconcurrency import Supabase
 
 // MARK: - SupabaseChatService
 /// Live DM layer over `public.messages` (sender_id / recipient_id / body).

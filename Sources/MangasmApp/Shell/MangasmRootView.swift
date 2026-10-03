@@ -1,5 +1,5 @@
 import SwiftUI
-import Supabase
+@preconcurrency import Supabase
 
 public struct MangasmRootView: View {
     @StateObject private var state = AppState()

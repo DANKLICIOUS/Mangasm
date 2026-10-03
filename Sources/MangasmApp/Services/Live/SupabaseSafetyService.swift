@@ -1,5 +1,5 @@
 import Foundation
-import Supabase
+@preconcurrency import Supabase
 
 // MARK: - SafetyError
 public enum SafetyError: LocalizedError, Sendable {

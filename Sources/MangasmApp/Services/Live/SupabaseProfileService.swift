@@ -1,5 +1,5 @@
 import Foundation
-import Supabase
+@preconcurrency import Supabase
 
 // MARK: - ProfileError
 public enum ProfileError: LocalizedError, Sendable {

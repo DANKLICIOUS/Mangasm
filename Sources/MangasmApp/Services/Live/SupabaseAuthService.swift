@@ -1,5 +1,5 @@
 import Foundation
-import Supabase
+@preconcurrency import Supabase
 
 /// Deep-link targets registered under the `mangasm://` URL scheme (project.yml
 /// CFBundleURLTypes). Supabase Auth redirects land here after email

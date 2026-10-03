@@ -1,5 +1,11 @@
 import SwiftUI
 
+/// Shared glass-sheet tokens. Sign-in and other overlays dim
+/// `.ultraThinMaterial` so landmark photography still reads through.
+enum GlassMorphosis {
+    static let materialOpacity: Double = 0.92
+}
+
 struct GlassBackground: ViewModifier {
     let radius: CGFloat
     var glow: Bool = false
