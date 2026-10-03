@@ -7,8 +7,7 @@ final class AccessibilityTests: XCTestCase {
     override func setUp() { continueAfterFailure = false }
 
     func testSettingsCloseButtonMeetsMinimumTouchTarget() {
-        let app = XCUIApplication()
-        app.launch()
+        let app = LaunchUI.launchForGateTests()
 
         // Enter the app through the consent gate, then open Settings.
         // Confirming the 18+ gate pre-fills consent, so the mock entry

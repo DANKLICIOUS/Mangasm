@@ -14,8 +14,7 @@ final class AccountDeletionTests: XCTestCase {
     override func setUp() { continueAfterFailure = false }
 
     func testDeleteAccountIsReachableFromSettings() {
-        let app = XCUIApplication()
-        app.launch()
+        let app = LaunchUI.launchForGateTests()
 
         // Enter the app through the consent gate. Confirming the 18+ gate
         // pre-fills consent, so the mock entry button proceeds straight in.

@@ -9,10 +9,9 @@ final class OnboardingGateTests: XCTestCase {
     override func setUp() { continueAfterFailure = false }
 
     func testEntryRequiresAgeAndTermsAcceptance() {
-        let app = XCUIApplication()
-        app.launch()
+        let app = LaunchUI.launchForGateTests()
 
-        // Splash auto-advances (~8.6s) → 18+ gate → sign-in.
+        // UI-testing launch starts at the 18+ gate, then sign-in.
         let ageGate = LaunchUI.waitForAgeGate(app)
         ageGate.tap()
 

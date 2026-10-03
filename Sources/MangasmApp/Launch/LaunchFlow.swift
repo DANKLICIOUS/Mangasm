@@ -9,8 +9,19 @@ public struct LaunchFlow: View {
     @EnvironmentObject private var state: AppState
 
     enum Stage { case splash, ageGate, signIn }
-    @State private var stage: Stage = .splash
+    @State private var stage: Stage = LaunchFlow.initialStage
     @State private var crossFadeOpacity: Double = 1.0
+
+    /// XCUITest launch argument `-MANGASM_UI_TESTING` starts at the 18+ gate
+    /// so splash video/timeline cannot hide it. The gate itself is still shown.
+    private static var initialStage: Stage {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-MANGASM_UI_TESTING") {
+            return .ageGate
+        }
+        #endif
+        return .splash
+    }
 
     public var body: some View {
         ZStack {

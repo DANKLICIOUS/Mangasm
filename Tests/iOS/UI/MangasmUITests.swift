@@ -22,9 +22,17 @@ final class MangasmUITests: XCTestCase {
     }
 }
 
-/// Shared launch helpers for UI tests. Still require the 18+ gate; only
-/// tap through splash if auto-advance has not already handed off.
+/// Shared launch helpers for UI tests. Still require the 18+ gate;
+/// `-MANGASM_UI_TESTING` skips splash so the gate is the first screen.
 enum LaunchUI {
+    @MainActor
+    static func launchForGateTests() -> XCUIApplication {
+        let app = XCUIApplication()
+        app.launchArguments += ["-MANGASM_UI_TESTING"]
+        app.launch()
+        return app
+    }
+
     @MainActor
     static func waitForAgeGate(
         _ app: XCUIApplication,
@@ -32,12 +40,9 @@ enum LaunchUI {
         line: UInt = #line
     ) -> XCUIElement {
         let gate = app.descendants(matching: .any)["age_gate_confirm"]
-        if !gate.waitForExistence(timeout: 12) {
-            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.35)).tap()
-        }
         XCTAssertTrue(
-            gate.waitForExistence(timeout: 20),
-            "18+ gate should appear after the splash",
+            gate.waitForExistence(timeout: 15),
+            "18+ gate should appear after launch",
             file: file,
             line: line
         )
