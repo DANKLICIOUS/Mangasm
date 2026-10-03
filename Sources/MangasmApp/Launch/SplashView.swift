@@ -345,9 +345,13 @@ public struct SplashView: View {
             .opacity(opacity)
         }
         .ignoresSafeArea()
-        .onAppear { runway.play() }
+        .onAppear {
+            runway.play()
+            // Drive the timeline from onAppear so XCUITest layout passes
+            // cannot cancel it the way SwiftUI `.task` does.
+            Task { await runTimeline() }
+        }
         .onDisappear { runway.pause() }
-        .task { await runTimeline() }
     }
 
     // MARK: - Timeline

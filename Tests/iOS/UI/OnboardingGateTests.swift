@@ -13,9 +13,7 @@ final class OnboardingGateTests: XCTestCase {
         app.launch()
 
         // Splash auto-advances (~8.6s) → 18+ gate → sign-in.
-        let ageGate = app.buttons["age_gate_confirm"]
-        XCTAssertTrue(ageGate.waitForExistence(timeout: 30),
-                      "18+ gate should appear after the splash")
+        let ageGate = LaunchUI.waitForAgeGate(app)
         ageGate.tap()
 
         let enter = app.buttons["mock_enter_button"]
