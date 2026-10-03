@@ -1,0 +1,12 @@
+(version 1)
+(allow default)
+
+;; Absolute Denial of Cross-Account / Sibling Directory Exploration
+(deny file-read* file-write*
+       (subpath "/Users/babe")
+       (subpath "/Users/shared"))
+
+;; Restrict Outbound Environment Actions to your Assigned Enclave
+(allow file-read* file-write*
+       (subpath (param "WORKSPACE_DIR"))
+       (subpath (param "HOME_DIR")))
