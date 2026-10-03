@@ -22,23 +22,62 @@ echo "==================== swift test --parallel ===================="
 swift test --parallel
 
 pick_destination() {
-  local available
-  available="$(xcrun simctl list devices available)"
-  local name
-  for name in "iPhone 17" "iPhone 16 Pro" "iPhone 16" "iPhone 15 Pro" "iPhone 15"; do
-    if printf '%s\n' "$available" | grep -q "${name} ("; then
-      printf 'platform=iOS Simulator,name=%s\n' "$name"
-      return 0
-    fi
-  done
-  # First available iPhone, e.g. "    iPhone SE (3rd generation) (UUID) (Shutdown)"
-  name="$(printf '%s\n' "$available" | sed -n 's/^[[:space:]]*\(iPhone [^()]*\) (.*/\1/p' | head -1 | sed 's/[[:space:]]*$//')"
-  if [ -n "$name" ]; then
-    printf 'platform=iOS Simulator,name=%s\n' "$name"
-    return 0
+  # Prefer iOS 18. Pinning OS avoids Xcode picking an iOS 26 twin of the
+  # same device name; iOS 26 XCUITest often omits SwiftUI identifiers.
+  python3 - <<'PY'
+import re, subprocess, sys
+
+out = subprocess.check_output(
+    ["xcrun", "simctl", "list", "devices", "available"], text=True
+)
+runtime = None
+devices = []
+for line in out.splitlines():
+    header = re.match(r"-- iOS ([0-9.]+) --", line.strip())
+    if header:
+        runtime = header.group(1)
+        continue
+    if line.strip().startswith("--"):
+        runtime = None
+        continue
+    match = re.match(r"\s+(iPhone [^()]+?) \(", line)
+    if match and runtime:
+        devices.append((runtime, match.group(1).rstrip()))
+
+def ver_key(os: str):
+    return tuple(int(part) for part in os.split("."))
+
+preferred = [
+    "iPhone 16 Pro",
+    "iPhone 16",
+    "iPhone 16e",
+    "iPhone 16 Plus",
+    "iPhone 15 Pro",
+    "iPhone 15",
+    "iPhone SE (3rd generation)",
+]
+ios18 = [(os, name) for os, name in devices if os.startswith("18.")]
+ios18.sort(key=lambda item: ver_key(item[0]), reverse=True)
+if ios18:
+    for want in preferred:
+        for os, name in ios18:
+            if name == want:
+                print(f"platform=iOS Simulator,name={name},OS={os}")
+                sys.exit(0)
+    os, name = ios18[0]
+    print(f"platform=iOS Simulator,name={name},OS={os}")
+    sys.exit(0)
+
+for os, name in devices:
+    print(f"platform=iOS Simulator,name={name},OS={os}")
+    sys.exit(0)
+
+sys.exit(1)
+PY
+  if [ $? -ne 0 ]; then
+    echo "error: no iPhone simulator available" >&2
+    return 1
   fi
-  echo "error: no iPhone simulator available" >&2
-  return 1
 }
 
 DEST="$(pick_destination)"

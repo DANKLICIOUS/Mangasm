@@ -40,12 +40,26 @@ public struct LaunchFlow: View {
             }
         }
         .onAppear {
+            UITestLaunch.logProcessFlags()
             // Belt-and-suspenders: XCUITest must still see the 18+ gate if
             // @State was reconstructed as `.splash`.
             if UITestLaunch.isActive, stage == .splash {
                 stage = .ageGate
                 crossFadeOpacity = 1
             }
+        }
+        .overlay(alignment: .topLeading) {
+            Color.clear
+                .frame(width: 1, height: 1)
+                .accessibilityIdentifier("launch_stage_\(stageLabel)")
+        }
+    }
+
+    private var stageLabel: String {
+        switch stage {
+        case .splash: return "splash"
+        case .ageGate: return "ageGate"
+        case .signIn: return "signIn"
         }
     }
 

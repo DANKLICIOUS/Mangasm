@@ -13,6 +13,10 @@ private final class RunwayPlayer: ObservableObject {
     private var entranceAudio: AVAudioPlayer?
 
     init() {
+        if UITestLaunch.isActive {
+            queuePlayer = nil
+            return
+        }
         // ── Video (muted, looped) ──
         if let url = Bundle.module.url(forResource: "runway", withExtension: "mp4") {
             let item = AVPlayerItem(url: url)
@@ -354,6 +358,7 @@ public struct SplashView: View {
             // Drive the timeline from onAppear so XCUITest layout passes
             // cannot cancel it the way SwiftUI `.task` does.
             Task { await runTimeline() }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 8.6) { go() }
         }
         .onDisappear { runway.pause() }
     }

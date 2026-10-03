@@ -56,10 +56,12 @@ public struct AgeGateView: View {
                                 .fill(MGGradient.launchCTA)
                         )
                         .shadow(color: MGColor.launchOrange.opacity(0.45), radius: 18, y: 10)
+                        .accessibilityIdentifier("age_gate_confirm")
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, 28)
                 .accessibilityIdentifier("age_gate_confirm")
+                .accessibilityAddTraits(.isButton)
 
                 VStack(spacing: 6) {
                     Text("By continuing you confirm you are of legal age and agree to our")

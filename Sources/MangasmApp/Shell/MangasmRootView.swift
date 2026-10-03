@@ -1,5 +1,8 @@
 import SwiftUI
 @preconcurrency import Supabase
+#if os(iOS)
+import UIKit
+#endif
 
 public struct MangasmRootView: View {
     @StateObject private var state = AppState()
@@ -21,6 +24,19 @@ public struct MangasmRootView: View {
         .environmentObject(state)
         .environmentObject(env)
         .environmentObject(store)
+        .overlay(alignment: .topLeading) {
+            Color.clear
+                .frame(width: 1, height: 1)
+                .accessibilityIdentifier(state.phase == .launch ? "phase_launch" : "phase_app")
+        }
+        .onAppear {
+            UITestLaunch.logProcessFlags()
+            #if os(iOS)
+            if UITestLaunch.isActive {
+                UIView.setAnimationsEnabled(false)
+            }
+            #endif
+        }
         // Server premium wins once known; StoreKit is optimistic until then.
         .onChange(of: store.isPremium) { _, isPremium in
             state.premium = PremiumResolver.isPremium(
