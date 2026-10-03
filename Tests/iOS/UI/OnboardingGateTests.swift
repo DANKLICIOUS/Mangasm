@@ -12,8 +12,7 @@ final class OnboardingGateTests: XCTestCase {
         let app = LaunchUI.launchForGateTests()
 
         // UI-testing launch starts at the 18+ gate, then sign-in.
-        let ageGate = LaunchUI.waitForAgeGate(app)
-        ageGate.tap()
+        LaunchUI.confirmAgeGate(app)
 
         let enter = app.buttons["mock_enter_button"]
         XCTAssertTrue(enter.waitForExistence(timeout: 8),

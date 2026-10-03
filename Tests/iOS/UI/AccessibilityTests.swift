@@ -12,8 +12,7 @@ final class AccessibilityTests: XCTestCase {
         // Enter the app through the consent gate, then open Settings.
         // Confirming the 18+ gate pre-fills consent, so the mock entry
         // button proceeds straight in.
-        let ageGate = LaunchUI.waitForAgeGate(app)
-        ageGate.tap()
+        LaunchUI.confirmAgeGate(app)
         let enter = app.buttons["mock_enter_button"]
         XCTAssertTrue(enter.waitForExistence(timeout: 8))
         enter.tap()

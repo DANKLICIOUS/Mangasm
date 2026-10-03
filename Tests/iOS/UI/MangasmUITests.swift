@@ -40,21 +40,45 @@ enum LaunchUI {
         file: StaticString = #file,
         line: UInt = #line
     ) -> XCUIElement {
-        let candidates: [XCUIElement] = [
-            app.buttons["age_gate_confirm"],
-            app.descendants(matching: .any)["age_gate_confirm"],
-            app.staticTexts["18+ ONLY"],
-            app.buttons["I AM 18 OR OLDER"],
-            app.descendants(matching: .any)["age_gate_screen"],
-        ]
-        for element in candidates {
-            if element.waitForExistence(timeout: 4) { return element }
-        }
-        XCTFail(
-            "18+ gate should appear after launch\n\(app.debugDescription)",
+        let title = app.staticTexts["18+ ONLY"]
+        XCTAssertTrue(
+            title.waitForExistence(timeout: 20),
+            "18+ gate should appear after launch",
             file: file,
             line: line
         )
-        return app.buttons["age_gate_confirm"]
+        let confirmCandidates: [XCUIElement] = [
+            app.buttons["I AM 18 OR OLDER"],
+            app.staticTexts["I AM 18 OR OLDER"],
+            app.buttons["age_gate_confirm"],
+            app.descendants(matching: .any)["age_gate_confirm"],
+        ]
+        for element in confirmCandidates where element.exists {
+            return element
+        }
+        for element in confirmCandidates {
+            if element.waitForExistence(timeout: 2) { return element }
+        }
+        XCTFail(
+            "18+ confirm control should appear with the gate\n\(app.debugDescription)",
+            file: file,
+            line: line
+        )
+        return title
+    }
+
+    /// Waits for the 18+ gate, then taps the confirm CTA (not the title).
+    @MainActor
+    static func confirmAgeGate(
+        _ app: XCUIApplication,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        let confirm = waitForAgeGate(app, file: file, line: line)
+        if confirm.identifier == "18+ ONLY" || confirm.label == "18+ ONLY" {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.80)).tap()
+            return
+        }
+        confirm.tap()
     }
 }
