@@ -362,26 +362,28 @@ private struct AuthSheet: View {
             }
 
             VStack(spacing: 7) {
-                Button {
-                    accepted.toggle()
-                    if accepted { nudge = false }
-                } label: {
-                    HStack(alignment: .top, spacing: 8) {
+                HStack(alignment: .top, spacing: 8) {
+                    Button {
+                        accepted.toggle()
+                        if accepted { nudge = false }
+                    } label: {
                         Image(systemName: accepted ? "checkmark.square.fill" : "square")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 22, weight: .semibold))
                             .foregroundStyle(accepted ? MGColor.goldDeep
                                              : (nudge ? Color(red: 0.85, green: 0.3, blue: 0.3) : cream.opacity(0.6)))
-                        LegalConsentText(cream: cream)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
+                            .frame(width: 44, height: 44)
+                            .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("accept_toggle")
+                    .accessibilityLabel("Confirm you are 18 or older and accept the community guidelines")
+                    .accessibilityValue(accepted ? "accepted" : "not_accepted")
+
+                    LegalConsentText(cream: cream)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 10)
                 }
-                .buttonStyle(.plain)
-                .accessibilityElement(children: .ignore)
-                .accessibilityIdentifier("accept_toggle")
-                .accessibilityLabel("Confirm you are 18 or older and accept the community guidelines")
-                .accessibilityValue(accepted ? "accepted" : "not_accepted")
-                .accessibilityAddTraits(.isButton)
 
                 if nudge {
                     Text("Please confirm to continue.")

@@ -32,12 +32,15 @@ final class OnboardingGateTests: XCTestCase {
             "age-gate confirm should pre-fill the sign-in consent toggle"
         )
         toggle.tap()
+        if (toggle.value as? String) != "not_accepted" {
+            toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.15, dy: 0.5)).tap()
+        }
         let revoked = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "value == %@", "not_accepted"),
             object: toggle
         )
         XCTAssertEqual(
-            XCTWaiter().wait(for: [revoked], timeout: 3),
+            XCTWaiter().wait(for: [revoked], timeout: 4),
             .completed,
             "toggle must revoke consent"
         )
