@@ -60,6 +60,7 @@ public struct AgeGateView: View {
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, 28)
+                .accessibilityLabel("I AM 18 OR OLDER")
                 .accessibilityIdentifier("age_gate_confirm")
                 .accessibilityAddTraits(.isButton)
 

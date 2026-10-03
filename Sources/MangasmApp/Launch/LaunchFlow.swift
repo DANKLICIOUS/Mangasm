@@ -64,6 +64,11 @@ public struct LaunchFlow: View {
     }
 
     private func advance(to next: Stage) {
+        if UITestLaunch.isActive {
+            stage = next
+            crossFadeOpacity = 1
+            return
+        }
         withAnimation(.easeInOut(duration: 0.35)) { crossFadeOpacity = 0 }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
             stage = next
