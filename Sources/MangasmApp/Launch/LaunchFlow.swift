@@ -4,23 +4,17 @@ import SwiftUI
 /// Provides `onEnter` callback for when the user has authenticated (or tapped through the stub).
 public struct LaunchFlow: View {
     public let onEnter: () -> Void
-    public init(onEnter: @escaping () -> Void) { self.onEnter = onEnter }
 
     @EnvironmentObject private var state: AppState
 
     enum Stage { case splash, ageGate, signIn }
-    @State private var stage: Stage = LaunchFlow.initialStage
+    @State private var stage: Stage
     @State private var crossFadeOpacity: Double = 1.0
 
-    /// XCUITest launch argument `-MANGASM_UI_TESTING` starts at the 18+ gate
-    /// so splash video/timeline cannot hide it. The gate itself is still shown.
-    private static var initialStage: Stage {
-        #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-MANGASM_UI_TESTING") {
-            return .ageGate
-        }
-        #endif
-        return .splash
+    public init(onEnter: @escaping () -> Void) {
+        self.onEnter = onEnter
+        // Property-wrapper defaults are not reliable for ProcessInfo; set in init.
+        _stage = State(initialValue: UITestLaunch.isActive ? .ageGate : .splash)
     }
 
     public var body: some View {
@@ -43,6 +37,14 @@ public struct LaunchFlow: View {
                     .environmentObject(state)
                     .opacity(crossFadeOpacity)
                     .transition(.opacity)
+            }
+        }
+        .onAppear {
+            // Belt-and-suspenders: XCUITest must still see the 18+ gate if
+            // @State was reconstructed as `.splash`.
+            if UITestLaunch.isActive, stage == .splash {
+                stage = .ageGate
+                crossFadeOpacity = 1
             }
         }
     }

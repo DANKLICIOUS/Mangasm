@@ -69,6 +69,10 @@ public final class AppEnvironment: ObservableObject {
     /// Supabase keys are configured. Events remain mock until a live EventService ships.
     /// DateNight uses Yelp + Ticketmaster when keys are present; otherwise mock fixtures.
     public static func makeDefault() -> AppEnvironment {
+        if UITestLaunch.isActive {
+            return .mock
+        }
+
         let dateNight: any DateNightService = {
             if let dn = DateNightConfig.fromInfoPlist() {
                 return LiveDateNightService(config: dn)

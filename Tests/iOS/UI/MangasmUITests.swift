@@ -29,6 +29,7 @@ enum LaunchUI {
     static func launchForGateTests() -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-MANGASM_UI_TESTING"]
+        app.launchEnvironment["MANGASM_UI_TESTING"] = "1"
         app.launch()
         return app
     }
@@ -39,13 +40,15 @@ enum LaunchUI {
         file: StaticString = #file,
         line: UInt = #line
     ) -> XCUIElement {
-        let gate = app.descendants(matching: .any)["age_gate_confirm"]
+        let gate = app.buttons["age_gate_confirm"]
+        if gate.waitForExistence(timeout: 12) { return gate }
+        let any = app.descendants(matching: .any)["age_gate_confirm"]
         XCTAssertTrue(
-            gate.waitForExistence(timeout: 15),
+            any.waitForExistence(timeout: 5),
             "18+ gate should appear after launch",
             file: file,
             line: line
         )
-        return gate
+        return any
     }
 }

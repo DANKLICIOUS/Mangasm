@@ -346,6 +346,10 @@ public struct SplashView: View {
         }
         .ignoresSafeArea()
         .onAppear {
+            if UITestLaunch.isActive {
+                go()
+                return
+            }
             runway.play()
             // Drive the timeline from onAppear so XCUITest layout passes
             // cannot cancel it the way SwiftUI `.task` does.

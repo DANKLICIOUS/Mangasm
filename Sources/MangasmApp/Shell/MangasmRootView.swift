@@ -39,8 +39,8 @@ public struct MangasmRootView: View {
             }
             // Restore a Keychain-persisted Supabase session on launch: valid
             // (refreshable) session → straight into the app; anything else stays
-            // on the launch flow.
-            if env.auth is SupabaseAuthService, await env.auth.restoreSession() {
+            // on the launch flow. XCUITest must remain on LaunchFlow.
+            if !UITestLaunch.isActive, env.auth is SupabaseAuthService, await env.auth.restoreSession() {
                 state.enterApp()
             }
             await store.loadProducts()
