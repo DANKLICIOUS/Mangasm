@@ -1,18 +1,18 @@
 name: CI
 
-# Deterministic, host-runnable checks for the two surfaces GitHub-hosted
-# runners can verify without Apple code-signing secrets:
+# Host-runnable checks:
 #   * Supabase — apply the full migration chain to a throwaway Postgres and
 #     run the RLS / trigger assertions.
 #   * Vercel/web — validate the static site config and edge middleware.
-# The iOS (Xcode) suite requires a signed simulator build and runs on Apple
-# hardware via `scripts/run-all-tests.sh`; it is intentionally not in CI.
+#   * slay-app — Vitest domain suite.
+#   * Apple — SPM `swift test --parallel` plus `xcodebuild test` for the
+#     Mangasm scheme (MangasmTests + MangasmUITests) on a macOS runner.
+#     Linux cannot compile RevenueCat/CryptoKit/SwiftUI; do not replace
+#     those suites with a Linux subset.
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 concurrency:
@@ -83,3 +83,28 @@ jobs:
           exit "$missing"
       - name: Assert /plus billing aims at the live Supabase host
         run: node scripts/check-web-billing-config.cjs
+
+  slay-app:
+    name: slay-app Vitest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: slay-app/package-lock.json
+      - name: Install and test
+        working-directory: slay-app
+        run: |
+          npm ci
+          npm test
+
+  apple:
+    name: Swift SPM + iOS simulator tests
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run real Apple XCTest suites
+        run: bash scripts/ci-macos-tests.sh
