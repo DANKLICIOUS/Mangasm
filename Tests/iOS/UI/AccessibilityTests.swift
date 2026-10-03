@@ -1,6 +1,7 @@
 import XCTest
 
 /// Accessibility — interactive controls must meet Apple's 44pt minimum touch target.
+@MainActor
 final class AccessibilityTests: XCTestCase {
 
     override func setUp() { continueAfterFailure = false }

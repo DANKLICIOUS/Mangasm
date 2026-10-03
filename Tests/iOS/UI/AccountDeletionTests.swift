@@ -8,6 +8,7 @@ import XCTest
 /// (resetForSignOut + the deleteAccount() service call), because the destructive
 /// `confirmationDialog` does not present reliably under XCUITest's synthetic tap
 /// when nested in a ScrollView-inside-a-sheet (verified via hierarchy dump).
+@MainActor
 final class AccountDeletionTests: XCTestCase {
 
     override func setUp() { continueAfterFailure = false }

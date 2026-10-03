@@ -3,6 +3,7 @@ import XCTest
 /// Phase 5 — TestFlight smoke. Verifies the real app binary launches on a
 /// simulator and reaches the foreground without crashing. Runs via
 /// xcodebuild test; needs no live backend.
+@MainActor
 final class MangasmUITests: XCTestCase {
 
     override func setUp() {

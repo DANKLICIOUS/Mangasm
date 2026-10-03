@@ -3,6 +3,7 @@ import XCTest
 /// Phase 1 (UI) — the 18+/terms consent gate must block app entry until accepted.
 /// Runs on the simulator via xcodebuild test; drives the app through the
 /// accessibility API (no live backend needed).
+@MainActor
 final class OnboardingGateTests: XCTestCase {
 
     override func setUp() { continueAfterFailure = false }
