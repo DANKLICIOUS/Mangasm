@@ -104,7 +104,6 @@ Live `makeDefault()` wires **SupabaseChatService**. Block purge = local clear + 
 | `Mangasm.storekit` | Local IAP testing |
 | `ExportOptions*.plist` | Archive / upload |
 | `supabase/config.toml` | Local Supabase CLI |
-| `.github/workflows/codeql.yml` | CodeQL |
 | `.mcp.json` | MCP for this repo |
 
 **Dependency:** `supabase/supabase-swift` ≥ 2.0
