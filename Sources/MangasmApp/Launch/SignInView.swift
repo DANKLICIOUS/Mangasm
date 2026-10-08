@@ -429,7 +429,7 @@ private struct AuthSheet: View {
             let shape = UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30)
             shape
                 .fill(.ultraThinMaterial)
-                .opacity(GlassMorphosis.materialOpacity)
+                .opacity(0.9)
                 .overlay { shape.fill(Color.black.opacity(0.18)) }
                 .overlay(
                     shape
