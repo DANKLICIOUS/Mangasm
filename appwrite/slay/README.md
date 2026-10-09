@@ -6,17 +6,18 @@ CLI used to author this tree: **appwrite-cli 28.2.0**.
 
 ## Layout
 
-| Path                       | Role                                                                                                      |
-| -------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `appwrite.config.json`     | Project + TablesDB + functions + Grove site + buckets + teams + topics                                    |
-| `functions/grow-artifact/` | Ruby 3.3 GROW — creates Artifacts                                                                         |
-| `functions/gnomie/`        | Gnomie identity + participation reputation                                                                |
-| `functions/market/`        | Grove market snapshots (read)                                                                             |
-| `functions/trade/`         | Simulated trades only — never places orders                                                               |
-| `functions/signal/`        | Gnomie Vision informational signals                                                                       |
-| `sdk/ids.ts`               | Resource IDs for the slay-app client                                                                      |
-| `../../slay-app`           | Site source (Vite/React Grove). Build output override: `./dist`                                           |
-| `../../web/slay-dist`      | Existing static Grove build served on mangasm.app `/slay` `/grove` — **do not replace Vercel production** |
+| Path                         | Role                                                                                                      |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `appwrite.config.json`       | Project + TablesDB + functions + Grove site + buckets + teams + topics                                    |
+| `../../appwrite.config.json` | Same project with repo-root paths so `appwrite` works from `/workspace`                                   |
+| `functions/grow-artifact/`   | Ruby 3.3 GROW — creates Artifacts                                                                         |
+| `functions/gnomie/`          | Gnomie identity + participation reputation                                                                |
+| `functions/market/`          | Grove market snapshots (read)                                                                             |
+| `functions/trade/`           | Simulated trades only — never places orders                                                               |
+| `functions/signal/`          | Gnomie Vision informational signals                                                                       |
+| `sdk/ids.ts`                 | Resource IDs for the slay-app client                                                                      |
+| `../../slay-app`             | Site source (Vite/React Grove). Build output override: `./dist`                                           |
+| `../../web/slay-dist`        | Existing static Grove build served on mangasm.app `/slay` `/grove` — **do not replace Vercel production** |
 
 ## Domain (TablesDB `grove`)
 
