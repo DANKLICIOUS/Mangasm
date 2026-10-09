@@ -37,6 +37,12 @@ public final class AppState: ObservableObject {
     @Published public var profileStyle: ProfileStyleState
     /// One-shot unlock toast queue (cleared by UI after display).
     @Published public var pendingStyleUnlocks: [ProfileStyleConfig] = []
+    /// Server-authored unlock list from `my_profile_style().unlocked_style_ids`.
+    @Published public var serverUnlockedStyleIds: [ProfileStyleId]?
+    /// Cached tier from `my_profile_style()` when live.
+    @Published public var reputationTier: ReputationUnlockTier?
+    /// User-visible persist / rejection message for the style picker.
+    @Published public var lastStylePersistMessage: String?
 
     private static let pendingReferralKey = "pendingReferralCode"
     private let styleStore: any ProfileStyleStore
@@ -80,17 +86,76 @@ public final class AppState: ObservableObject {
         if !toast.isEmpty {
             pendingStyleUnlocks = toast
         }
-        // Widget App Group bridge (no-op if group not provisioned yet)
+        syncWidgetBridge()
+    }
+
+    private func syncWidgetBridge() {
         if let d = UserDefaults(suiteName: "group.com.mangasm.app") {
             d.set(profile.repScore, forKey: "mangasm.widget.repScore")
             d.set(activeStyle.styleId.rawValue, forKey: "mangasm.widget.styleId")
         }
     }
 
+    public func isStyleUnlocked(_ id: ProfileStyleId) -> Bool {
+        if let server = serverUnlockedStyleIds {
+            return server.contains(id)
+        }
+        return ProfileStyleCatalog.isUnlocked(id, score: profile.repScore)
+    }
+
+    /// Apply a live (or mock) reputation snapshot. `suppressToast` avoids a
+    /// false unlock celebration when hydrating over the sample seed score.
+    public func applyReputationSnapshot(_ snap: ReputationSnapshot, suppressToast: Bool = false) {
+        profile.repScore = snap.score
+        reputationTier = snap.tier
+        serverUnlockedStyleIds = snap.unlocksFromServer ? snap.unlockedStyleIds : nil
+        if suppressToast {
+            profileStyle.reputationScore = ProfileStyleCatalog.clampScore(snap.score)
+            profileStyle.seedSeenWithCurrentUnlocks()
+        } else {
+            let toast = CommunityReputationStyle.applyScore(
+                to: &profileStyle,
+                newScore: snap.score
+            )
+            if !toast.isEmpty {
+                pendingStyleUnlocks = toast
+            }
+        }
+        if let selected = snap.selectedStyleId {
+            // Demotion does not wipe an already-chosen style (backend contract).
+            profileStyle.preferredStyleId = selected
+            styleStore.savePreferred(selected)
+        }
+        styleStore.saveSeenUnlockIds(profileStyle.seenUnlockIds)
+        syncWidgetBridge()
+    }
+
     public func setPreferredStyle(_ id: ProfileStyleId) {
-        if CommunityReputationStyle.selectPreferred(id, state: &profileStyle) {
-            styleStore.savePreferred(id)
+        lastStylePersistMessage = nil
+        guard isStyleUnlocked(id) else {
+            lastStylePersistMessage = ProfileStyleCatalog.unlockHint(for: id)
+            return
+        }
+        profileStyle.preferredStyleId = id
+        styleStore.savePreferred(id)
+        objectWillChange.send()
+    }
+
+    /// Client gate, local persist, then server persist. Reverts on `styleLocked`.
+    public func setPreferredStyle(_ id: ProfileStyleId, reputation: any ReputationService) async {
+        lastStylePersistMessage = nil
+        let previous = profileStyle.preferredStyleId
+        setPreferredStyle(id)
+        guard profileStyle.preferredStyleId == id else { return }
+        do {
+            try await reputation.selectStyle(id)
+        } catch ReputationError.styleLocked {
+            profileStyle.preferredStyleId = previous
+            styleStore.savePreferred(previous)
+            lastStylePersistMessage = ReputationError.styleLocked.errorDescription
             objectWillChange.send()
+        } catch {
+            lastStylePersistMessage = "Style saved on this device. Server sync will retry when available."
         }
     }
 
@@ -126,6 +191,9 @@ public final class AppState: ObservableObject {
         ageGateAffirmed = false
         clearPendingReferralCode()
         pendingStyleUnlocks = []
+        serverUnlockedStyleIds = nil
+        reputationTier = nil
+        lastStylePersistMessage = nil
         syncProfileStyleWithReputation()
     }
 

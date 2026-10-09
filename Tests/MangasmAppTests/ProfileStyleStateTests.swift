@@ -7,9 +7,9 @@ final class ProfileStyleStateTests: XCTestCase {
         XCTAssertEqual(state.activeConfig.styleId, .calmStudio)
     }
 
-    func testPreferredNotUnlockedFallsBackToDefault() {
+    func testPreferredGrandfatheredAfterDemotion() {
         let state = ProfileStyleState(reputationScore: 10, preferredStyleId: .digitalFlow)
-        XCTAssertEqual(state.activeConfig.styleId, .calmStudio)
+        XCTAssertEqual(state.activeConfig.styleId, .digitalFlow)
     }
 
     func testScoreIncreaseDetectsNewUnlocks() {
@@ -19,22 +19,33 @@ final class ProfileStyleStateTests: XCTestCase {
             seenUnlockIds: [.calmStudio]
         )
         let toast = state.applyScoreChange(42)
-        XCTAssertEqual(Set(toast.map(\.styleId)), [.aspirational, .precisionTech])
-        XCTAssertTrue(state.seenUnlockIds.contains(.precisionTech))
+        XCTAssertEqual(Set(toast.map(\.styleId)), [.aspirational])
+        XCTAssertTrue(state.seenUnlockIds.contains(.aspirational))
+        XCTAssertFalse(state.seenUnlockIds.contains(.precisionTech))
+    }
+
+    func testReliableBandUnlocksTwoStylesTogether() {
+        var state = ProfileStyleState(
+            reputationScore: 40,
+            preferredStyleId: nil,
+            seenUnlockIds: [.calmStudio, .aspirational]
+        )
+        let toast = state.applyScoreChange(65)
+        XCTAssertEqual(Set(toast.map(\.styleId)), [.precisionTech, .digitalFlow])
     }
 
     func testApplyScoreDoesNotRepeatSeenUnlocks() {
         var state = ProfileStyleState(
             reputationScore: 50,
             preferredStyleId: nil,
-            seenUnlockIds: [.calmStudio, .aspirational, .precisionTech]
+            seenUnlockIds: [.calmStudio, .aspirational]
         )
         let toast = state.applyScoreChange(50)
         XCTAssertTrue(toast.isEmpty)
     }
 
     func testSelectPreferredOnlyIfUnlocked() {
-        var state = ProfileStyleState(reputationScore: 25, preferredStyleId: nil)
+        var state = ProfileStyleState(reputationScore: 45, preferredStyleId: nil)
         XCTAssertTrue(state.selectPreferred(.aspirational))
         XCTAssertFalse(state.selectPreferred(.boldExpression))
         XCTAssertEqual(state.preferredStyleId, .aspirational)

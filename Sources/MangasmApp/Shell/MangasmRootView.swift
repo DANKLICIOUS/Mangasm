@@ -101,6 +101,10 @@ public struct MangasmRootView: View {
             try await env.profile.loadFromServer()
             state.profile = env.profile.current()
             state.visibility = env.profile.currentVisibility()
+            await env.reputation.loadFromServer()
+            if let snap = env.reputation.snapshot(for: state.profile.id) {
+                state.applyReputationSnapshot(snap, suppressToast: true)
+            }
             try? await env.matches.loadFromServer(viewerHobbies: state.profile.hobbies)
             if let safety = env.safety as? SupabaseSafetyService {
                 await safety.loadFromServer()

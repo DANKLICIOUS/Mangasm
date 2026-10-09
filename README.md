@@ -140,10 +140,81 @@ Version numbers live in `project.yml` (`MARKETING_VERSION` / `CURRENT_PROJECT_VE
 
 _Updated 2026-07-23 — the earlier "mock-only prototype" description was stale. See `SPEC_INDEX.md` for the authoritative claim/blocker status._
 
-- **Live/mock split** — real Supabase services live in `Sources/MangasmApp/Services/Live/` (auth, profile, match, chat, safety, referral) and are selected when `SupabaseConfig` is present in Info.plist; otherwise the app falls back to the mock environment (`AppEnvironment.swift`). Previews and tests intentionally use mocks. ⚠️ The fallback is currently unconditional — a Release archive without config silently ships all-mock services (review-polish blocker B3).
+- **Live/mock split** — real Supabase services live in `Sources/MangasmApp/Services/Live/` (auth, profile, match, chat, safety, referral, reputation) and are selected when `SupabaseConfig` is present in Info.plist; otherwise the app falls back to the mock environment (`AppEnvironment.swift`). Previews and tests intentionally use mocks. ⚠️ The fallback is currently unconditional — a Release archive without config silently ships all-mock services (review-polish blocker B3).
 - **Live auth is email/password only** — sign-up with email confirmation, sign-in, and password reset run on Supabase (`SupabaseAuthService.swift`, `EmailAuthValidator.swift`). Sign in with Apple and the Google/phone buttons have been removed.
 - **No content filter yet** — moderation/filtering on messages and profiles is not implemented (blocker B1).
 - **Map is stylized, not functional** — `FakeMap` renders gradient streets and pinned avatars; no MapKit, no GPS, no location collection of any kind. Live Discover currently backfills `Candidate.samples` when the DB returns few rows (blocker B4).
 - **DMs are E2E-encrypted** (`MessageCrypto.swift`, CryptoKit sealed boxes), but the client chat schema has drifted from the repo migrations and the live DB (blocker B5).
 - **Placeholder art / fonts** — `lambo_hero.jpg` and `runway.mp4` are the bundled prototype assets. Custom OFL fonts are not included; system fallbacks are active.
 - **macOS preview is a dev tool** — `MangasmPreview` is excluded from the iOS product; it exists solely to let engineers run screens on a Mac.
+
+---
+
+## Web Cash Path — Stripe Mangasm+ Configuration
+
+Mangasm operates a web-first cash register on `mangasm.app/plus` without blocking on App Store review:
+- Pricing: **$9.99/mo** (Monthly) · **$24.99/3mo** (3-Month / quarterly).
+- Entitlements: Web subscriptions directly sync to `billing_subscriptions` and `profiles.premium` via PostgreSQL triggers (`supabase/migrations/0012_web_billing.sql`).
+
+### 1. Vercel Environment Variables (`mangasm` / `mangasm-landing` / `web`)
+
+Configure the following environment variables in your Vercel Project Settings (Settings → Environment Variables):
+
+| Variable | Target | Description | Example / Notes |
+| -------- | ------ | ----------- | --------------- |
+| `SUPABASE_PUBLISHABLE_KEY` (or `SUPABASE_ANON_KEY`) | Production, Preview | Public client key for live Supabase project | `sb_publishable_...` |
+| `SUPABASE_URL` | Production, Preview | Live Supabase project URL | `https://dvomzrvslwdabwcwtvrg.supabase.co` |
+| `RESEND_API_KEY` | Production, Preview | API key for transactional waitlist emails | `re_...` |
+| `WAITLIST_NOTIFY_TO` | Production | Admin destination for signup notifications | `bae@slay.llc` |
+| `WAITLIST_FROM` | Production | From email address | `Mangasm Rebuild <bae@slay.llc>` |
+
+> **Security Note:** Never set `SUPABASE_SERVICE_ROLE_KEY` or `STRIPE_SECRET_KEY` in Vercel client environment variables. `/api/public-config` strips all private keys.
+
+### 2. Supabase Edge Functions Secrets (`supabase secrets set`)
+
+Deploy and configure the edge functions:
+
+```bash
+# Set secrets in live Supabase project
+supabase secrets set \
+  STRIPE_SECRET_KEY="sk_live_..." \
+  STRIPE_WEBHOOK_SECRET="whsec_..." \
+  STRIPE_PRICE_MONTHLY="price_1TyJDiGxbhrlkJVl4YOUgZat" \
+  STRIPE_PRICE_QUARTERLY="price_1TyJDsGxbhrlkJVlHDwNtO1Y" \
+  CHECKOUT_SUCCESS_URL="https://www.mangasm.app/plus/success" \
+  CHECKOUT_CANCEL_URL="https://www.mangasm.app/plus"
+
+# Deploy functions (JWT verification handled in handler)
+supabase functions deploy stripe-checkout --no-verify-jwt
+supabase functions deploy stripe-webhook --no-verify-jwt
+```
+
+### 3. Stripe Dashboard Setup
+
+1. **Create Products & Recurring Prices:**
+   - **Mangasm+ Monthly:** $9.99 USD / month recurring (`STRIPE_PRICE_MONTHLY`).
+   - **Mangasm+ 3-Month:** $24.99 USD / every 3 months recurring (`STRIPE_PRICE_QUARTERLY`).
+2. **Enable Payment Methods:**
+   - In Stripe Dashboard → Settings → Payment methods: Enable **Card**, **Cash App Pay**, **Apple Pay**, **Google Pay**, and **Link**.
+3. **Register Webhook Endpoint:**
+   - URL: `https://dvomzrvslwdabwcwtvrg.supabase.co/functions/v1/stripe-webhook`
+   - Events:
+     - `checkout.session.completed`
+     - `customer.subscription.created`
+     - `customer.subscription.updated`
+     - `customer.subscription.deleted`
+     - `invoice.payment_succeeded`
+     - `invoice.payment_failed`
+   - Copy Signing Secret (`whsec_...`) → `STRIPE_WEBHOOK_SECRET`.
+
+### 4. Billing Provider Evaluation: Stripe vs. Whop
+
+| Dimension | Stripe (Current Implementation) | Whop (Alternative Evaluation) |
+| --------- | -------------------------------- | ----------------------------- |
+| **Transaction Fees** | Standard 2.9% + $0.30 per charge | 3.0% platform fee + merchant processing fees (~5.9% + 30¢ total on basic tiers) |
+| **Merchant of Record (MoR)** | Mangasm is MoR (direct control over funds, disputes, payouts) | Whop acts as MoR / reseller (simplified global tax, but payout holds & dispute fees) |
+| **Payment Methods** | Native Card, Apple Pay, Google Pay, **Cash App Pay**, ACH | Cards, Apple Pay, Google Pay, Crypto, Discord/Telegram bot integration |
+| **Integration Complexity** | **Already 100% built in repo** (DB triggers, Edge Functions, webhook signature check, `web/plus.html`) | Requires new webhook translator, custom redirect URLs, and dual customer reconciliation |
+| **Entitlement Sync** | Zero latency: Webhook updates `billing_subscriptions` → trigger flips `profiles.premium` | Webhook → Edge Function → custom mapping to user profile |
+| **Recommendation** | **Keep Stripe as primary web cash register**; keep Whop in evaluation for potential creator/community monetization tiers if needed later. |
+

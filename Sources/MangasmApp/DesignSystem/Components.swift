@@ -132,6 +132,8 @@ public struct Chip: View {
                     .stroke(tone == .gold ? MGColor.gold.opacity(0.4) : MGColor.ink.opacity(0.14),
                             lineWidth: 1)
             )
+            // Shadows only — no color restyle
+            .mgPolishLift(.contact, warmKey: tone == .gold)
     }
 }
 
@@ -221,8 +223,8 @@ public struct MGCard<Content: View>: View {
         ZStack {
             RoundedRectangle(cornerRadius: radius)
                 .fill(MGGradient.holo)
-                .shadow(color: Color(red: 40/255, green: 30/255, blue: 15/255).opacity(0.5),
-                        radius: 22, x: 0, y: 18)
+                // Dual-shadow float lift (cool ambient + warm gold key)
+                .mgPolishLift(.float, warmKey: true)
 
             content
                 .clipShape(RoundedRectangle(cornerRadius: radius - 1))

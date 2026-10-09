@@ -40,7 +40,7 @@ final class TrustScoreFormulaTests: XCTestCase {
 
     func testProgressToNextStyle() {
         let (next, p) = TrustScoreFormula.progressToNextStyle(score: 42)
-        XCTAssertEqual(next?.styleId, .digitalFlow)
+        XCTAssertEqual(next?.styleId, .precisionTech)
         XCTAssertGreaterThan(p, 0)
         XCTAssertLessThan(p, 1)
         let (done, full) = TrustScoreFormula.progressToNextStyle(score: 100)
@@ -92,12 +92,12 @@ final class CommunityReputationStyleFacadeTests: XCTestCase {
         XCTAssertEqual(active.badgeName, "New Member")
     }
 
-    func testResolveFallsBackWhenPreferredLocked() {
+    func testResolveGrandfathersPreferredAfterDemotion() {
         let active = CommunityReputationStyle.resolve(
             score: 10,
             preferred: .boldExpression
         )
-        XCTAssertEqual(active.styleId, .calmStudio)
+        XCTAssertEqual(active.styleId, .boldExpression)
     }
 }
 

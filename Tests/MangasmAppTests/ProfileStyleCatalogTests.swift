@@ -4,23 +4,30 @@ import XCTest
 final class ProfileStyleCatalogTests: XCTestCase {
     func testBoundariesUnlockCorrectDefault() {
         XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 0).id, .calmStudio)
-        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 20).id, .calmStudio)
-        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 21).id, .aspirational)
+        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 39).id, .calmStudio)
         XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 40).id, .aspirational)
-        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 41).id, .precisionTech)
-        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 60).id, .precisionTech)
-        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 61).id, .digitalFlow)
-        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 80).id, .digitalFlow)
-        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 81).id, .boldExpression)
+        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 64).id, .aspirational)
+        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 65).id, .digitalFlow)
+        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 84).id, .digitalFlow)
+        XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 85).id, .boldExpression)
         XCTAssertEqual(ProfileStyleCatalog.defaultStyle(score: 100).id, .boldExpression)
     }
 
     func testAvailableCountGrowsWithScore() {
         XCTAssertEqual(ProfileStyleCatalog.available(score: 0).count, 1)
-        XCTAssertEqual(ProfileStyleCatalog.available(score: 21).count, 2)
-        XCTAssertEqual(ProfileStyleCatalog.available(score: 41).count, 3)
-        XCTAssertEqual(ProfileStyleCatalog.available(score: 61).count, 4)
-        XCTAssertEqual(ProfileStyleCatalog.available(score: 81).count, 5)
+        XCTAssertEqual(ProfileStyleCatalog.available(score: 39).count, 1)
+        XCTAssertEqual(ProfileStyleCatalog.available(score: 40).count, 2)
+        XCTAssertEqual(ProfileStyleCatalog.available(score: 64).count, 2)
+        XCTAssertEqual(ProfileStyleCatalog.available(score: 65).count, 4)
+        XCTAssertEqual(ProfileStyleCatalog.available(score: 84).count, 4)
+        XCTAssertEqual(ProfileStyleCatalog.available(score: 85).count, 5)
+    }
+
+    func testReliableUnlocksBothPrecisionAndDigitalFlow() {
+        let ids = Set(ProfileStyleCatalog.available(score: 65).map(\.styleId))
+        XCTAssertTrue(ids.contains(.precisionTech))
+        XCTAssertTrue(ids.contains(.digitalFlow))
+        XCTAssertFalse(ids.contains(.boldExpression))
     }
 
     func testClampsOutOfRangeScores() {

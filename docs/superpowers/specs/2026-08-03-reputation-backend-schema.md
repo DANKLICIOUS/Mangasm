@@ -2,6 +2,13 @@
 
 **Cosmetic only.** Never gate messaging or adult content on these columns.
 
+> **2026-09-20 — live contract (mangasm-backend #10):** writes go to
+> `profiles.selected_style_id` (enum, default `calmStudio`). Reads go through
+> `my_profile_style()` (`score`, `tier`, `unlocked_style_ids`, `selected_style_id`).
+> Do **not** apply this iOS `supabase/` tree to the same project as
+> `mangasm-backend`. See `docs/reputation-live.md` and backend
+> `docs/PROFILE_STYLE.md`. The SQL below is historical / additive sketch only.
+
 ## Postgres (Supabase)
 
 ```sql
@@ -15,6 +22,18 @@ alter table public.profiles
     check (
       preferred_style is null
       or preferred_style in (
+        'calmStudio', 'aspirational', 'precisionTech', 'digitalFlow', 'boldExpression'
+      )
+    );
+
+-- Preferred live column (mangasm-backend). Client also accepts preferred_style
+-- as a fallback when selected_style_id is not deployed yet.
+-- Unlock bands: new <40, building 40+, reliable 65+, verified 85+.
+alter table public.reputation_scores
+  add column if not exists selected_style_id text
+    check (
+      selected_style_id is null
+      or selected_style_id in (
         'calmStudio', 'aspirational', 'precisionTech', 'digitalFlow', 'boldExpression'
       )
     );
@@ -40,8 +59,8 @@ create index if not exists reputation_events_user_id_idx
 
 ## RLS sketch
 
-- Users read own `rep_score` / `preferred_style`.
-- Users update `preferred_style` only if unlocked client-side (server should re-validate min score).
+- Users read own `rep_score` / `preferred_style` / `reputation_scores.selected_style_id`.
+- Users update `selected_style_id` (or `preferred_style`) only if unlocked; server RPC `set_selected_style` must re-validate.
 - `reputation_events` insert via service role / edge function only.
 
 ## Edge function (later)

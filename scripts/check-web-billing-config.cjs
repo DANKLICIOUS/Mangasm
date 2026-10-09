@@ -19,6 +19,7 @@ const root = path.join(__dirname, "..");
 const plus = fs.readFileSync(path.join(root, "web/plus.html"), "utf8");
 const revenue = fs.readFileSync(path.join(root, "web/admin/revenue.html"), "utf8");
 const publicConfig = fs.readFileSync(path.join(root, "web/api/public-config.js"), "utf8");
+const rootPublicConfig = fs.readFileSync(path.join(root, "api/public-config.js"), "utf8");
 
 function supabaseHosts(src) {
   return [...src.matchAll(/https:\/\/([a-z0-9]+)\.supabase\.co/g)].map((m) => m[1]);
@@ -28,6 +29,7 @@ for (const [name, src] of [
   ["web/plus.html", plus],
   ["web/admin/revenue.html", revenue],
   ["web/api/public-config.js", publicConfig],
+  ["api/public-config.js", rootPublicConfig],
 ]) {
   const hosts = supabaseHosts(src);
   const bad = hosts.filter((h) => RETIRED.includes(h));
@@ -43,9 +45,15 @@ assert(
   plus.includes(`LIVE_SUPABASE_URL = "https://${LIVE}.supabase.co"`),
   "plus.html must hardcode the live host as LIVE_SUPABASE_URL",
 );
+const embedded = plus.match(/const EMBEDDED_ANON_KEY = "([^"]*)"/);
+assert(embedded, "plus.html must declare EMBEDDED_ANON_KEY");
 assert(
-  /const EMBEDDED_ANON_KEY = ""/.test(plus),
-  "plus.html must not embed a guessed anon key; leave EMBEDDED_ANON_KEY empty",
+  /^sb_publishable_[A-Za-z0-9_]+$/.test(embedded[1]),
+  "plus.html must embed the live sb_publishable_ client key (not empty, not a JWT)",
+);
+assert(
+  !/^(sb_secret_|sk_|whsec_|eyJ)/.test(embedded[1]),
+  "plus.html must not embed service_role or Stripe secrets",
 );
 
 const handlerPath = path.join(root, "web/api/public-config.js");

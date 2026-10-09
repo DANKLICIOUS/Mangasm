@@ -39,7 +39,7 @@ struct ProfileScreen: View {
                         premium: state.premium,
                         canSeePhotos: env.reputation.canViewPhotos(
                             viewerScore: state.profile.repScore,
-                            targetGate: 50
+                            targetGate: env.reputation.photoGate(for: state.profile.id)
                         )
                     )
                 }
@@ -86,11 +86,7 @@ private struct VouchesAIStrip: View {
             }
             .padding(.vertical, 6)
             .padding(.horizontal, 11)
-            .background(.ultraThinMaterial.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color.white.opacity(0.7), lineWidth: 0.7)
-            )
+            .mgPolishGlass(radius: 12, glow: false, lift: .contact)
 
             Spacer()
 
@@ -115,12 +111,7 @@ private struct VouchesAIStrip: View {
             }
             .padding(.vertical, 6)
             .padding(.horizontal, 12)
-            .background(.ultraThinMaterial.opacity(0.5), in: RoundedRectangle(cornerRadius: 12))
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(MGColor.gold.opacity(0.4), lineWidth: 1)
-            )
-            .shadow(color: MGColor.gold.opacity(0.6), radius: 8, x: 0, y: 3)
+            .mgPolishGlass(radius: 12, glow: true, lift: .lift)
         }
     }
 
@@ -279,7 +270,7 @@ private struct AvatarNameRow: View {
                     }
                 }
                 .frame(width: 72, height: 72)
-                // Gold ring overlay (mask-based; approximated as Circle stroke in SwiftUI)
+                // Gold ring + tightened specular (shine — keep gold ring)
                 .overlay(
                     Circle()
                         .strokeBorder(
@@ -290,8 +281,21 @@ private struct AvatarNameRow: View {
                             ),
                             lineWidth: 2.5
                         )
-                        .shadow(color: MGColor.gold.opacity(0.45), radius: 7)
                 )
+                .overlay(
+                    Circle()
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.55), Color.white.opacity(0.08), Color.clear],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                            lineWidth: 0.9
+                        )
+                        .blendMode(.softLight)
+                        .allowsHitTesting(false)
+                )
+                .mgPolishLift(.lift, warmKey: true)
 
                 // Spotify badge
                 Circle()
@@ -457,6 +461,20 @@ private struct PhotoThumb: View {
                         lineWidth: 2
                     )
             )
+            .overlay(
+                Circle()
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [Color.white.opacity(0.5), Color.clear],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 0.8
+                    )
+                    .blendMode(.softLight)
+                    .allowsHitTesting(false)
+            )
+            .mgPolishLift(.contact, warmKey: true)
         }
         .frame(width: 58, height: 58)
     }
@@ -482,6 +500,7 @@ private struct AddPhotoButton: View {
                 .foregroundStyle(MGColor.goldDeep)
         }
         .frame(width: 58, height: 58)
+        .mgPolishLift(.contact, warmKey: true)
     }
 }
 
