@@ -13,6 +13,15 @@ build/
 *.env.local
 supabase/.env.local
 .env.local
+
+# Appwrite CLI session + function vendor (never commit keys)
+.appwrite/
+**/.bundle/
+**/vendor/bundle/
+slay-app/dist/
+.appwrite/
+**/.appwrite/
+*.appwrite-session
 App/iOS/Secrets.xcconfig
 fastlane/.env
 fastlane/api_key.json
@@ -22,6 +31,9 @@ fastlane/README.md
 supabase/.temp/
 mcp/outreach/node_modules/
 .vercel
+
+# slay-app local Appwrite Sites build (vite --outDir dist)
+slay-app/dist/
 
 # npm pre-commit tooling
 node_modules/

@@ -1,0 +1,1195 @@
+{
+  "projectId": "slay-llc-void-market",
+  "projectName": "slay.llc - Void Market / The Grove",
+  "endpoint": "https://cloud.appwrite.io/v1",
+  "tablesDB": [
+    {
+      "$id": "grove",
+      "name": "The Grove",
+      "enabled": true
+    }
+  ],
+  "tables": [
+    {
+      "$id": "gnomies",
+      "$permissions": ["create(\"users\")", "read(\"any\")", "update(\"users\")"],
+      "databaseId": "grove",
+      "name": "Gnomie",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "handle",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "avatar_url",
+          "type": "url",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "avatar_seed",
+          "type": "varchar",
+          "required": false,
+          "array": false,
+          "size": 128
+        },
+        {
+          "key": "joined_at",
+          "type": "datetime",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "tier",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["NOVICE", "EXPERT", "MENTOR", "TOP_1_PERCENT"]
+        },
+        {
+          "key": "reputation_score",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 1000,
+          "default": 0
+        },
+        {
+          "key": "badges",
+          "type": "varchar",
+          "required": false,
+          "array": true,
+          "size": 64
+        },
+        {
+          "key": "wallet_address",
+          "type": "varchar",
+          "required": false,
+          "array": false,
+          "size": 128
+        },
+        {
+          "key": "learning_progress",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 100,
+          "default": 0
+        },
+        {
+          "key": "artifacts_grown",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "trades_executed",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "mentorship_helps",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "community_contributions",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "tenure_days",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_gnomie_handle",
+          "type": "unique",
+          "columns": ["handle"]
+        },
+        {
+          "key": "idx_gnomie_tier",
+          "type": "key",
+          "columns": ["tier"]
+        }
+      ]
+    },
+    {
+      "$id": "artifacts",
+      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "databaseId": "grove",
+      "name": "Artifact",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "name",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 128
+        },
+        {
+          "key": "ticker",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 16
+        },
+        {
+          "key": "tagline",
+          "type": "varchar",
+          "required": false,
+          "array": false,
+          "size": 280
+        },
+        {
+          "key": "description",
+          "type": "text",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "lore",
+          "type": "mediumtext",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "media_type",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["IMAGE", "VIDEO", "INTERACTIVE_CANVAS"]
+        },
+        {
+          "key": "media_url",
+          "type": "url",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "poster_url",
+          "type": "url",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "ambient_color",
+          "type": "varchar",
+          "required": false,
+          "array": false,
+          "size": 16
+        },
+        {
+          "key": "creator_gnomie_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "social_x",
+          "type": "url",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "social_telegram",
+          "type": "url",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "social_website",
+          "type": "url",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "social_discord",
+          "type": "url",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "token_contract",
+          "type": "varchar",
+          "required": false,
+          "array": false,
+          "size": 128
+        },
+        {
+          "key": "token_chain",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["SOLANA", "ETHEREUM", "BASE"]
+        },
+        {
+          "key": "token_total_supply",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "token_decimals",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "max": 18,
+          "default": 9
+        },
+        {
+          "key": "vision_summary",
+          "type": "text",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "commercial_status",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["ACTIVE_COMMUNITY_MARKET", "INCUBATING", "GRADUATED"]
+        },
+        {
+          "key": "derivative_rights_allowed",
+          "type": "boolean",
+          "required": true,
+          "array": false,
+          "default": true
+        },
+        {
+          "key": "licensing_terms",
+          "type": "text",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "provenance_adapter",
+          "type": "mediumtext",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "provenance_note",
+          "type": "text",
+          "required": false,
+          "array": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_artifact_ticker",
+          "type": "unique",
+          "columns": ["ticker"]
+        },
+        {
+          "key": "idx_artifact_creator",
+          "type": "key",
+          "columns": ["creator_gnomie_id"]
+        },
+        {
+          "key": "idx_artifact_status",
+          "type": "key",
+          "columns": ["commercial_status"]
+        }
+      ]
+    },
+    {
+      "$id": "markets",
+      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "databaseId": "grove",
+      "name": "Market",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "artifact_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "price_usd",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "price_native",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "price_change_24h",
+          "type": "float",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "market_cap_usd",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "liquidity_usd",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "volume_24h_usd",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "transactions_24h",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "holders_count",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "buy_count_24h",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "sell_count_24h",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "volatility_score",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "max": 100,
+          "default": 0
+        },
+        {
+          "key": "age_days",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "bonding_progress_pct",
+          "type": "integer",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "max": 100,
+          "default": 0
+        },
+        {
+          "key": "trend",
+          "type": "enum",
+          "required": false,
+          "array": false,
+          "elements": ["STABLE", "ACCELERATING", "VOLATILE", "CONSOLIDATING"]
+        },
+        {
+          "key": "captured_at",
+          "type": "datetime",
+          "required": false,
+          "array": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_market_artifact",
+          "type": "key",
+          "columns": ["artifact_id"]
+        },
+        {
+          "key": "idx_market_captured",
+          "type": "key",
+          "columns": ["captured_at"]
+        }
+      ]
+    },
+    {
+      "$id": "trades",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "grove",
+      "name": "Trade",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "artifact_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "gnomie_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "type",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["BUY", "SELL"]
+        },
+        {
+          "key": "amount_in",
+          "type": "float",
+          "required": true,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "estimated_output",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "slippage_tolerance_pct",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "price_impact_pct",
+          "type": "float",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "creator_fee_usd",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "platform_fee_usd",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "network_gas_sol",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "execution_route",
+          "type": "varchar",
+          "required": false,
+          "array": false,
+          "size": 128
+        },
+        {
+          "key": "status",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["SIMULATED", "SUBMITTED", "CONFIRMING", "CONFIRMED", "FAILED"]
+        },
+        {
+          "key": "wallet_address",
+          "type": "varchar",
+          "required": false,
+          "array": false,
+          "size": 128
+        },
+        {
+          "key": "disclaimer",
+          "type": "text",
+          "required": false,
+          "array": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_trade_artifact",
+          "type": "key",
+          "columns": ["artifact_id"]
+        },
+        {
+          "key": "idx_trade_gnomie",
+          "type": "key",
+          "columns": ["gnomie_id"]
+        },
+        {
+          "key": "idx_trade_status",
+          "type": "key",
+          "columns": ["status"]
+        }
+      ]
+    },
+    {
+      "$id": "signals",
+      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "databaseId": "grove",
+      "name": "Signal",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "artifact_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "dimension",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": [
+            "PRICE",
+            "VOLUME",
+            "LIQUIDITY",
+            "TRANSACTION_FREQUENCY",
+            "VOLATILITY",
+            "HOLDER_DISTRIBUTION",
+            "BUY_SELL_RATIO",
+            "AGE"
+          ]
+        },
+        {
+          "key": "label",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 128
+        },
+        {
+          "key": "observation",
+          "type": "text",
+          "required": true,
+          "array": false
+        },
+        {
+          "key": "intensity",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["LOW", "MODERATE", "ELEVATED", "HIGH"]
+        },
+        {
+          "key": "score",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "is_financial_advice",
+          "type": "boolean",
+          "required": true,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "disclaimer",
+          "type": "text",
+          "required": false,
+          "array": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_signal_artifact",
+          "type": "key",
+          "columns": ["artifact_id"]
+        },
+        {
+          "key": "idx_signal_dimension",
+          "type": "key",
+          "columns": ["dimension"]
+        }
+      ]
+    },
+    {
+      "$id": "comments",
+      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "databaseId": "grove",
+      "name": "Comment",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "artifact_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "gnomie_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "author_handle",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "author_tier",
+          "type": "enum",
+          "required": false,
+          "array": false,
+          "elements": ["NOVICE", "EXPERT", "MENTOR", "TOP_1_PERCENT"]
+        },
+        {
+          "key": "text",
+          "type": "text",
+          "required": true,
+          "array": false
+        },
+        {
+          "key": "posted_at",
+          "type": "datetime",
+          "required": false,
+          "array": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_comment_artifact",
+          "type": "key",
+          "columns": ["artifact_id"]
+        },
+        {
+          "key": "idx_comment_gnomie",
+          "type": "key",
+          "columns": ["gnomie_id"]
+        }
+      ]
+    },
+    {
+      "$id": "reputation",
+      "$permissions": ["create(\"users\")", "read(\"any\")", "update(\"users\")"],
+      "databaseId": "grove",
+      "name": "Reputation",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "gnomie_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "score",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 1000,
+          "default": 0
+        },
+        {
+          "key": "tier",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["NOVICE", "EXPERT", "MENTOR", "TOP_1_PERCENT"]
+        },
+        {
+          "key": "learning_progress",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 100,
+          "default": 0
+        },
+        {
+          "key": "artifacts_grown",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "trades_executed",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "mentorship_helps",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "community_contributions",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "tenure_days",
+          "type": "integer",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "default": 0
+        },
+        {
+          "key": "last_computed_at",
+          "type": "datetime",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "scoring_note",
+          "type": "text",
+          "required": false,
+          "array": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_reputation_gnomie",
+          "type": "unique",
+          "columns": ["gnomie_id"]
+        },
+        {
+          "key": "idx_reputation_tier",
+          "type": "key",
+          "columns": ["tier"]
+        }
+      ]
+    },
+    {
+      "$id": "learning_progress",
+      "$permissions": [
+        "create(\"users\")",
+        "read(\"users\")",
+        "update(\"users\")",
+        "delete(\"users\")"
+      ],
+      "databaseId": "grove",
+      "name": "LearningProgress",
+      "enabled": true,
+      "rowSecurity": true,
+      "columns": [
+        {
+          "key": "gnomie_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "lesson_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "lesson_slug",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 128
+        },
+        {
+          "key": "category",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["FOUNDATIONS", "MARKETS", "RISK_MANAGEMENT", "GNOMIE_LORE"]
+        },
+        {
+          "key": "completed",
+          "type": "boolean",
+          "required": true,
+          "array": false,
+          "default": false
+        },
+        {
+          "key": "completed_at",
+          "type": "datetime",
+          "required": false,
+          "array": false
+        },
+        {
+          "key": "paper_trade_only",
+          "type": "boolean",
+          "required": true,
+          "array": false,
+          "default": true
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_learn_gnomie_lesson",
+          "type": "unique",
+          "columns": ["gnomie_id", "lesson_id"]
+        },
+        {
+          "key": "idx_learn_slug",
+          "type": "key",
+          "columns": ["lesson_slug"]
+        }
+      ]
+    },
+    {
+      "$id": "creator_economics",
+      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "databaseId": "grove",
+      "name": "CreatorEconomics",
+      "enabled": true,
+      "rowSecurity": false,
+      "columns": [
+        {
+          "key": "artifact_id",
+          "type": "varchar",
+          "required": true,
+          "array": false,
+          "size": 64
+        },
+        {
+          "key": "creator_reward_share_pct",
+          "type": "float",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "platform_fee_pct",
+          "type": "float",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "network_gas_est_sol",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "liquidity_locked_pct",
+          "type": "float",
+          "required": true,
+          "array": false,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "bonding_curve_type",
+          "type": "enum",
+          "required": true,
+          "array": false,
+          "elements": ["LINEAR", "EXPONENTIAL", "SIGMOID_MIGRATION"]
+        },
+        {
+          "key": "migration_target_market_cap",
+          "type": "float",
+          "required": false,
+          "array": false,
+          "min": 0
+        },
+        {
+          "key": "disclaimer",
+          "type": "text",
+          "required": true,
+          "array": false
+        }
+      ],
+      "indexes": [
+        {
+          "key": "idx_economics_artifact",
+          "type": "unique",
+          "columns": ["artifact_id"]
+        }
+      ]
+    }
+  ],
+  "functions": [
+    {
+      "$id": "grow-artifact",
+      "name": "GROW Artifact",
+      "enabled": true,
+      "live": true,
+      "logging": true,
+      "runtime": "ruby-3.3",
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 30,
+      "entrypoint": "src/main.rb",
+      "commands": "bundle install",
+      "version": "v5",
+      "path": "functions/grow-artifact",
+      "ignore": ["vendor", ".bundle", ".git", ".env", ".env.local"],
+      "scopes": [
+        "databases.read",
+        "databases.write",
+        "tables.read",
+        "tables.write",
+        "rows.read",
+        "rows.write"
+      ],
+      "vars": [
+        {
+          "key": "APPWRITE_DATABASE_ID",
+          "value": "grove"
+        }
+      ]
+    },
+    {
+      "$id": "gnomie",
+      "name": "Gnomie",
+      "enabled": true,
+      "live": true,
+      "logging": true,
+      "runtime": "ruby-3.3",
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "entrypoint": "src/main.rb",
+      "commands": "bundle install",
+      "version": "v5",
+      "path": "functions/gnomie",
+      "ignore": ["vendor", ".bundle", ".git", ".env", ".env.local"],
+      "scopes": ["tables.read", "tables.write", "rows.read", "rows.write"],
+      "vars": [
+        {
+          "key": "APPWRITE_DATABASE_ID",
+          "value": "grove"
+        }
+      ]
+    },
+    {
+      "$id": "market",
+      "name": "Market",
+      "enabled": true,
+      "live": true,
+      "logging": true,
+      "runtime": "ruby-3.3",
+      "execute": ["any"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "entrypoint": "src/main.rb",
+      "commands": "bundle install",
+      "version": "v5",
+      "path": "functions/market",
+      "ignore": ["vendor", ".bundle", ".git", ".env", ".env.local"],
+      "scopes": ["tables.read", "rows.read"],
+      "vars": [
+        {
+          "key": "APPWRITE_DATABASE_ID",
+          "value": "grove"
+        }
+      ]
+    },
+    {
+      "$id": "trade",
+      "name": "Trade",
+      "enabled": true,
+      "live": true,
+      "logging": true,
+      "runtime": "ruby-3.3",
+      "execute": ["users"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "entrypoint": "src/main.rb",
+      "commands": "bundle install",
+      "version": "v5",
+      "path": "functions/trade",
+      "ignore": ["vendor", ".bundle", ".git", ".env", ".env.local"],
+      "scopes": ["tables.read", "tables.write", "rows.read", "rows.write"],
+      "vars": [
+        {
+          "key": "APPWRITE_DATABASE_ID",
+          "value": "grove"
+        }
+      ]
+    },
+    {
+      "$id": "signal",
+      "name": "Signal",
+      "enabled": true,
+      "live": true,
+      "logging": true,
+      "runtime": "ruby-3.3",
+      "execute": ["any"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "entrypoint": "src/main.rb",
+      "commands": "bundle install",
+      "version": "v5",
+      "path": "functions/signal",
+      "ignore": ["vendor", ".bundle", ".git", ".env", ".env.local"],
+      "scopes": ["tables.read", "tables.write", "rows.read", "rows.write"],
+      "vars": [
+        {
+          "key": "APPWRITE_DATABASE_ID",
+          "value": "grove"
+        }
+      ]
+    }
+  ],
+  "sites": [
+    {
+      "$id": "the-grove",
+      "name": "The Grove - slay.llc Void Market",
+      "enabled": true,
+      "logging": true,
+      "framework": "react",
+      "timeout": 30,
+      "installCommand": "npm install",
+      "buildCommand": "npx vite build --outDir dist --emptyOutDir",
+      "outputDirectory": "./dist",
+      "specification": "s-1vcpu-512mb",
+      "buildRuntime": "node-22",
+      "adapter": "static",
+      "fallbackFile": "index.html",
+      "path": "../../slay-app"
+    }
+  ],
+  "buckets": [
+    {
+      "$id": "artifact-media",
+      "name": "Artifact Media",
+      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "fileSecurity": true,
+      "enabled": true,
+      "maximumFileSize": 10485760,
+      "allowedFileExtensions": ["jpg", "jpeg", "png", "gif", "webp", "mp4", "webm"],
+      "compression": "gzip",
+      "encryption": false,
+      "antivirus": true
+    },
+    {
+      "$id": "gnomie-avatars",
+      "name": "Gnomie Avatars",
+      "$permissions": ["create(\"users\")", "read(\"any\")"],
+      "fileSecurity": true,
+      "enabled": true,
+      "maximumFileSize": 2097152,
+      "allowedFileExtensions": ["jpg", "jpeg", "png", "gif", "webp"],
+      "compression": "gzip",
+      "encryption": false,
+      "antivirus": true
+    }
+  ],
+  "teams": [
+    {
+      "$id": "grove-curators",
+      "name": "Grove Curators"
+    },
+    {
+      "$id": "gnomie-mentors",
+      "name": "Gnomie Mentors"
+    }
+  ],
+  "topics": [
+    {
+      "$id": "grove-activity",
+      "name": "Grove Activity",
+      "subscribe": ["users"]
+    },
+    {
+      "$id": "gnomie-school",
+      "name": "Gnomie School",
+      "subscribe": ["users"]
+    }
+  ]
+}

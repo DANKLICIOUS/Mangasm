@@ -1,0 +1,8 @@
+.appwrite/
+*.session
+*.env.local
+functions/**/vendor/
+functions/**/.bundle/
+functions/**/.env
+sites/**/dist/
+sites/**/node_modules/
