@@ -318,14 +318,14 @@
 				CODE_SIGN_ENTITLEMENTS = App/iOS/Mangasm.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Mark Webster (854XZ2543V)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 854XZ2543V;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = App/iOS/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Mangasm;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = "#0A0612";
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = "#0A120E";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -420,14 +420,14 @@
 				CODE_SIGN_ENTITLEMENTS = App/iOS/Mangasm.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Mark Webster (854XZ2543V)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 36;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 854XZ2543V;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = App/iOS/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Mangasm;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = "#0A0612";
+				INFOPLIST_KEY_UILaunchScreen_BackgroundColor = "#0A120E";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

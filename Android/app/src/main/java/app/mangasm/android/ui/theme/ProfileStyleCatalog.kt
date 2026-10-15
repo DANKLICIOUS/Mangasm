@@ -21,7 +21,7 @@ data class ProfileStyleConfig(
 
 object ProfileStyleCatalog {
     val all: List<ProfileStyleConfig> = listOf(
-        ProfileStyleConfig(ProfileStyleId.CALM_STUDIO, 0, "New Member", "Calm Studio"),
+        ProfileStyleConfig(ProfileStyleId.CALM_STUDIO, 0, "New Member", "Skull Island"),
         ProfileStyleConfig(ProfileStyleId.ASPIRATIONAL, 40, "Rising Member", "Aspirational"),
         ProfileStyleConfig(ProfileStyleId.PRECISION_TECH, 65, "Trusted Member", "Precision Tech"),
         ProfileStyleConfig(ProfileStyleId.DIGITAL_FLOW, 65, "Community Leader", "Digital Flow"),

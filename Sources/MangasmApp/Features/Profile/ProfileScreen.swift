@@ -18,7 +18,7 @@ struct ProfileScreen: View {
             ProfileStyleBackground(styleId: styleId)
             // Legacy Lambo plate under low opacity when style is aspirational-adjacent
             LamborghiniBackground(night: state.night)
-                .opacity(styleId == .aspirational || styleId == .calmStudio ? 0.35 : 0.12)
+                .opacity(styleId == .calmStudio ? 0.42 : 0.08)
             WeatherFX(kind: state.weather, night: state.night)
                 .opacity(0.55)
 

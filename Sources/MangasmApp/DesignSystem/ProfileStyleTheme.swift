@@ -13,15 +13,21 @@ public struct ProfileStyleTheme: Sendable {
     public static func theme(for id: ProfileStyleId) -> ProfileStyleTheme {
         switch id {
         case .calmStudio:
+            // Display name is Skull Island. Storage id stays `calmStudio` for the
+            // backend enum. Dark jungle + relic gold — not the old Bob Ross pastel.
             return .init(
-                accent: Color(hex: "#7BAF7B"),
-                accentSecondary: Color(hex: "#E8D5A3"),
-                cardFill: Color.white.opacity(0.72),
-                cardStroke: Color(hex: "#C9B896").opacity(0.6),
-                textPrimary: Color(hex: "#2A2117"),
-                textSecondary: Color(hex: "#2A2117").opacity(0.7),
-                ringColors: [Color(hex: "#A8D5A2"), Color(hex: "#E8D5A3")],
-                fallbackGradient: [Color(hex: "#B8D4E8"), Color(hex: "#E8F0D8"), Color(hex: "#F5E6C8")]
+                accent: MGColor.gold,
+                accentSecondary: MGColor.jungleMist,
+                cardFill: Color.black.opacity(0.42),
+                cardStroke: MGColor.gold.opacity(0.45),
+                textPrimary: MGColor.boneIvory,
+                textSecondary: MGColor.boneIvory.opacity(0.72),
+                ringColors: [MGColor.jungleCanopy, MGColor.gold],
+                fallbackGradient: [
+                    MGColor.jungleInk,
+                    MGColor.jungleCanopy,
+                    MGColor.campfire.opacity(0.35),
+                ]
             )
         case .aspirational:
             return .init(

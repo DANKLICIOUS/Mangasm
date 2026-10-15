@@ -48,7 +48,7 @@ public struct HowTrustScoreWorksView: View {
 
                     section("Cosmetic styles") {
                         Text(
-                            "New members start with Calm Studio. Building (40+) adds Aspirational. "
+                            "New members start with Skull Island. Building (40+) adds Aspirational. "
                                 + "Reliable (65+) adds Precision Tech and Digital Flow. "
                                 + "Verified (85+) unlocks Bold Expression. "
                                 + "You may freely switch among any unlocked styles. "

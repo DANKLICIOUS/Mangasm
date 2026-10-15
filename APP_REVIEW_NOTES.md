@@ -3,6 +3,15 @@
 **Build for this notes set:** **1.1.0 (31)** · Community Reputation + DateNight  
 **Live ASC (2026-08-03):** version **Waiting for Review** · attached build may still be **26** until you reselect **31**.
 
+### Significant change (Guideline 4.3)
+
+This version is a **significant visual and product identity change**, not a reskin of a generic dating template:
+
+- **Skull Island** is the default chrome: launch, sign-in, and New Member profile style. Jungle, campfire, and a geological skull-mountain plate — not a gold/Lambo luxury grid.
+- **Events remain the differentiator:** Discover → Events (Circle / Open Door / Social Mixer) with host-approved addresses.
+- Cosmetic **Community Reputation** styles (Skull Island, Aspirational, Precision Tech, Digital Flow, Bold Expression) never unlock messages or adult features.
+- Backend style id for Skull Island remains `calmStudio` (storage only). Reviewers will see the name **Skull Island**.
+
 > Paste **Demo Account** + **Notes** into App Store Connect → version → **App Review Information**.  
 > Do not invent credentials — provision via `./scripts/provision-demo-reviewer.sh` then paste.
 
@@ -39,6 +48,8 @@ export SUPABASE_SERVICE_ROLE_KEY='…'
 ## Notes for Reviewer (paste into Notes)
 
 Mangasm is a safety-first social app for adult gay men (18+).
+
+This version is a significant change from prior submissions: the app’s visual identity is **Skull Island** (jungle / campfire chrome on launch, sign-in, and the default New Member profile style). It is not a generic dating-app template. Member-hosted **Events** (Circle, Open Door, Social Mixer) with host-approved addresses remain the core differentiator. Community Reputation unlocks cosmetic styles only.
 
 ### HOW TO TEST (email + password — there is NO phone OTP field)
 

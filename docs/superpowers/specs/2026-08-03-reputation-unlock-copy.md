@@ -15,7 +15,7 @@
 
 | Style           | Body                                                                                         |
 | --------------- | -------------------------------------------------------------------------------------------- |
-| Calm Studio     | New Member · Just joined and completed basic profile setup.                                  |
+| Skull Island    | New Member · Just joined and completed basic profile setup.                                  |
 | Aspirational    | Rising Member · Building positive reputation through consistent, respectful activity.        |
 | Precision Tech  | Trusted Member · Verified identity and strong positive community feedback.                   |
 | Digital Flow    | Community Leader · Actively helps keep the community safe and supportive.                    |

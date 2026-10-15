@@ -8,6 +8,8 @@ public enum ProfileStyleId: String, CaseIterable, Codable, Sendable, Hashable {
     case boldExpression
 
     /// Cross-platform / RN ThemeProvider aliases (`bobRoss`, `lambo`, …).
+    /// `skullIsland` is a display alias for the default `calmStudio` row —
+    /// backend `selected_style_id` stays `calmStudio`.
     public var legacyThemeAlias: String {
         switch self {
         case .calmStudio: return "bobRoss"
@@ -20,7 +22,7 @@ public enum ProfileStyleId: String, CaseIterable, Codable, Sendable, Hashable {
 
     public init?(legacyThemeAlias alias: String) {
         switch alias {
-        case "bobRoss": self = .calmStudio
+        case "bobRoss", "skullIsland": self = .calmStudio
         case "lambo": self = .aspirational
         case "cyborg": self = .precisionTech
         case "matrix": self = .digitalFlow
@@ -62,8 +64,8 @@ public enum ProfileStyleCatalog {
             styleId: .calmStudio,
             minScore: ReputationUnlockTier.new.minScore,
             badgeName: "New Member",
-            displayName: "Calm Studio",
-            heroAssetName: "style-hero-calmStudio"
+            displayName: "Skull Island",
+            heroAssetName: "style-hero-skullIsland"
         ),
         .init(
             styleId: .aspirational,

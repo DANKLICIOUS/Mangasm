@@ -29,6 +29,12 @@ public enum MGColor {
     public static let launchOrange = Color(hex: "#F08A38")
     public static let launchOrangeDeep = Color(hex: "#C95E1E")
     public static let skylineInk = Color(hex: "#120A14")
+    /// Skull Island chrome (Guideline 4.3 significant-change identity).
+    public static let jungleInk = Color(hex: "#0A120E")
+    public static let jungleCanopy = Color(hex: "#0B2E1A")
+    public static let jungleMist = Color(hex: "#1A4A45")
+    public static let boneIvory = Color(hex: "#E8DCC8")
+    public static let campfire = Color(hex: "#E07A3D")
 }
 
 public enum MGFont {

@@ -13,7 +13,7 @@ public struct SignInView: View {
 
     public var body: some View {
         ZStack(alignment: .bottom) {
-            LandmarkSlides()
+            LamborghiniBackground(night: true)
                 .ignoresSafeArea()
 
             AuthSheet(onAuthenticated: onAuthenticated)
