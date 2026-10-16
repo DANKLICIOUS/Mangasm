@@ -12,7 +12,7 @@ public struct AgeGateView: View {
 
     public var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            MGColor.jungleInk.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer()

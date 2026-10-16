@@ -36,7 +36,7 @@ public struct ProfileStyleBadgeIcon: View {
 
     private var symbolName: String {
         switch styleId {
-        case .calmStudio: return "leaf.fill"
+        case .calmStudio: return "flame.fill"
         case .aspirational: return "arrow.up.right.circle.fill"
         case .precisionTech: return "checkmark.shield.fill"
         case .digitalFlow: return "point.3.connected.trianglepath.dotted"
@@ -46,7 +46,7 @@ public struct ProfileStyleBadgeIcon: View {
 
     private var iconForeground: Color {
         switch styleId {
-        case .calmStudio: return Color(hex: "#2A2117")
+        case .calmStudio: return MGColor.boneIvory
         case .aspirational, .precisionTech, .digitalFlow, .boldExpression: return .white
         }
     }

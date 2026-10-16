@@ -139,22 +139,28 @@ public struct SplashView: View {
                 // ── Layer 0: black base ──────────────────────────────────
                 Color.black.ignoresSafeArea()
 
-                // ── Layer 1: runway video (or gradient fallback) ─────────
-                if let player = runway.queuePlayer {
-                    // AVPlayerLayer .resizeAspectFill = CSS object-fit: cover (no letterbox).
+                // ── Layer 1: Skull Island plate (Guideline 4.3 identity) ─
+                if let island = bundledFileImage("skull_island_hero", "jpg") {
+                    island
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
+                        .clipped()
+                        .ignoresSafeArea()
+                        .allowsHitTesting(false)
+                } else if let player = runway.queuePlayer {
                     RunwayVideoView(player: player)
                         .allowsHitTesting(false)
                         .frame(width: geo.size.width, height: geo.size.height)
                         .clipped()
                         .ignoresSafeArea()
                 } else {
-                    // Fallback gradient when runway.mp4 is absent from bundle
                     LinearGradient(
                         colors: [
-                            Color(hex: "#0A0612"),
-                            Color(hex: "#1A0A22"),
-                            Color(hex: "#2D0F1A"),
-                            Color(hex: "#1A0808")
+                            MGColor.jungleInk,
+                            MGColor.jungleCanopy,
+                            Color(hex: "#1A0808"),
+                            MGColor.jungleInk
                         ],
                         startPoint: .top, endPoint: .bottom
                     )
@@ -177,13 +183,13 @@ public struct SplashView: View {
                 // ── Layer 3: radial orange haze (screen blend) ───────────
                 RadialGradient(
                     colors: [
-                        MGColor.launchOrange.opacity(0.10),
-                        MGColor.launchOrange.opacity(0.04),
+                        MGColor.campfire.opacity(0.16),
+                        MGColor.campfire.opacity(0.05),
                         Color.clear
                     ],
-                    center: UnitPoint(x: 0.5, y: 0.30),
+                    center: UnitPoint(x: 0.42, y: 0.72),
                     startRadius: 0,
-                    endRadius: geo.size.width * 0.60
+                    endRadius: geo.size.width * 0.70
                 )
                 .blendMode(.screen)
                 .ignoresSafeArea()
@@ -256,7 +262,7 @@ public struct SplashView: View {
                         Spacer().frame(height: 12)
 
                         // Tagline — delay 1.5s
-                        Text("DARK LUXURY · BROTHERHOOD · NIGHTLIFE")
+                        Text("CAMPFIRE · BROTHERHOOD · THE ISLAND")
                             .font(MGFont.mono(9.5))
                             .tracking(9.5 * 0.42)  // 0.42em → 3.99pt
                             .foregroundStyle(Color(red: 245/255, green: 235/255, blue: 214/255, opacity: 0.78))

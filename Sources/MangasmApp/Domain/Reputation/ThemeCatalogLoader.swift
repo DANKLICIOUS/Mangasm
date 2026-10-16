@@ -53,6 +53,9 @@ public enum ThemeCatalogLoader {
             if row.badgeName != cfg.badgeName {
                 issues.append("\(row.swiftId) badgeName mismatch")
             }
+            if row.displayName != cfg.displayName {
+                issues.append("\(row.swiftId) displayName mismatch")
+            }
             if row.rnId != cfg.styleId.legacyThemeAlias {
                 issues.append("\(row.swiftId) rnId \(row.rnId) != \(cfg.styleId.legacyThemeAlias)")
             }
