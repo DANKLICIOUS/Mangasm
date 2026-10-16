@@ -71,7 +71,7 @@ public struct AgeGateView: View {
                         Text("Terms of Service")
                             .font(MGFont.mono(8))
                             .underline()
-                            .foregroundStyle(MGColor.gold.opacity(0.85))
+                            .foregroundStyle(MGColor.launchOrange.opacity(0.9))
                     }
                 }
                 .padding(.horizontal, 32)

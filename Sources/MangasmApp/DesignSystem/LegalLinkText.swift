@@ -34,7 +34,7 @@ private struct LegalLink: View {
                 .font(MGFont.mono(7.5))
                 .tracking(7.5 * 0.04)
                 .underline()
-                .foregroundStyle(MGColor.gold.opacity(0.9))
+                .foregroundStyle(MGColor.launchOrange.opacity(0.9))
         }
         .accessibilityLabel(title)
     }

@@ -14,8 +14,8 @@ final class ModelTests: XCTestCase {
     }
     func testProfileSampleFullFields() {
         let p = Profile.sample
-        XCTAssertEqual(p.location, "Dubai → London")
-        XCTAssertEqual(p.headline, "Slow mornings, fast cars")
+        XCTAssertEqual(p.location, "Harbor District")
+        XCTAssertEqual(p.headline, "Slow mornings, long tables")
         XCTAssertEqual(p.instagram, "julianv")
         XCTAssertEqual(p.x, "julian_v")
         XCTAssertEqual(p.astro, "Scorpio")

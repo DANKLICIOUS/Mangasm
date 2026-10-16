@@ -1,14 +1,14 @@
 # App Store Review Notes — Mangasm (com.mangasm.app)
 
-**Build for this notes set:** **1.1.0 (31)** · Community Reputation + DateNight  
-**Live ASC (2026-08-03):** version **Waiting for Review** · attached build may still be **26** until you reselect **31**.
+**Build for this notes set:** **1.1.0 (37)** · Skull Island identity + Events  
+**Live ASC:** attach build **37** (or the next free number if 37 is taken).
 
 ### Significant change (Guideline 4.3)
 
 This version is a **significant visual and product identity change**, not a reskin of a generic dating template:
 
 - **Skull Island** is the default chrome: launch, sign-in, and New Member profile style. Jungle, campfire, and a geological skull-mountain plate — not a gold/Lambo luxury grid.
-- **Events remain the differentiator:** Discover → Events (Circle / Open Door / Social Mixer) with host-approved addresses.
+- **Events remain the differentiator:** default landing tab is Events (Circle / Open Door / Social Mixer) with host-approved addresses.
 - Cosmetic **Community Reputation** styles (Skull Island, Aspirational, Precision Tech, Digital Flow, Bold Expression) never unlock messages or adult features.
 - Backend style id for Skull Island remains `calmStudio` (storage only). Reviewers will see the name **Skull Island**.
 
@@ -56,7 +56,7 @@ This version is a significant change from prior submissions: the app’s visual 
 1. Launch the app. Affirm 18+ / Terms on the sign-in sheet if prompted.
 2. On Sign In, use **Email + Password** — it is the only sign-in method.
 3. Use the demo account from App Review Information (Username = full email).
-4. After sign-in, open **Discover** and browse profiles.
+4. After sign-in you land on **Events** (Circle / Open Door / Social Mixer). Then open **Discover** to browse profiles.
 5. Open **AI Match** (center lamp tab) → scroll to **RSVP A FIRST DATE** (DateNight). Enter a ZIP or Allow location → **Find**.
 6. **Report / Block:** profile or chat → overflow menu.
 7. **Delete account:** Settings → Delete Account (prefer Report/Block smoke if you must preserve the demo user).
@@ -91,5 +91,5 @@ Mangasm+ uses StoreKit IAP only (`Mangasm2cute4u001` monthly, `Mangasm0001` quar
 - [ ] ASC App Review fields match verified demo
 - [ ] Nutrition label location fields match DateNight if GPS used
 - [ ] IAP products complete (`Mangasm0001` was MISSING_METADATA) and attached
-- [ ] Preferred binary: attach build **31** if it is the intended review build
+- [ ] Preferred binary: attach build **37** if it is the intended review build
 - [x] Privacy policy URL live (mangasm.app/privacy **200**)
