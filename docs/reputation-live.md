@@ -4,11 +4,13 @@ Client contract for `SupabaseReputationService`. **Server is the source of truth
 for unlocks.** Cosmetic only — does not change App Review Guideline 1.2 claims,
 StoreKit IAP, or photo-gate math.
 
-Default New Member **display** is Skull Island (Guideline 4.3 significant-change
-chrome). Storage / `selected_style_id` remains `calmStudio` so this does not
-require a backend enum change. Do not db-push this repo’s `supabase/` tree.
+Default New Member **display** is Inkhouse (Guideline 4.3 significant-change
+chrome, ThemeChoiceId `steampunk`). Storage / `selected_style_id` remains
+`calmStudio` so this does not require a backend enum change. Do not db-push
+this repo’s `supabase/` tree.
 
-Build 38 (1.1.1) is already in TestFlight. This work is for a later build.
+Build 38 (1.1.1) is already in TestFlight. This identity work targets a later
+build (**39**).
 
 Canonical backend doc: [`DANKLICIOUS/mangasm-backend` `docs/PROFILE_STYLE.md`](https://github.com/DANKLICIOUS/mangasm-backend/blob/cursor/reputation-gated-profile-style-b83a/docs/PROFILE_STYLE.md)
 (draft PR [#10](https://github.com/DANKLICIOUS/mangasm-backend/pull/10)).

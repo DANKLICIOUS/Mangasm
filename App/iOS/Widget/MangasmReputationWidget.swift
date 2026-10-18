@@ -74,7 +74,7 @@ public struct MangasmReputationProvider: TimelineProvider {
     /// Mirrors ProfileStyleCatalog thresholds without linking the full package (widget target isolation).
     private static func labels(for styleRaw: String, score: Int) -> (String, String) {
         switch styleRaw {
-        case "calmStudio": return ("New Member", "Skull Island")
+        case "calmStudio": return ("New Member", "Inkhouse")
         case "aspirational": return ("Rising Member", "Aspirational")
         case "digitalFlow": return ("Community Leader", "Digital Flow")
         case "boldExpression": return ("Elite Verified", "Bold Expression")
@@ -83,7 +83,7 @@ public struct MangasmReputationProvider: TimelineProvider {
             if score >= 61 { return ("Community Leader", "Digital Flow") }
             if score >= 41 { return ("Trusted Member", "Precision Tech") }
             if score >= 21 { return ("Rising Member", "Aspirational") }
-            return ("New Member", "Skull Island")
+            return ("New Member", "Inkhouse")
         }
     }
 }

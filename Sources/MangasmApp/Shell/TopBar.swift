@@ -59,7 +59,7 @@ public struct TopBar: View {
                 }
                 .allowsHitTesting(false)
 
-                // Weather pill — prototype shows location "Dubai" hardcoded
+                // Weather pill — neighborhood-only label (never a precise city).
                 TopBarWeatherPill(weather: weather)
                     .allowsHitTesting(false)
             }
@@ -71,9 +71,9 @@ public struct TopBar: View {
                 Text("Mangasm")
                     .font(MGFont.serif(31, .bold))
                     .tracking(31 * 0.01)
-                    .foregroundStyle(MGGradient.goldHeading)
-                    .shadow(color: MGColor.gold.opacity(0.40), radius: 6, x: 0, y: 1)
-                    .shadow(color: .white.opacity(0.5), radius: 1, x: 0, y: 1)
+                    .foregroundStyle(MGColor.parchment)
+                    .shadow(color: MGColor.brass.opacity(0.40), radius: 6, x: 0, y: 1)
+                    .shadow(color: .white.opacity(0.35), radius: 1, x: 0, y: 1)
                     .padding(.top, 2)
             }
             .allowsHitTesting(false)
@@ -166,9 +166,8 @@ public struct TopBar: View {
 
 // MARK: - TopBarWeatherPill
 // Prototype ref: mangasm-fx.jsx WeatherPill()
-// Location pin + "Dubai" (hardcoded per prototype) + temp + weather glyph.
-// Approximation: city is hardcoded "Dubai" matching the prototype; real implementation
-// would pull from location context. temp strings mapped locally (Weather enum has no temp).
+// Location pin + neighborhood-only label + temp + weather glyph.
+// Precise GPS never ships in chrome; temp strings mapped locally (Weather enum has no temp).
 private struct TopBarWeatherPill: View {
     let weather: Weather
 
@@ -192,8 +191,8 @@ private struct TopBarWeatherPill: View {
                 .frame(width: 10, height: 10)
                 .foregroundStyle(MGColor.goldDeep)
 
-            // City label
-            Text("Dubai")
+            // Neighborhood-only label (Guideline 4.3 chrome; never a luxury-city pin)
+            Text("Parlor")
                 .font(MGFont.mono(8))
                 .tracking(8 * 0.05)
                 .foregroundStyle(MGColor.inkSoft)

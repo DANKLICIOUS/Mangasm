@@ -46,7 +46,7 @@ struct PasswordResetRequestView: View {
 
             Text("Reset Password")
                 .font(MGFont.serif(24, .bold))
-                .foregroundStyle(MGGradient.goldHeading)
+                .foregroundStyle(MGGradient.brassHeading)
                 .padding(.top, 8)
 
             if sent {
@@ -59,7 +59,7 @@ struct PasswordResetRequestView: View {
 
                 Button("Done") { dismiss() }
                     .font(MGFont.serif(15, .bold))
-                    .foregroundStyle(MGColor.goldText)
+                    .foregroundStyle(MGColor.parchment)
                     .accessibilityIdentifier("reset_done_button")
             } else {
                 Text("Enter your account email and we'll send a sign-in link to set a new password.")
@@ -102,21 +102,17 @@ struct PasswordResetRequestView: View {
                         if isLoading {
                             ProgressView()
                                 .controlSize(.small)
-                                .tint(MGColor.goldText)
+                                .tint(MGColor.parchment)
                         }
                         Text("Send Reset Link")
                             .font(MGFont.serif(15, .bold))
-                            .foregroundStyle(MGColor.goldText)
+                            .foregroundStyle(MGColor.parchment)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 13)
                     .background(
                         RoundedRectangle(cornerRadius: 14)
-                            .fill(LinearGradient(
-                                colors: [MGColor.goldBright, MGColor.gold, MGColor.goldDeep],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ))
+                            .fill(MGGradient.launchCTA)
                     )
                 }
                 .buttonStyle(.plain)
@@ -176,7 +172,7 @@ struct NewPasswordView: View {
 
             Text("Choose a New Password")
                 .font(MGFont.serif(22, .bold))
-                .foregroundStyle(MGGradient.goldHeading)
+                .foregroundStyle(MGGradient.brassHeading)
                 .padding(.top, 8)
 
             Text("At least 8 characters, with a lowercase letter, an uppercase letter, a number, and a symbol.")
@@ -216,21 +212,17 @@ struct NewPasswordView: View {
                     if isLoading {
                         ProgressView()
                             .controlSize(.small)
-                            .tint(MGColor.goldText)
+                            .tint(MGColor.parchment)
                     }
                     Text("Save Password")
                         .font(MGFont.serif(15, .bold))
-                        .foregroundStyle(MGColor.goldText)
+                        .foregroundStyle(MGColor.parchment)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 13)
                 .background(
                     RoundedRectangle(cornerRadius: 14)
-                        .fill(LinearGradient(
-                            colors: [MGColor.goldBright, MGColor.gold, MGColor.goldDeep],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ))
+                        .fill(MGGradient.launchCTA)
                 )
             }
             .buttonStyle(.plain)

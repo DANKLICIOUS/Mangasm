@@ -48,6 +48,7 @@ public struct ProfileStyleBackground: View {
     private static func heroImage(named name: String) -> Image? {
         // Prefer SPM resource bundle (Resources/style-hero-*.jpg), then main catalog.
         if let url = Bundle.module.url(forResource: name, withExtension: "jpg")
+            ?? Bundle.module.url(forResource: name, withExtension: "jpg", subdirectory: "themes")
             ?? Bundle.module.url(forResource: name, withExtension: "png")
         {
             #if canImport(UIKit)

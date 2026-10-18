@@ -73,7 +73,10 @@ function applyTheme(id) {
   document.querySelectorAll(".card").forEach((btn) => {
     btn.classList.toggle("is-on", btn.dataset.id === theme.id);
   });
-  pickLine.textContent = `Selected: ${theme.id} — ${theme.name}. Reply with this id to apply it to iOS.`;
+  const live = theme.id === "steampunk";
+  pickLine.textContent = live
+    ? `Live iOS chrome: ${theme.id} — ${theme.name}.`
+    : `Preview only: ${theme.id} — ${theme.name}. Live iOS chrome is steampunk — Inkhouse.`;
   localStorage.setItem("mangasm_theme_choice", theme.id);
 }
 
@@ -100,4 +103,4 @@ THEMES.forEach((theme) => {
 tabSignin.addEventListener("click", () => setScreen("signin"));
 tabEvents.addEventListener("click", () => setScreen("events"));
 
-applyTheme(localStorage.getItem("mangasm_theme_choice") || "viral");
+applyTheme("steampunk");

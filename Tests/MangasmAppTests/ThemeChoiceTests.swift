@@ -17,4 +17,10 @@ final class ThemeChoiceTests: XCTestCase {
         let fills = ThemeChoiceId.allCases.map { ThemeChoicePalette.palette(for: $0).accent }
         XCTAssertEqual(fills.count, Set(fills.map { String(describing: $0) }).count)
     }
+
+    func testLiveChromeIsInkhouse() {
+        XCTAssertEqual(ThemeChoiceId.live, .steampunk)
+        XCTAssertEqual(ThemeChoiceId.live.displayName, "Inkhouse")
+        XCTAssertEqual(ThemeChoiceId.live.rawValue, "steampunk")
+    }
 }

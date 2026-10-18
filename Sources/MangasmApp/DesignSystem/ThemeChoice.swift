@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Four App Review identity choices. Not the live default until a human picks one.
+/// Four App Review identity choices. Live chrome is Inkhouse (`steampunk`).
 /// Web picker: `/themes` (`web/theme-lab.html`). Storage id for reputation styles
 /// stays `calmStudio` — these are chrome identities, not backend enum values.
 public enum ThemeChoiceId: String, CaseIterable, Sendable, Codable {
@@ -8,6 +8,9 @@ public enum ThemeChoiceId: String, CaseIterable, Sendable, Codable {
     case effective
     case fantasy
     case steampunk
+
+    /// Human pick for Guideline 4.3 identity. Storage id stays `calmStudio`.
+    public static let live: ThemeChoiceId = .steampunk
 
     public var displayName: String {
         switch self {

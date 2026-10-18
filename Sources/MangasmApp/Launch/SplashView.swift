@@ -139,9 +139,10 @@ public struct SplashView: View {
                 // ── Layer 0: black base ──────────────────────────────────
                 Color.black.ignoresSafeArea()
 
-                // ── Layer 1: Skull Island plate (Guideline 4.3 identity) ─
-                if let island = bundledFileImage("skull_island_hero", "jpg") {
-                    island
+                // ── Layer 1: Inkhouse plate (Guideline 4.3 identity) ─
+                if let parlor = bundledFileImage("steampunk", "jpg")
+                    ?? bundledFileImage("style-hero-inkhouse", "jpg") {
+                    parlor
                         .resizable()
                         .scaledToFill()
                         .frame(width: geo.size.width, height: geo.size.height, alignment: .bottom)
@@ -157,10 +158,10 @@ public struct SplashView: View {
                 } else {
                     LinearGradient(
                         colors: [
-                            MGColor.jungleInk,
+                            MGColor.parlorInk,
                             MGColor.jungleCanopy,
                             Color(hex: "#1A0808"),
-                            MGColor.jungleInk
+                            MGColor.parlorInk
                         ],
                         startPoint: .top, endPoint: .bottom
                     )
@@ -183,8 +184,8 @@ public struct SplashView: View {
                 // ── Layer 3: radial orange haze (screen blend) ───────────
                 RadialGradient(
                     colors: [
-                        MGColor.campfire.opacity(0.16),
-                        MGColor.campfire.opacity(0.05),
+                        MGColor.brass.opacity(0.16),
+                        MGColor.oxblood.opacity(0.08),
                         Color.clear
                     ],
                     center: UnitPoint(x: 0.42, y: 0.72),
@@ -235,7 +236,7 @@ public struct SplashView: View {
                         Text("EST. MMXXVI")
                             .font(MGFont.mono(9))
                             .tracking(9 * 0.50)   // 0.5em → 4.5pt
-                            .foregroundStyle(MGColor.launchOrange)
+                            .foregroundStyle(MGColor.brass)
                             .opacity(showKicker ? 1 : 0)
                             .offset(y: showKicker ? 0 : 20)
 
@@ -247,11 +248,11 @@ public struct SplashView: View {
                             .font(MGFont.serif(60, .bold))
                             .foregroundStyle(Color.white)
                             .shadow(
-                                color: MGColor.launchOrange.opacity(glowPulse ? 0.95 : 0.55),
+                                color: MGColor.brass.opacity(glowPulse ? 0.95 : 0.55),
                                 radius: glowPulse ? 30 : 18
                             )
                             .shadow(
-                                color: MGColor.launchOrange.opacity(glowPulse ? 0.55 : 0.30),
+                                color: MGColor.oxblood.opacity(glowPulse ? 0.55 : 0.30),
                                 radius: glowPulse ? 80 : 44
                             )
                             .shadow(color: Color.black.opacity(0.50), radius: 3, y: 2)
@@ -262,7 +263,7 @@ public struct SplashView: View {
                         Spacer().frame(height: 12)
 
                         // Tagline — delay 1.5s
-                        Text("CAMPFIRE · BROTHERHOOD · THE ISLAND")
+                        Text("INK · BRASS · AFTER DARK")
                             .font(MGFont.mono(9.5))
                             .tracking(9.5 * 0.42)  // 0.42em → 3.99pt
                             .foregroundStyle(Color(red: 245/255, green: 235/255, blue: 214/255, opacity: 0.78))
@@ -287,20 +288,20 @@ public struct SplashView: View {
                                 .fill(MGGradient.launchCTA)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 16)
-                                        .stroke(MGColor.launchOrange.opacity(0.53), lineWidth: 1)
+                                        .stroke(MGColor.brass.opacity(0.53), lineWidth: 1)
                                 )
                                 // CTA pulse — Approximation: CSS box-shadow pulse → animated shadow
                                 .shadow(
-                                    color: MGColor.launchOrange.opacity(ctaPulse ? 0.95 : 0.60),
+                                    color: MGColor.oxblood.opacity(ctaPulse ? 0.95 : 0.60),
                                     radius: ctaPulse ? 22 : 15,
                                     y: ctaPulse ? 6 : 10
                                 )
 
                             // Button label
-                            Text("ENTER THE COMMUNITY")
+                            Text("CROSS THE THRESHOLD")
                                 .font(MGFont.serif(16, .bold))
                                 .tracking(16 * 0.08)  // 0.08em → 1.28pt
-                                .foregroundStyle(Color.white)
+                                .foregroundStyle(MGColor.parchment)
                                 .zIndex(2)
 
                             // Shimmer sweep — Approximation: diagonal gradient offset animation

@@ -12,7 +12,7 @@ public struct AgeGateView: View {
 
     public var body: some View {
         ZStack {
-            MGColor.jungleInk.ignoresSafeArea()
+            MGColor.parlorInk.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 Spacer()
@@ -20,8 +20,8 @@ public struct AgeGateView: View {
                 ZStack {
                     Image(systemName: "shield.fill")
                         .font(.system(size: 88, weight: .semibold))
-                        .foregroundStyle(MGColor.launchOrange)
-                        .shadow(color: MGColor.launchOrange.opacity(0.45), radius: 24, y: 8)
+                        .foregroundStyle(MGColor.oxblood)
+                        .shadow(color: MGColor.oxblood.opacity(0.45), radius: 24, y: 8)
 
                     Image(systemName: "exclamationmark")
                         .font(.system(size: 34, weight: .bold))
@@ -55,7 +55,7 @@ public struct AgeGateView: View {
                             RoundedRectangle(cornerRadius: 14)
                                 .fill(MGGradient.launchCTA)
                         )
-                        .shadow(color: MGColor.launchOrange.opacity(0.45), radius: 18, y: 10)
+                        .shadow(color: MGColor.oxblood.opacity(0.45), radius: 18, y: 10)
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, 28)
@@ -71,7 +71,7 @@ public struct AgeGateView: View {
                         Text("Terms of Service")
                             .font(MGFont.mono(8))
                             .underline()
-                            .foregroundStyle(MGColor.gold.opacity(0.85))
+                            .foregroundStyle(MGColor.brass.opacity(0.9))
                     }
                 }
                 .padding(.horizontal, 32)

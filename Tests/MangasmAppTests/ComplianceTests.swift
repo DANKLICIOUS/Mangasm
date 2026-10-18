@@ -39,6 +39,7 @@ final class ComplianceTests: XCTestCase {
             "anon", "anonymous", "glory", "bareback",
             "sanitiz", "twenty-minute", "in-and-out",
             "clothing optional", "gear encouraged", "booth",
+            "latex", "fetish", "kink",
         ]
         for event in EventItem.samples {
             let haystack = (event.title + " " + event.description).lowercased()
@@ -49,6 +50,35 @@ final class ComplianceTests: XCTestCase {
                 )
             }
         }
+    }
+
+    /// Guideline 4.3 — reviewer-visible seed must not reopen a gold/Lambo luxury grid.
+    func testReviewerVisibleSeedIsInkhouseNotLuxuryGrid() {
+        let banned = [
+            "dubai", "penthouse", "palm jumeirah", "business bay",
+            "skyline", "fast cars", "quiet luxury", "jet-set",
+            "lambo", "marina",
+        ]
+        let corpus = [
+            Profile.sample.location,
+            Profile.sample.headline,
+            Profile.sample.bio,
+            EventItem.samples.map(\.title).joined(separator: " "),
+            EventItem.samples.map(\.place).joined(separator: " "),
+            EventItem.samples.map(\.area).joined(separator: " "),
+            EventItem.samples.map(\.description).joined(separator: " "),
+            Community.samples.map(\.name).joined(separator: " "),
+            Community.samples.map(\.tagline).joined(separator: " "),
+            Candidate.samples.map(\.bio).joined(separator: " "),
+        ].joined(separator: " ").lowercased()
+        for term in banned {
+            XCTAssertFalse(corpus.contains(term), "reviewer seed still contains luxury-grid term: \(term)")
+        }
+        XCTAssertEqual(EventItem.samples[0].title, "Ink Circle")
+        XCTAssertEqual(Set(EventItem.samples.map(\.type)), Set(EventType.allCases))
+        XCTAssertEqual(EventType.cosplay.label, "Costume")
+        XCTAssertEqual(ProfileStyleCatalog.config(id: .calmStudio).displayName, "Inkhouse")
+        XCTAssertEqual(ThemeChoiceId.live, .steampunk)
     }
 
     // MARK: - Honest encryption claim
