@@ -9,7 +9,9 @@ import AppKit
 /// a SwiftUI `Image`. `Image(name:bundle:)` only finds asset-catalog images, so
 /// a bundled hero JPEG silently renders empty with that initializer.
 func bundledFileImage(_ name: String, _ ext: String) -> Image? {
-    guard let url = Bundle.module.url(forResource: name, withExtension: ext) else { return nil }
+    let url = Bundle.module.url(forResource: name, withExtension: ext)
+        ?? Bundle.module.url(forResource: name, withExtension: ext, subdirectory: "themes")
+    guard let url else { return nil }
     #if canImport(UIKit)
     if let img = UIImage(contentsOfFile: url.path) { return Image(uiImage: img) }
     #elseif canImport(AppKit)
@@ -19,8 +21,8 @@ func bundledFileImage(_ name: String, _ ext: String) -> Image? {
 }
 
 // MARK: - LamborghiniBackground
-// App chrome plate. Skull Island (`skull_island_hero`) is the Guideline 4.3
-// significant-change identity; the older Lambo plate remains a fallback.
+// App chrome plate. Inkhouse (`steampunk`) is the Guideline 4.3
+// significant-change identity; Skull Island then Lambo remain fallbacks.
 
 public struct LamborghiniBackground: View {
     public let night: Bool
@@ -32,7 +34,9 @@ public struct LamborghiniBackground: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack {
-                if let hero = bundledFileImage("skull_island_hero", "jpg")
+                if let hero = bundledFileImage("steampunk", "jpg")
+                    ?? bundledFileImage("style-hero-inkhouse", "jpg")
+                    ?? bundledFileImage("skull_island_hero", "jpg")
                     ?? bundledFileImage("lambo_hero", "jpg")
                 {
                     hero
@@ -46,24 +50,24 @@ public struct LamborghiniBackground: View {
                 } else {
                     LinearGradient(
                         stops: [
-                            .init(color: MGColor.jungleInk, location: 0),
+                            .init(color: MGColor.parlorInk, location: 0),
                             .init(color: MGColor.jungleCanopy, location: 0.45),
-                            .init(color: MGColor.jungleInk, location: 1),
+                            .init(color: MGColor.parlorInk, location: 1),
                         ],
                         startPoint: .top, endPoint: .bottom
                     )
                 }
 
-                JungleMistOverlay()
+                GaslightMistOverlay()
                     .blendMode(.screen)
                     .opacity(night ? 0.28 : 0.18)
 
                 if night {
                     LinearGradient(
                         stops: [
-                            .init(color: MGColor.jungleInk.opacity(0.55), location: 0),
-                            .init(color: MGColor.jungleInk.opacity(0.12), location: 0.38),
-                            .init(color: MGColor.jungleInk.opacity(0.28), location: 0.72),
+                            .init(color: MGColor.parlorInk.opacity(0.55), location: 0),
+                            .init(color: MGColor.parlorInk.opacity(0.12), location: 0.38),
+                            .init(color: MGColor.parlorInk.opacity(0.28), location: 0.72),
                             .init(color: Color.black.opacity(0.72), location: 1),
                         ],
                         startPoint: .top, endPoint: .bottom
@@ -71,9 +75,9 @@ public struct LamborghiniBackground: View {
                 } else {
                     LinearGradient(
                         stops: [
-                            .init(color: MGColor.jungleInk.opacity(0.22), location: 0),
+                            .init(color: MGColor.parlorInk.opacity(0.22), location: 0),
                             .init(color: Color.clear, location: 0.42),
-                            .init(color: MGColor.jungleInk.opacity(0.10), location: 0.76),
+                            .init(color: MGColor.parlorInk.opacity(0.10), location: 0.76),
                             .init(color: Color.black.opacity(0.28), location: 1),
                         ],
                         startPoint: .top, endPoint: .bottom
@@ -82,7 +86,7 @@ public struct LamborghiniBackground: View {
 
                 RadialGradient(
                     colors: [
-                        MGColor.campfire.opacity(night ? 0.28 : 0.16),
+                        MGColor.brass.opacity(night ? 0.22 : 0.12),
                         Color.clear,
                     ],
                     center: .init(x: 0.42, y: 0.78),
@@ -107,8 +111,8 @@ public struct LamborghiniBackground: View {
     }
 }
 
-/// Soft horizontal fog bands — Skull Island atmosphere instead of carbon fibre.
-private struct JungleMistOverlay: View {
+/// Soft horizontal fog bands — gaslight parlor atmosphere instead of carbon fibre.
+private struct GaslightMistOverlay: View {
     var body: some View {
         Canvas { ctx, size in
             let bands = 5

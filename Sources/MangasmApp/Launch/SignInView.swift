@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - SignInView
 
-/// Landmark slideshow + glass auth sheet. Email-only auth: sign in, create
+/// Inkhouse plate + glass auth sheet. Email-only auth: sign in, create
 /// account (email confirmation required), and password reset via magic link.
 public struct SignInView: View {
     public let onAuthenticated: () -> Void
@@ -212,23 +212,19 @@ private struct AuthSheet: View {
                     if isLoading {
                         ProgressView()
                             .controlSize(.small)
-                            .tint(MGColor.goldText)
+                            .tint(MGColor.parchment)
                     }
                     Text(mode == .signIn ? "Sign In" : "Create Account")
                         .font(MGFont.serif(15, .bold))
                         .tracking(15 * 0.03)
-                        .foregroundStyle(MGColor.goldText)
+                        .foregroundStyle(MGColor.parchment)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 13)
                 .background(
                     RoundedRectangle(cornerRadius: 14)
-                        .fill(LinearGradient(
-                            colors: [MGColor.goldBright, MGColor.gold, MGColor.goldDeep],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ))
-                        .shadow(color: MGColor.gold.opacity(0.5), radius: 12, x: 0, y: 8)
+                        .fill(MGGradient.launchCTA)
+                        .shadow(color: MGColor.oxblood.opacity(0.5), radius: 12, x: 0, y: 8)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 14)
@@ -260,7 +256,7 @@ private struct AuthSheet: View {
         let styled = field
             .font(MGFont.mono(13))
             .foregroundStyle(cream)
-            .tint(MGColor.gold)
+            .tint(MGColor.brass)
             .padding(.horizontal, 14)
             .padding(.vertical, 12)
             .background(
@@ -309,8 +305,8 @@ private struct AuthSheet: View {
                 Text("Mangasm")
                     .font(MGFont.serif(38, .bold))
                     .tracking(38 * 0.01)
-                    .foregroundStyle(MGGradient.goldHeading)
-                    .shadow(color: MGColor.gold.opacity(0.4), radius: 7, x: 0, y: 1)
+                    .foregroundStyle(MGColor.parchment)
+                    .shadow(color: MGColor.brass.opacity(0.4), radius: 7, x: 0, y: 1)
 
                 Text("SIGN IN TO CONTINUE")
                     .font(MGFont.mono(8.5))
@@ -333,20 +329,16 @@ private struct AuthSheet: View {
                 // Mock-only fast entry for previews/dev. Compiled out of Release
                 // so App Review never sees a hidden bypass.
                 Button(action: attemptMockEnter) {
-                    Text(isLoading ? "Signing in…" : "Enter the community →")
+                    Text(isLoading ? "Signing in…" : "Cross the threshold →")
                         .font(MGFont.serif(16, .bold))
                         .tracking(16 * 0.04)
-                        .foregroundStyle(MGColor.goldText)
+                        .foregroundStyle(MGColor.parchment)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)
                         .background(
                             RoundedRectangle(cornerRadius: 15)
-                                .fill(LinearGradient(
-                                    colors: [MGColor.goldBright, MGColor.gold, MGColor.goldDeep],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ))
-                                .shadow(color: MGColor.gold.opacity(0.7), radius: 16, x: 0, y: 12)
+                                .fill(MGGradient.launchCTA)
+                                .shadow(color: MGColor.oxblood.opacity(0.7), radius: 16, x: 0, y: 12)
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 15)
@@ -368,7 +360,7 @@ private struct AuthSheet: View {
                     HStack(alignment: .top, spacing: 8) {
                         Image(systemName: accepted ? "checkmark.square.fill" : "square")
                             .font(.system(size: 14, weight: .semibold))
-                            .foregroundStyle(accepted ? MGColor.goldDeep
+                            .foregroundStyle(accepted ? MGColor.brass
                                              : (nudge ? Color(red: 0.85, green: 0.3, blue: 0.3) : cream.opacity(0.6)))
                         LegalConsentText(cream: cream)
                             .multilineTextAlignment(.leading)

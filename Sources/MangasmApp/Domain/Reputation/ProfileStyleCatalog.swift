@@ -22,7 +22,7 @@ public enum ProfileStyleId: String, CaseIterable, Codable, Sendable, Hashable {
 
     public init?(legacyThemeAlias alias: String) {
         switch alias {
-        case "bobRoss", "skullIsland": self = .calmStudio
+        case "bobRoss", "skullIsland", "inkhouse": self = .calmStudio
         case "lambo": self = .aspirational
         case "cyborg": self = .precisionTech
         case "matrix": self = .digitalFlow
@@ -64,8 +64,8 @@ public enum ProfileStyleCatalog {
             styleId: .calmStudio,
             minScore: ReputationUnlockTier.new.minScore,
             badgeName: "New Member",
-            displayName: "Skull Island",
-            heroAssetName: "style-hero-skullIsland"
+            displayName: "Inkhouse",
+            heroAssetName: "style-hero-inkhouse"
         ),
         .init(
             styleId: .aspirational,

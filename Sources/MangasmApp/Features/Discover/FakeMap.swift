@@ -15,7 +15,7 @@ struct MapPinData {
 // Street lines: SVG <g> with thick (#c8cfd2, sw7) and thin (#d6dbd2, sw2.5) paths.
 // Radial gold glow: radial-gradient top-center, rgba(201,168,76,0.12).
 // Pins: glass pill + avatar circle; hot (≥85) gets gold border + glow + gold ring.
-// Privacy badge: bottom-left green dot + "Privacy zone · Dubai Marina".
+// Privacy badge: bottom-left green dot + "Privacy zone · neighborhood only".
 struct FakeMap: View {
     let pins: [MapPinData]
 
@@ -109,7 +109,7 @@ struct FakeMap: View {
                         .fill(MGColor.spotify)
                         .frame(width: 6, height: 6)
                         .shadow(color: MGColor.spotify.opacity(1), radius: 3)
-                    Text("Privacy zone · Dubai Marina")
+                    Text("Privacy zone · neighborhood only")
                         .font(MGFont.mono(7.5))
                         .foregroundStyle(MGColor.inkSoft)
                 }
