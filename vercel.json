@@ -103,6 +103,14 @@
       "destination": "/storybook.html"
     },
     {
+      "source": "/manifesto",
+      "destination": "/manifesto.html"
+    },
+    {
+      "source": "/manifesto/",
+      "destination": "/manifesto.html"
+    },
+    {
       "source": "/plus",
       "destination": "/plus.html"
     },
