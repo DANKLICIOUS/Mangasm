@@ -4,7 +4,7 @@
 //
 // shots.json: [{ "url", "width", "height", "mobile"?, "reducedMotion"?, "noWebGL"?,
 //   "steps": [ { "scroll": "#units", "offset": -90 } | { "move": [[x,y],...], "every": 40 }
-//            | { "click": [x,y] } | { "clickSel": "#dash-replay" } | { "hoverSel": ".rh-col" } | { "eval": "js" }
+//            | { "click": [x,y] } | { "clickSel": "#dash-replay" } | { "hoverSel": ".rh-col" } | { "eval": "js", "log"?: true }
 //            | { "wait": ms } | { "shot": "/opt/cursor/artifacts/x.png" } ] }]
 // Prints console errors/warnings, uncaught exceptions and CuteFX.status() per page.
 import { spawn } from "node:child_process";
@@ -156,7 +156,10 @@ try {
         await send("Input.dispatchMouseEvent", { type: "mousePressed", x, y, button: "left", clickCount: 1 });
         await send("Input.dispatchMouseEvent", { type: "mouseReleased", x, y, button: "left", clickCount: 1 });
       }
-      if (st.eval) await evaluate(st.eval);
+      if (st.eval) {
+        const v = await evaluate(st.eval);
+        if (st.log) console.log("eval", v);
+      }
       if (st.wait) await sleep(st.wait);
       if (st.shot) {
         const { data } = await send("Page.captureScreenshot", { format: "png" });
