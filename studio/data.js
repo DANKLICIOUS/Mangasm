@@ -1,7 +1,7 @@
 // Single source of truth for copy. Edit here; markup is generated from it.
 window.STUDIO = {
   // Paste a Unicorn Studio embed ID (Project → Export → Embed) to replace the
-  // built-in ice shader in the hero. Leave empty to use the local shader.
+  // built-in jelly scene in the hero. Leave empty to use the local shader.
   unicornProjectId: "",
 
   brands: [
@@ -18,7 +18,7 @@ window.STUDIO = {
         "Launch site, waitlist & analytics",
         "App Store + social launch kit",
       ],
-      hue: "#d1e3ff",
+      hue: "#ffb8d9",
     },
     {
       id: "coexist",
@@ -33,7 +33,7 @@ window.STUDIO = {
         "Stripe & StoreKit billing",
         "CI/CD, monitoring, rollbacks",
       ],
-      hue: "#c9d0df",
+      hue: "#b5f0d6",
     },
     {
       id: "lynx",
@@ -48,7 +48,7 @@ window.STUDIO = {
         "Ops automations & reporting",
         "Human-in-the-loop guardrails",
       ],
-      hue: "#e1e6f1",
+      hue: "#d7c8ff",
     },
   ],
 
@@ -104,9 +104,9 @@ window.STUDIO = {
       [300, "› hero         static jpg, no motion", "dim"],
       [300, "› brand        3 fonts, 7 blues, no system", "warn"],
       [600, "$ slay brand --generate system", "cmd"],
-      [500, "✓ palette      #0b0d12 · #d1e3ff · #a0a5b1", "ok"],
-      [300, "✓ type         IBM Plex Mono / Inter Tight", "ok"],
-      [600, "$ slay hero --engine unicorn-studio --scene ice", "cmd"],
+      [500, "✓ palette      peach · bubblegum · mint · lilac", "ok"],
+      [300, "✓ type         Fredoka / Nunito", "ok"],
+      [600, "$ slay hero --engine unicorn-studio --scene jelly", "cmd"],
       [700, "✓ webgl scene  60fps · 1.2MB · lazy", "ok"],
       [500, "$ slay ship --preview", "cmd"],
       [700, "✓ preview      https://client-next.vercel.app", "ok"],
