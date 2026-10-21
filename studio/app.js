@@ -100,8 +100,8 @@
     };
     resize();
     addEventListener("resize", resize);
-    state.tx = state.mx = canvas.width / 2;
-    state.ty = state.my = canvas.height / 2;
+    state.tx = state.mx = canvas.width * 0.78;
+    state.ty = state.my = canvas.height * 0.62;
     const target = scrollLinked ? window : canvas;
     target.addEventListener("pointermove", (e) => {
       const r = canvas.getBoundingClientRect();
@@ -246,7 +246,7 @@
     .map(
       (id) => `
       <div class="term" data-term="${id}">
-        <div class="term-head"><i></i>${brandById[id].name} · ${brandById[id].role.split(" ")[0]}<span class="state">idle</span></div>
+        <div class="term-head"><i></i>${brandById[id].name} · ${brandById[id].role.split(/[ ,]/)[0]}<span class="state">idle</span></div>
         <pre class="term-body" aria-live="off"></pre>
       </div>`
     )
@@ -390,8 +390,11 @@
       preview.classList.add("on");
     });
     item.addEventListener("pointermove", (e) => {
-      preview.style.left = e.clientX + 180 + "px";
-      preview.style.top = e.clientY + "px";
+      const w = preview.offsetWidth,
+        h = preview.offsetHeight;
+      const x = e.clientX + 28 + w > innerWidth ? e.clientX - 28 - w : e.clientX + 28;
+      preview.style.left = x + "px";
+      preview.style.top = Math.max(h / 2 + 8, Math.min(innerHeight - h / 2 - 8, e.clientY)) + "px";
     });
     item.addEventListener("pointerleave", () => preview.classList.remove("on"));
   });

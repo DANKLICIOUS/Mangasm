@@ -98,7 +98,7 @@ main,
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  mix-blend-mode: difference;
+  background: linear-gradient(rgba(11, 13, 18, 0.92), rgba(11, 13, 18, 0));
 }
 .logo {
   font-weight: 500;
@@ -226,6 +226,23 @@ main,
   justify-content: center;
   padding: 120px 32px 80px;
 }
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(11, 13, 18, 0.6), rgba(11, 13, 18, 0) 65%);
+}
+@media (max-width: 960px) {
+  .hero::before {
+    background: linear-gradient(
+      rgba(11, 13, 18, 0.15),
+      rgba(11, 13, 18, 0.6) 45%,
+      rgba(11, 13, 18, 0.35)
+    );
+  }
+}
 .hero-title {
   margin: 0;
   font-weight: 300;
@@ -249,6 +266,7 @@ main,
   animation-delay: 0.24s;
 }
 .hero-lede {
+  text-shadow: 0 1px 14px rgba(11, 13, 18, 0.85);
   max-width: 520px;
   color: var(--ice-2);
   font-size: 18px;
@@ -676,7 +694,7 @@ main,
 .work-item {
   position: relative;
   display: grid;
-  grid-template-columns: 140px 1.1fr 1.6fr auto;
+  grid-template-columns: 120px minmax(0, 0.9fr) minmax(0, 1.3fr) minmax(0, 300px);
   gap: 24px;
   align-items: center;
   padding: 30px 0;
@@ -751,11 +769,13 @@ main,
   width: 300px;
   aspect-ratio: 4 / 3;
   pointer-events: none;
+  background-color: var(--bg);
   background-size: cover;
   background-position: center;
   border: 1px solid var(--line);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0.9);
+  transform: translateY(-50%) scale(0.92);
   transition:
     opacity 0.25s,
     transform 0.25s;
@@ -770,7 +790,7 @@ main,
 }
 .work-preview.on {
   opacity: 1;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translateY(-50%);
 }
 
 /* ---------- contact + footer ---------- */
@@ -812,7 +832,37 @@ main,
   }
 }
 
+@media (max-width: 960px), (hover: none) {
+  .work-preview {
+    display: none;
+  }
+}
 @media (max-width: 960px) {
+  .nav {
+    padding: 18px 20px;
+  }
+  .hero,
+  .section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+  .hud-tl,
+  .hud-bl {
+    left: 20px;
+  }
+  .hud-tr {
+    right: 20px;
+  }
+  .hud-br {
+    display: none;
+  }
+  .dash-bar {
+    flex-wrap: wrap;
+  }
+  .dash-progress {
+    order: 5;
+    flex-basis: 100%;
+  }
   .units,
   .terms {
     grid-template-columns: 1fr;
