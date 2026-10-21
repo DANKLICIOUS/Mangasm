@@ -5,133 +5,9 @@
   const UNICORN_SDK =
     "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.4.3/dist/unicornStudio.umd.js";
 
-  /* ---------------- ice shader ---------------- */
-  const FRAG = `
-    precision highp float;
-    uniform vec2 uRes; uniform float uTime; uniform vec2 uMouse; uniform float uScroll; uniform float uZoom;
-
-    vec2 hash2(vec2 p) {
-      p = vec2(dot(p, vec2(127.1, 311.7)), dot(p, vec2(269.5, 183.3)));
-      return fract(sin(p) * 43758.5453);
-    }
-    // x: distance to nearest seed, y: F2 - F1 (facet edge), z: cell id
-    vec3 voro(vec2 x) {
-      vec2 n = floor(x), f = fract(x);
-      float m1 = 8.0, m2 = 8.0; vec2 id = n;
-      for (int j = -1; j <= 1; j++)
-      for (int i = -1; i <= 1; i++) {
-        vec2 g = vec2(float(i), float(j));
-        vec2 o = hash2(n + g);
-        o = 0.5 + 0.5 * sin(uTime * 0.18 + 6.2831 * o);
-        vec2 r = g + o - f;
-        float d = dot(r, r);
-        if (d < m1) { m2 = m1; m1 = d; id = n + g; } else if (d < m2) { m2 = d; }
-      }
-      return vec3(sqrt(m1), sqrt(m2) - sqrt(m1), hash2(id).x);
-    }
-    float facet(vec2 uv, float lift) {
-      vec3 v = voro(uv * uZoom);
-      float edge = 1.0 - smoothstep(0.0, 0.04 + lift * 0.05, v.y);
-      float body = 0.28 + 0.42 * v.z;
-      float fres = pow(clamp(v.x, 0.0, 1.0), 1.6);
-      return body * 0.6 + edge * (0.55 + lift * 0.9) + fres * 0.22 + lift * 0.18;
-    }
-    void main() {
-      vec2 uv = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
-      vec2 m = (uMouse - 0.5 * uRes) / uRes.y;
-      uv.y += uScroll * 0.9;
-      vec2 mm = m + vec2(0.0, uScroll * 0.9);
-      float md = length(uv - mm);
-      float lift = exp(-md * md * 9.0);
-      vec2 dir = normalize(uv - mm + 1e-4);
-      vec2 off = dir * (0.003 + lift * 0.012);
-      vec3 col = vec3(
-        facet(uv + off, lift),
-        facet(uv, lift),
-        facet(uv - off, lift)
-      );
-      vec3 deep = vec3(0.043, 0.051, 0.071);
-      vec3 ice = vec3(0.82, 0.89, 1.0);
-      col = mix(deep, ice, col * 0.55);
-      float vig = smoothstep(1.25, 0.2, length(uv - vec2(0.0, uScroll * 0.9)));
-      col *= 0.55 + 0.45 * vig;
-      col = mix(col, deep, clamp(uScroll * 0.55, 0.0, 0.78));
-      gl_FragColor = vec4(col, 1.0);
-    }`;
-  const VERT = "attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }";
-
-  function createIce(canvas, { zoom = 2.6, maxDpr = 1.5, scrollLinked = false } = {}) {
-    const gl = canvas.getContext("webgl", { antialias: false, alpha: false });
-    if (!gl) return null;
-    const sh = (type, src) => {
-      const s = gl.createShader(type);
-      gl.shaderSource(s, src);
-      gl.compileShader(s);
-      if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));
-      return s;
-    };
-    const prog = gl.createProgram();
-    gl.attachShader(prog, sh(gl.VERTEX_SHADER, VERT));
-    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
-    gl.linkProgram(prog);
-    gl.useProgram(prog);
-    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(prog, "p");
-    gl.enableVertexAttribArray(loc);
-    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const u = (n) => gl.getUniformLocation(prog, n);
-    const uRes = u("uRes"),
-      uTime = u("uTime"),
-      uMouse = u("uMouse"),
-      uScroll = u("uScroll"),
-      uZoom = u("uZoom");
-
-    const state = { mx: 0, my: 0, tx: 0, ty: 0, scroll: 0, visible: true, dpr: 1, running: true };
-    const resize = () => {
-      state.dpr = Math.min(devicePixelRatio || 1, maxDpr);
-      const w = Math.max(1, Math.floor(canvas.clientWidth * state.dpr));
-      const h = Math.max(1, Math.floor(canvas.clientHeight * state.dpr));
-      if (canvas.width !== w || canvas.height !== h) {
-        canvas.width = w;
-        canvas.height = h;
-      }
-      gl.viewport(0, 0, w, h);
-    };
-    resize();
-    addEventListener("resize", resize);
-    state.tx = state.mx = canvas.width * 0.78;
-    state.ty = state.my = canvas.height * 0.62;
-    const target = scrollLinked ? window : canvas;
-    target.addEventListener("pointermove", (e) => {
-      const r = canvas.getBoundingClientRect();
-      state.tx = (e.clientX - r.left) * state.dpr;
-      state.ty = (r.height - (e.clientY - r.top)) * state.dpr;
-    });
-    new IntersectionObserver(([en]) => (state.visible = en.isIntersecting)).observe(canvas);
-
-    const t0 = performance.now();
-    const frame = (now) => {
-      if (!state.running) return;
-      if (state.visible) {
-        state.mx += (state.tx - state.mx) * 0.08;
-        state.my += (state.ty - state.my) * 0.08;
-        if (scrollLinked) {
-          const target = scrollY / innerHeight;
-          state.scroll += (target - state.scroll) * 0.08;
-        }
-        gl.uniform2f(uRes, canvas.width, canvas.height);
-        gl.uniform1f(uTime, reduceMotion ? 0 : (now - t0) / 1000);
-        gl.uniform2f(uMouse, state.mx, state.my);
-        gl.uniform1f(uScroll, state.scroll);
-        gl.uniform1f(uZoom, zoom);
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
-      }
-      requestAnimationFrame(frame);
-    };
-    requestAnimationFrame(frame);
-    return { stop: () => (state.running = false), canvas };
-  }
+  /* ---------------- ice shader (rendered by fx.js on the shared WebGL context) ---------------- */
+  const createIce = (canvas, opts = {}) =>
+    window.OvernightFX ? window.OvernightFX.mount(canvas, { effect: "ice", ...opts }) : null;
 
   /* ---------------- hero scene: Unicorn Studio or local shader ---------------- */
   const sceneLabel = $("#scene-label");
@@ -434,7 +310,10 @@
   const fps = (now) => {
     frames++;
     if (now - last > 1000) {
-      fpsEl.textContent = `WebGL · ${frames} fps`;
+      const fx = window.OvernightFX;
+      fpsEl.textContent = fx?.contexts
+        ? `WebGL · ${frames} fps · ${fx.instances.length} fx · ${fx.contexts} ctx`
+        : "WebGL · off";
       frames = 0;
       last = now;
     }

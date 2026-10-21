@@ -25,7 +25,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body>
+  <body data-fx="grain">
     <div class="loader" id="loader" aria-hidden="true">
       <span class="loader-pct" id="loader-pct">000</span>
       <span class="loader-label">/// Initializing overnight</span>
@@ -53,12 +53,12 @@
     </nav>
 
     <main>
-      <header class="hero" id="top">
+      <header class="hero" id="top" data-fx="liquid">
         <div class="hud hud-tl">
           <span>SLAY.LLC</span><span>COEXIST.LLC</span><span>LYNXLOGIX.AI</span>
         </div>
         <div class="hud hud-tr" id="clock">22:00:00 · T-08:00</div>
-        <h1 class="hero-title">
+        <h1 class="hero-title" data-fx="text">
           <span class="line">We transform</span>
           <span class="line">businesses</span>
           <span class="line"><em>overnight.</em></span>
@@ -81,7 +81,7 @@
         <div class="units" id="units-grid"></div>
       </section>
 
-      <section class="section" id="backstage">
+      <section class="section" id="backstage" data-fx="aurora" data-fx-bleed="160">
         <p class="eyebrow" data-scramble>////// 02 · Behind the scenes</p>
         <h2>The night shift, live.</h2>
         <p class="section-lede">
@@ -120,7 +120,7 @@
         <p class="eyebrow" data-scramble>////// 03 · The transformation</p>
         <h2>Same business. One night later.</h2>
         <p class="section-lede">Drag the divider to compare the 22:00 site with the 06:00 site.</p>
-        <div class="compare" id="compare">
+        <div class="compare" id="compare" data-fx="dissolve" data-fx-z="4">
           <div class="mock mock-before">
             <div class="mb-nav">
               <b>ACME Services</b><span>Home · About · Services · Contact</span>
@@ -194,6 +194,7 @@
       <span id="fps">WebGL · —</span>
     </footer>
 
+    <script src="fx.js" data-theme="overnight"></script>
     <script src="data.js"></script>
     <script src="app.js"></script>
   </body>
