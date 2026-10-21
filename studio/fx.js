@@ -439,10 +439,16 @@
       inst.waiting = false;
       inst.ro = new ResizeObserver(() => (inst.needsRaster = true));
       inst.ro.observe(inst.el);
+      // typewriter / scramble scripts change the text without changing the box
+      inst.mo = new MutationObserver((list) => {
+        if (list.some((m) => m.target !== inst.canvas)) inst.needsRaster = true;
+      });
+      inst.mo.observe(inst.el, { subtree: true, childList: true, characterData: true });
       inst.needsRaster = true;
     },
     destroy(inst) {
       inst.ro?.disconnect();
+      inst.mo?.disconnect();
       inst.el.classList.remove("ofx-text-live");
       if (inst.tex && R && !R.lost) R.gl.deleteTexture(inst.tex);
     },
@@ -591,20 +597,27 @@
     const start = now();
     return new Promise((resolve) => {
       const check = () => {
-        const busy = el.getAnimations?.({ subtree: true }).some((a) => a.playState === "running");
+        const busy = el
+          .getAnimations?.({ subtree: true })
+          .some((a) => a.playState === "running" && a.effect?.getComputedTiming().iterations !== Infinity);
         let hidden = false;
         for (let n = el; n && n !== document.body && !hidden; n = n.parentElement)
           hidden = +getComputedStyle(n).opacity < 0.99;
         el.querySelectorAll("*").forEach((c) => {
-          const cs = getComputedStyle(c);
-          if (+cs.opacity < 0.99 || (cs.filter && cs.filter !== "none")) hidden = true;
+          if (+getComputedStyle(c).opacity < 0.99) hidden = true;
         });
-        if ((!busy && !hidden) || now() - start > 20000) resolve();
+        if ((!busy && !hidden) || now() - start > 6000) resolve();
         else setTimeout(check, 150);
       };
       (document.fonts?.ready || Promise.resolve()).then(check);
     });
   }
+  // gradient text (background-clip: text) can't be rasterised; it is left to the DOM
+  const clearColor = (c) => c === "transparent" || /,\s*0\)$/.test(c);
+  const seeThrough = (node) => {
+    const cs = getComputedStyle(node);
+    return clearColor(cs.color) || clearColor(cs.webkitTextFillColor || "");
+  };
   const transform = (s, tt) =>
     tt === "uppercase"
       ? s.toUpperCase()
@@ -629,7 +642,7 @@
       const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
       for (let node; (node = walker.nextNode()); ) {
         const parent = node.parentElement;
-        if (!parent || parent.closest("canvas")) continue;
+        if (!parent || parent.closest("canvas") || seeThrough(parent)) continue;
         const cs = getComputedStyle(parent);
         ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
         if ("letterSpacing" in ctx) ctx.letterSpacing = cs.letterSpacing === "normal" ? "0px" : cs.letterSpacing;
@@ -696,12 +709,16 @@
     s.textContent = `
       .ofx-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;display:block}
       .ofx-under{z-index:-1}
-      .ofx-fixed{position:fixed;inset:0;width:100vw;height:100vh;z-index:60;image-rendering:pixelated}
+      .ofx-fixed{position:fixed;inset:0;width:100vw;height:100vh;z-index:60}
+      .ofx-canvas[data-ofx=grain]{image-rendering:pixelated}
       .ofx-host{isolation:isolate}
       .ofx-text-live,.ofx-text-live *:not(canvas){color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important}`;
     document.head.appendChild(s);
   }
 
+  // long pages: keep any one effect's buffer within ~2.4 MP and the GL size limits
+  const MAX_PIXELS = 2.4e6;
+  const MAX_SIDE = 4096;
   let raf = 0;
   function schedule() {
     if (!raf && !document.hidden) raf = requestAnimationFrame(loop);
@@ -731,7 +748,7 @@
     if (!inst.ready) {
       if (inst.initing) return;
       inst.initing = true;
-      Promise.resolve(inst.def.init(inst)).then(
+      new Promise((res) => res(inst.def.init(inst))).then(
         () => {
           inst.initing = false;
           inst.ready = true;
@@ -739,6 +756,15 @@
           schedule();
         },
         (err) => {
+          // A compile error with an empty log means the context was lost or the GPU process
+          // was still starting; retry a few times before giving up on this effect.
+          inst.failures = (inst.failures || 0) + 1;
+          if (inst.failures < 4 && (R.gl.isContextLost() || !String(err?.message || "").trim())) {
+            R.programs.clear();
+            inst.initing = false;
+            setTimeout(() => ((inst.dirty = true), schedule()), 400 * inst.failures);
+            return;
+          }
           warn(inst.name, err);
           inst.destroy();
         }
@@ -752,8 +778,10 @@
     const cssH = fixed ? innerHeight : cv.clientHeight;
     if (!cssW || !cssH) return;
     inst.dpr = Math.min(devicePixelRatio || 1, inst.maxDpr);
-    const w = Math.max(1, Math.round(cssW * inst.dpr * inst.scale));
-    const h = Math.max(1, Math.round(cssH * inst.dpr * inst.scale));
+    let k = inst.dpr * inst.scale;
+    k = Math.min(k, Math.sqrt(MAX_PIXELS / (cssW * cssH)), MAX_SIDE / cssW, MAX_SIDE / cssH);
+    const w = Math.max(1, Math.round(cssW * k));
+    const h = Math.max(1, Math.round(cssH * k));
     if (w !== inst.w || h !== inst.h) {
       inst.w = cv.width = w;
       inst.h = cv.height = h;
@@ -803,9 +831,10 @@
         return null;
       }
       if (name === "text") {
-        const cs = getComputedStyle(el);
-        const clear = (c) => c === "transparent" || /,\s*0\)$/.test(c);
-        if (clear(cs.color) || clear(cs.webkitTextFillColor || "")) {
+        const parents = new Set();
+        const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        for (let n; (n = tw.nextNode()); ) if (n.textContent.trim()) parents.add(n.parentElement);
+        if (![...parents].some((p) => !seeThrough(p))) {
           warn("text effect skipped: element text is transparent (gradient text?)", el);
           return null;
         }
@@ -825,7 +854,7 @@
         fps: opts.fps ?? def.fps ?? 60,
         maxDpr: opts.maxDpr ?? 1.5,
         pad: opts.pad ?? opts.bleed ?? def.pad ?? 0,
-        layer: el instanceof HTMLCanvasElement ? "canvas" : def.layer,
+        layer: el instanceof HTMLCanvasElement ? "canvas" : opts.layer || def.layer,
         static: reduceMotion,
         visible: false,
         dirty: true,
@@ -962,6 +991,7 @@
           cell: num(el.dataset.fxCell),
           blend: el.dataset.fxBlend,
           bleed: num(el.dataset.fxBleed),
+          layer: el.dataset.fxLayer,
         });
         if (h) out.push(h);
       }

@@ -8,7 +8,8 @@
  * effects   which of liquid/text/grain/dissolve/aurora auto-mount for data-site embeds.
  * targets   CSS selector per effect; omitted = fx.js default (hero of the first <h1>, the <h1>,
  *           <body>, the second <section>, [data-fx-dissolve]). Elements with data-fx="…" win.
- * options   extra mount options per effect (z, scale, cell, zoom, blend, intensity).
+ * options   extra mount options per effect (layer, z, scale, bleed, cell, zoom, blend, intensity).
+ *           layer: "fixed" pins an effect to the viewport (z: -1 puts it behind the content).
  * fonts     display/body families (fx-demo.html previews only).
  * source    where the palette came from.
  */
@@ -48,7 +49,7 @@ window.OvernightFXThemes = {
     label: "Ganesh AI",
     vibe: "Phosphor-green terminal, neon glow, AI catalog",
     palette: { bg: "#000502", ink: "#d6f7e8", a: "#00ff9c", b: "#9ffbd0", c: "#27e8e0" },
-    intensity: { liquid: 0.85, text: 1, grain: 0.7, dissolve: 1 },
+    intensity: { liquid: 0.6, text: 1, grain: 0.7, dissolve: 1 },
     effects: { liquid: true, text: true, grain: true, dissolve: true, aurora: false },
     targets: { dissolve: "main section:nth-of-type(2), section:nth-of-type(2)" },
     fonts: { display: "JetBrains Mono", body: "JetBrains Mono" },
@@ -57,14 +58,14 @@ window.OvernightFXThemes = {
 
   "mangasm.app": {
     label: "Mangasm",
-    vibe: "Cinematic manga rebuild — night blue, cyan and violet with gold",
-    palette: { bg: "#05060c", ink: "#eef1f8", a: "#22d3ee", b: "#a78bfa", c: "#fbbf24" },
-    intensity: { liquid: 0.8, text: 0.9, grain: 0.5, aurora: 0.7 },
+    vibe: "Safety-first rebuild — campfire pink and gold on warm night",
+    palette: { bg: "#0a090c", ink: "#f4efe8", a: "#ff6b9d", b: "#e83a7a", c: "#c9a227" },
+    intensity: { liquid: 0.7, text: 0.9, grain: 0.5, aurora: 0.7 },
     effects: { liquid: true, text: true, grain: true, dissolve: false, aurora: true },
     targets: { liquid: "header.hero", text: ".hero h1", aurora: "#status, .public-status" },
     options: { liquid: { z: 1 } },
     fonts: { display: "Cormorant Garamond", body: "DM Sans" },
-    source: "web/styles.css in this repo (--bg #05060c, #22d3ee, #a78bfa, --gold #fbbf24)",
+    source: "web/styles.css in this repo (--bg #0a090c, --pink #e83a7a, --pink-soft #ff6b9d, --gold #c9a227)",
   },
 
   "nostalgia.sh": {
@@ -73,6 +74,8 @@ window.OvernightFXThemes = {
     palette: { bg: "#0a0712", ink: "#e8d9b0", a: "#f0c75e", b: "#a45dff", c: "#27e8e0" },
     intensity: { liquid: 0.8, text: 0.9, grain: 0.8, aurora: 0.9 },
     effects: { liquid: true, text: true, grain: true, dissolve: false, aurora: true },
+    targets: { liquid: "body", aurora: "body" },
+    options: { liquid: { layer: "fixed", z: -1 }, aurora: { layer: "fixed", z: -1 } },
     fonts: { display: "Cinzel Decorative", body: "Cormorant Garamond" },
     source: "nostalgia.sh/assets/index-*.css (--obsidian #0a0712, --gold-bright #f0c75e, #a45dff, #27e8e0)",
   },

@@ -5,7 +5,7 @@
 // shots.json: [{ "url": "...", "out": "/opt/cursor/artifacts/fx-x.png", "width": 1440, "height": 900,
 //   "waitReady": true, "reducedMotion": false, "noWebGL": false,
 //   "steps": [ { "scroll": "#backstage", "offset": -80 }, { "move": [[x,y], ...], "every": 60 },
-//              { "eval": "js" }, { "wait": 1500 } ], "clip": { "x": 0, "y": 0, "width": 400, "height": 300, "scale": 2 } }]
+//              { "inject": "studio/fx.js" }, { "eval": "js" }, { "print": "js expr" }, { "wait": 1500 } ], "clip": { "x": 0, "y": 0, "width": 400, "height": 300, "scale": 2 } }]
 // Prints console errors/warnings and OvernightFX stats per shot.
 import { spawn } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -128,7 +128,9 @@ async function shoot(cdp, shot) {
         await sleep(step.every || 50);
       }
     }
-    if (step.eval) await evaluate(step.eval);
+    if (step.inject) await evaluate(readFileSync(step.inject, "utf8") + "\n;0");
+    if (step.eval) await evaluate(step.eval + "\n;0");
+    if (step.print) console.log(`  ${step.print.slice(0, 40)}… → ${JSON.stringify(await evaluate(step.print))}`);
     if (step.wait) await sleep(step.wait);
   }
   await sleep(shot.settle ?? 800);
