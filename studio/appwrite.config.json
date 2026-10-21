@@ -1,0 +1,21 @@
+{
+  "projectId": "<APPWRITE_PROJECT_ID>",
+  "endpoint": "https://<REGION>.cloud.appwrite.io/v1",
+  "sites": [
+    {
+      "$id": "overnight-studio",
+      "name": "Overnight — Slay × Coexist × LynxLogix",
+      "enabled": true,
+      "logging": true,
+      "framework": "other",
+      "timeout": 30,
+      "installCommand": "",
+      "buildCommand": "",
+      "outputDirectory": "./",
+      "buildRuntime": "node-22",
+      "adapter": "static",
+      "fallbackFile": "index.html",
+      "path": "."
+    }
+  ]
+}

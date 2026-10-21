@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Overnight — Slay.LLC × Coexist.LLC × LynxLogix.Ai</title>
+    <meta
+      name="description"
+      content="Brand, platform and AI agents working in parallel. We transform businesses overnight."
+    />
+    <meta property="og:title" content="We transform businesses overnight." />
+    <meta
+      property="og:description"
+      content="Slay.LLC designs it. Coexist.LLC ships it. LynxLogix.Ai automates it."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="loader" id="loader" aria-hidden="true">
+      <span class="loader-pct" id="loader-pct">000</span>
+      <span class="loader-label">/// Initializing overnight</span>
+    </div>
+
+    <canvas id="ice" aria-hidden="true"></canvas>
+    <div
+      id="unicorn"
+      class="unicorn"
+      aria-hidden="true"
+      data-us-production="true"
+      data-us-lazyload="true"
+    ></div>
+
+    <nav class="nav">
+      <a class="logo" href="#top" data-scramble>OVERNIGHT<span>_</span></a>
+      <div class="nav-links">
+        <a href="#units" data-scramble>// Units</a>
+        <a href="#backstage" data-scramble>// Backstage</a>
+        <a href="#transform" data-scramble>// Transform</a>
+        <a href="#work" data-scramble>// Work</a>
+        <a href="#contact" class="bracket" data-scramble>Start tonight</a>
+      </div>
+    </nav>
+
+    <main>
+      <header class="hero" id="top">
+        <div class="hud hud-tl">
+          <span>SLAY.LLC</span><span>COEXIST.LLC</span><span>LYNXLOGIX.AI</span>
+        </div>
+        <div class="hud hud-tr" id="clock">22:00:00 · T-08:00</div>
+        <h1 class="hero-title">
+          <span class="line">We transform</span>
+          <span class="line">businesses</span>
+          <span class="line"><em>overnight.</em></span>
+        </h1>
+        <p class="hero-lede">
+          Three studios, one night shift. Slay.LLC designs it, Coexist.LLC ships it, LynxLogix.Ai
+          automates it — in parallel, while you sleep.
+        </p>
+        <div class="hero-actions">
+          <a class="btn bracket" href="#backstage">Watch the night shift</a>
+          <a class="btn ghost" href="#work">See completed work</a>
+        </div>
+        <div class="hud hud-bl" id="scene-label">Scene: ice shader · Scroll to discover</div>
+        <div class="hud hud-br">N 40.7128° · W 74.0060°</div>
+      </header>
+
+      <section class="section" id="units">
+        <p class="eyebrow" data-scramble>////// 01 · The units</p>
+        <h2>Three companies. One overnight pipeline.</h2>
+        <div class="units" id="units-grid"></div>
+      </section>
+
+      <section class="section" id="backstage">
+        <p class="eyebrow" data-scramble>////// 02 · Behind the scenes</p>
+        <h2>The night shift, live.</h2>
+        <p class="section-lede">
+          A replay of a real overnight engagement: three agent-driven terminals, one per unit,
+          running in parallel from 22:00 to 06:00.
+        </p>
+        <div class="dash" id="dash">
+          <div class="dash-bar">
+            <span class="dash-title">mission_control — client.com</span>
+            <div class="dash-progress" aria-hidden="true"><i id="dash-fill"></i></div>
+            <span class="dash-time" id="dash-time">22:00</span>
+            <button type="button" class="btn bracket small" id="dash-replay">Replay</button>
+          </div>
+          <div class="terms" id="terms"></div>
+          <div class="dash-metrics">
+            <div>
+              <span class="k">Lighthouse</span
+              ><b data-metric="perf" data-from="41" data-to="98">41</b>
+            </div>
+            <div>
+              <span class="k">Time to live</span
+              ><b data-metric="ttl" data-from="0" data-to="8" data-suffix="h">0h</b>
+            </div>
+            <div>
+              <span class="k">Agents</span><b data-metric="agents" data-from="0" data-to="11">0</b>
+            </div>
+            <div>
+              <span class="k">Human gates</span
+              ><b data-metric="gates" data-from="0" data-to="3">0</b>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="transform">
+        <p class="eyebrow" data-scramble>////// 03 · The transformation</p>
+        <h2>Same business. One night later.</h2>
+        <p class="section-lede">Drag the divider to compare the 22:00 site with the 06:00 site.</p>
+        <div class="compare" id="compare">
+          <div class="mock mock-before">
+            <div class="mb-nav">
+              <b>ACME Services</b><span>Home · About · Services · Contact</span>
+            </div>
+            <div class="mb-hero">
+              <h3>Welcome to Our Website!</h3>
+              <p>
+                We provide quality services for all your needs. Contact us today for a free quote.
+              </p>
+              <button type="button" tabindex="-1">Click Here</button>
+            </div>
+            <div class="mb-cols">
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+            <span class="tag">22:00 · BEFORE</span>
+          </div>
+          <div class="mock mock-after" id="mock-after">
+            <canvas class="mock-ice" id="mock-ice"></canvas>
+            <div class="ma-nav"><b>ACME_</b><span>// Work // Studio [Book]</span></div>
+            <div class="ma-hero">
+              <p class="eyebrow">////// Services, re-engineered</p>
+              <h3>Built for what<br /><em>comes next.</em></h3>
+              <span class="bracket">Book a call</span>
+            </div>
+            <div class="ma-stats">
+              <span>98 perf</span><span>3× leads</span><span>24/7 agents</span>
+            </div>
+            <span class="tag">06:00 · AFTER</span>
+          </div>
+          <div
+            class="compare-handle"
+            id="compare-handle"
+            role="slider"
+            tabindex="0"
+            aria-label="Before and after comparison"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-valuenow="50"
+          >
+            <span></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="work">
+        <p class="eyebrow" data-scramble>////// 04 · Completed projects</p>
+        <h2>Shipped, live, and still running.</h2>
+        <div class="work" id="work-list"></div>
+      </section>
+
+      <section class="section contact" id="contact">
+        <p class="eyebrow" data-scramble>////// 05 · Start tonight</p>
+        <h2>Send the brief at 9pm.<br /><em>Wake up to a new business.</em></h2>
+        <a class="btn bracket big" href="mailto:bae@slay.llc?subject=Overnight%20transformation"
+          >bae@slay.llc</a
+        >
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>// © 2026 Slay.LLC · Coexist.LLC · LynxLogix.Ai</span>
+      <span id="fps">WebGL · —</span>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
