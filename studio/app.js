@@ -255,6 +255,133 @@
   ).observe($("#dash"));
   $("#dash-replay").addEventListener("click", runShift);
 
+  /* ---------------- backstage: run history (static dashboard snapshot) ---------------- */
+  const RH = S.runHistory;
+  const rhEl = $("#run-history");
+  const fmtInt = (n) => n.toLocaleString("en-US");
+  const dayLabel = (i) => {
+    const d = new Date(RH.start + "T12:00:00");
+    d.setDate(d.getDate() + i);
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  };
+  const maxDay = Math.max(...RH.days.map(([s, f]) => s + f));
+  const RH_TONES = ["pink", "mint", "lilac", "butter", "sky"];
+  const RH_STATS = [
+    ["runs", RH.totals.runs, "runs · 30 days", "lilac"],
+    ["succeeded", RH.totals.succeeded, "succeeded", "mint"],
+    ["failed", RH.totals.failed, "failed", "coral"],
+    ["automations", RH.totals.automations, "automations", "butter"],
+  ];
+  const listed = RH.automations.length;
+  rhEl.innerHTML = `
+    <div class="rh-head">
+      <div>
+        <h3 id="rh-title">Run history</h3>
+        <p class="rh-sub">Our own Cursor Automations, last 30 days</p>
+      </div>
+      <p class="rh-legend" aria-hidden="true"><span class="ok">succeeded</span><span class="bad">failed</span></p>
+    </div>
+    <dl class="rh-stats">
+      ${RH_STATS.map(
+        ([k, v, label, tone]) =>
+          `<div class="rh-stat rh-${tone}"><dt>${label}</dt><dd data-count="${v}">${fmtInt(v)}</dd></div>`
+      ).join("")}
+    </dl>
+    <figure class="rh-chart">
+      <div class="rh-bars" role="img" aria-label="Daily runs from ${dayLabel(0)} to ${dayLabel(RH.days.length - 1)}: ${fmtInt(RH.totals.succeeded)} succeeded and ${fmtInt(RH.totals.failed)} failed. Runs ramp up in late September; failures cluster in two stretches in early and mid October.">
+        ${RH.days
+          .map(([s, f], i) => {
+            const h = ((s + f) / maxDay) * 100;
+            return `<div class="rh-col" style="--i:${i}" data-tip="${dayLabel(i)} · ${s} ✓${f ? ` · ${f} ✗` : ""}"><div class="rh-bar${h < 8 ? " dot" : ""}" style="--h:${h.toFixed(1)}%">${
+              f ? `<i class="bad" style="flex-grow:${f}"></i>` : ""
+            }<i class="ok" style="flex-grow:${s}"></i></div></div>`;
+          })
+          .join("")}
+      </div>
+      <figcaption class="rh-axis"><span>${dayLabel(0)}</span><span>${dayLabel(RH.days.length - 1)}</span></figcaption>
+    </figure>
+    <div class="rh-cols">
+      <div class="rh-panel">
+        <h4>Automations <small>${listed} of ${RH.totals.automations} · all active</small></h4>
+        <ul class="rh-autos">
+          ${RH.automations
+            .map(
+              (a, i) => `<li>
+                <span class="rh-ico rh-${RH_TONES[i % RH_TONES.length]}" aria-hidden="true">✦</span>
+                <span class="rh-name">${esc(a.name)}<small>${esc(a.schedule || "Schedule not shown in snapshot")}${a.next ? ` · next ${esc(a.next)}` : ""}</small></span>
+                <span class="rh-active">Active</span>
+              </li>`
+            )
+            .join("")}
+        </ul>
+      </div>
+      <div class="rh-panel">
+        <h4>Recent runs <button type="button" class="rh-replay" id="rh-replay">↻ replay</button></h4>
+        <ol class="rh-runs" id="rh-runs">
+          ${RH.runs
+            .map(
+              (r) => `<li>
+                <span class="rh-check" aria-hidden="true">✓</span>
+                <span class="rh-name">${esc(r.name)}<small>${esc(r.automation)}</small></span>
+                <time>${esc(r.time).replace(/^(\w+ \d+) /, "<b>$1</b> ")}</time>
+              </li>`
+            )
+            .join("")}
+        </ol>
+      </div>
+    </div>
+    <p class="rh-note">Static snapshot of the Cursor Automations dashboard from ${esc(RH.snapshot)}; the dashboard can't be read live.</p>`;
+
+  const runItems = $$(".rh-runs li", rhEl);
+  const counters = $$("[data-count]", rhEl);
+  const FEED_GAP = 480;
+  const feed = { elapsed: 0, visible: false, last: 0, raf: 0, shown: -1 };
+  const FEED_MS = 500 + runItems.length * FEED_GAP;
+  function renderFeed() {
+    const t = feed.elapsed;
+    const shown = Math.min(runItems.length, Math.max(0, Math.floor((t - 500) / FEED_GAP) + 1));
+    if (shown !== feed.shown) {
+      feed.shown = shown;
+      runItems.forEach((li, i) => {
+        const on = i >= runItems.length - shown;
+        li.classList.toggle("on", on);
+        li.classList.toggle("latest", on && i === runItems.length - shown);
+      });
+    }
+    const e = 1 - Math.pow(1 - Math.min(1, t / 1600), 3);
+    counters.forEach((c) => (c.textContent = fmtInt(Math.round(+c.dataset.count * e))));
+  }
+  function feedFrame(now) {
+    feed.raf = 0;
+    if (feed.visible) feed.elapsed += Math.min(100, now - (feed.last || now));
+    feed.last = now;
+    renderFeed();
+    if (feed.elapsed < FEED_MS) feed.raf = requestAnimationFrame(feedFrame);
+  }
+  function runFeed() {
+    rhEl.classList.remove("grow");
+    void rhEl.offsetWidth;
+    rhEl.classList.add("grow");
+    feed.elapsed = reduceMotion ? FEED_MS : 0;
+    feed.last = 0;
+    feed.shown = -1;
+    renderFeed();
+    if (!reduceMotion && !feed.raf) feed.raf = requestAnimationFrame(feedFrame);
+  }
+  let feedStarted = false;
+  new IntersectionObserver(
+    ([en]) => {
+      feed.visible = en.isIntersecting;
+      feed.last = 0;
+      if (en.isIntersecting && !feedStarted) {
+        feedStarted = true;
+        runFeed();
+      }
+    },
+    { threshold: 0.2 }
+  ).observe(rhEl);
+  $("#rh-replay").addEventListener("click", runFeed);
+
   /* ---------------- before / after ---------------- */
   const compare = $("#compare"),
     handle = $("#compare-handle");
