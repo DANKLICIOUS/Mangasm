@@ -19,7 +19,7 @@ folder and use `src="/fx.js"`.
 
 | Site | Preset (palette · effects) | Source repo | Framework / host | Add the tag to |
 | --- | --- | --- | --- | --- |
-| mangasm.app | `#05060c` cyan/violet/gold · liquid, text, grain, aurora | this repo (`web/`) | static HTML on Vercel | `web/index.html` — done on this branch |
+| mangasm.app | `#0a090c` pink/gold · liquid, text, grain, aurora | this repo (`web/`) | static HTML on Vercel | `web/index.html` — done on this branch |
 | lynxlogix.net | `#070707` brushed gold · liquid, grain, dissolve, aurora | [gothamgodzilla/lynxlogix-net](https://github.com/gothamgodzilla/lynxlogix-net) (mirror [Matryx-Magic/lynxlogix-net](https://github.com/Matryx-Magic/lynxlogix-net)) | static HTML on Vercel | `index.html`, after `<script src="js/site.js">` |
 | ganesh.guru | `#000502` phosphor green · liquid, text, grain, dissolve | not found | Vite SPA on Replit (Google Frontend) | root `index.html` of the Vite project, before `</body>` |
 | nostalgia.sh | `#0a0712` gold/violet/cyan · liquid, text, grain, aurora | not found | Vite SPA on Vercel | root `index.html` of the Vite project, before `</body>` |

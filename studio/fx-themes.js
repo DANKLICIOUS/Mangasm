@@ -58,14 +58,14 @@ window.OvernightFXThemes = {
 
   "mangasm.app": {
     label: "Mangasm",
-    vibe: "Cinematic manga rebuild — night blue, cyan and violet with gold",
-    palette: { bg: "#05060c", ink: "#eef1f8", a: "#22d3ee", b: "#a78bfa", c: "#fbbf24" },
-    intensity: { liquid: 0.8, text: 0.9, grain: 0.5, aurora: 0.7 },
+    vibe: "Safety-first rebuild — campfire pink and gold on warm night",
+    palette: { bg: "#0a090c", ink: "#f4efe8", a: "#ff6b9d", b: "#e83a7a", c: "#c9a227" },
+    intensity: { liquid: 0.7, text: 0.9, grain: 0.5, aurora: 0.7 },
     effects: { liquid: true, text: true, grain: true, dissolve: false, aurora: true },
     targets: { liquid: "header.hero", text: ".hero h1", aurora: "#status, .public-status" },
     options: { liquid: { z: 1 } },
     fonts: { display: "Cormorant Garamond", body: "DM Sans" },
-    source: "web/styles.css in this repo (--bg #05060c, #22d3ee, #a78bfa, --gold #fbbf24)",
+    source: "web/styles.css in this repo (--bg #0a090c, --pink #e83a7a, --pink-soft #ff6b9d, --gold #c9a227)",
   },
 
   "nostalgia.sh": {
