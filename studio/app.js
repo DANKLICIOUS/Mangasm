@@ -1,169 +1,206 @@
 (() => {
   const S = window.STUDIO;
   const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const esc = (s) =>
+    String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   const UNICORN_SDK =
     "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.4.3/dist/unicornStudio.umd.js";
-
-  /* ---------------- ice shader (rendered by fx.js on the shared WebGL context) ---------------- */
-  const createIce = (canvas, opts = {}) =>
-    window.OvernightFX ? window.OvernightFX.mount(canvas, { effect: "ice", ...opts }) : null;
-
-  /* ---------------- hero scene: Unicorn Studio or local shader ---------------- */
-  const sceneLabel = $("#scene-label");
-  const iceCanvas = $("#ice");
-  let ice = null;
-  const startOwnShader = (reason) => {
-    if (!ice) ice = createIce(iceCanvas, { scrollLinked: true });
-    sceneLabel.textContent = `Scene: ice shader${reason ? " · " + reason : ""} · Scroll to discover`;
-  };
-  const startUnicorn = (projectId) => {
-    const host = $("#unicorn");
-    host.dataset.usProject = projectId;
-    const s = document.createElement("script");
-    s.src = UNICORN_SDK;
-    s.onload = () =>
-      window.UnicornStudio.init()
-        .then((scenes) => {
-          if (!scenes.length) return startOwnShader("unicorn: no scenes");
-          iceCanvas.style.display = "none";
-          sceneLabel.textContent = "Scene: Unicorn Studio · Scroll to discover";
-        })
-        .catch((err) => {
-          console.warn("[unicorn]", err);
-          startOwnShader("unicorn unavailable");
-        });
-    s.onerror = () => startOwnShader("unicorn sdk blocked");
-    document.head.appendChild(s);
-  };
-  const hasWebGL2 = !!document.createElement("canvas").getContext("webgl2");
-  const unicornId = new URLSearchParams(location.search).get("us") || S.unicornProjectId;
-  if (unicornId && hasWebGL2) startUnicorn(unicornId);
-  else startOwnShader();
+  const brandById = Object.fromEntries(S.brands.map((b) => [b.id, b]));
 
   /* ---------------- loader ---------------- */
   const loader = $("#loader"),
     pct = $("#loader-pct");
-  let p = 0;
-  const tick = () => {
-    p = Math.min(100, p + (reduceMotion ? 100 : 2 + Math.random() * 6));
-    pct.textContent = String(Math.floor(p)).padStart(3, "0");
-    if (p < 100) setTimeout(tick, 28);
-    else
-      setTimeout(() => {
-        loader.classList.add("done");
-        document.body.classList.add("ready");
-      }, 200);
+  const loadStart = performance.now();
+  const LOAD_MS = reduceMotion ? 0 : 900;
+  const loadTick = (now) => {
+    const f = LOAD_MS ? Math.min(1, (now - loadStart) / LOAD_MS) : 1;
+    pct.textContent = Math.round(f * f * (3 - 2 * f) * 100);
+    if (f < 1) return requestAnimationFrame(loadTick);
+    loader.classList.add("done");
+    document.body.classList.add("ready");
   };
-  tick();
+  requestAnimationFrame(loadTick);
 
-  /* ---------------- text scramble ---------------- */
-  const GLYPHS = "!<>-_\\/[]{}=+*^?#";
-  const scramble = (el) => {
-    if (reduceMotion || el.dataset.scrambling) return;
-    const text = el.dataset.text || (el.dataset.text = el.textContent);
-    el.dataset.scrambling = "1";
-    let frame = 0;
-    const total = text.length + 12;
-    const step = () => {
-      el.textContent = [...text]
-        .map((c, i) =>
-          c === " " || i < frame - 12
-            ? c
-            : i < frame
-              ? GLYPHS[(Math.random() * GLYPHS.length) | 0]
-              : c
-        )
-        .join("");
-      if (++frame <= total) requestAnimationFrame(step);
-      else {
-        el.textContent = text;
-        delete el.dataset.scrambling;
+  /* ---------------- mascot ---------------- */
+  const tpl = $("#mascot-tpl");
+  const mascots = ["#mascot", "#contact-mascot"].map((sel) => {
+    const host = $(sel);
+    host.appendChild(tpl.content.cloneNode(true));
+    return host;
+  });
+  const [heroMascot] = mascots;
+  const eyeState = mascots.map(() => ({ x: 0, y: 0, tx: 0, ty: 0 }));
+  let pointer = null;
+  addEventListener("pointermove", (e) => (pointer = { x: e.clientX, y: e.clientY }), {
+    passive: true,
+  });
+  let lastY = scrollY,
+    squash = 0,
+    lookDown = 0;
+  const mascotTick = () => {
+    const vy = scrollY - lastY;
+    lastY = scrollY;
+    squash += (Math.max(-1, Math.min(1, vy / 40)) - squash) * 0.18;
+    lookDown += ((Math.abs(vy) > 1 ? Math.sign(vy) : 0) - lookDown) * 0.1;
+    mascots.forEach((m, i) => {
+      const r = m.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      const st = eyeState[i];
+      if (pointer) {
+        const dx = pointer.x - (r.left + r.width / 2),
+          dy = pointer.y - (r.top + r.height * 0.58);
+        const d = Math.hypot(dx, dy) || 1;
+        const reach = Math.min(1, d / 260);
+        st.tx = (dx / d) * 9 * reach;
+        st.ty = (dy / d) * 7 * reach;
       }
-    };
-    step();
+      st.ty += lookDown * 4;
+      st.x += (st.tx - st.x) * 0.2;
+      st.y += (st.ty - st.y) * 0.2;
+      $(".m-eyes", m).style.transform = `translate(${st.x.toFixed(2)}px, ${st.y.toFixed(2)}px)`;
+      const s = Math.abs(squash) * 0.09;
+      m.style.transform = s > 0.002 ? `scale(${1 + s}, ${1 - s})` : "";
+    });
+    requestAnimationFrame(mascotTick);
   };
-  document.querySelectorAll("[data-scramble]").forEach((el) => {
-    if (el.children.length) return;
-    el.addEventListener("mouseenter", () => scramble(el));
+  if (!reduceMotion) requestAnimationFrame(mascotTick);
+
+  const setHappy = (on) => mascots.forEach((m) => m.classList.toggle("happy", on));
+  document.addEventListener("pointerover", (e) => {
+    if (e.target.closest?.(".btn, .work-item")) setHappy(true);
+  });
+  document.addEventListener("pointerout", (e) => {
+    if (e.target.closest?.(".btn, .work-item")) setHappy(false);
+  });
+  let boingTimer = 0;
+  heroMascot.addEventListener("click", () => {
+    heroMascot.classList.remove("boing");
+    void heroMascot.offsetWidth;
+    heroMascot.classList.add("boing", "happy");
+    clearTimeout(boingTimer);
+    boingTimer = setTimeout(() => heroMascot.classList.remove("boing", "happy"), 1100);
+    const r = heroMascot.getBoundingClientRect();
+    window.CuteFX?.confetti(r.left + r.width / 2, r.top + r.height * 0.3, 40);
   });
 
   /* ---------------- units ---------------- */
-  const unitsGrid = $("#units-grid");
-  unitsGrid.innerHTML = S.brands
+  const ICONS = {
+    slay: `<svg viewBox="0 0 48 48"><path d="M24 4c2 10 6 14 16 16-10 2-14 6-16 16-2-10-6-14-16-16 10-2 14-6 16-16Z" fill="#ff9ecb" stroke="#2b2140" stroke-width="3" stroke-linejoin="round"/><path d="M39 31c.8 3.6 2.2 5 5.6 5.8-3.4.8-4.8 2.2-5.6 5.8-.8-3.6-2.2-5-5.6-5.8 3.4-.8 4.8-2.2 5.6-5.8Z" fill="#ffe48a" stroke="#2b2140" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
+    coexist: `<svg viewBox="0 0 48 48"><rect x="7" y="7" width="34" height="14" rx="7" fill="#a4ecca" stroke="#2b2140" stroke-width="3"/><rect x="7" y="27" width="34" height="14" rx="7" fill="#a7d5ff" stroke="#2b2140" stroke-width="3"/><circle cx="15" cy="14" r="2.6" fill="#2b2140"/><circle cx="15" cy="34" r="2.6" fill="#2b2140"/><path d="M24 14h10M24 34h10" stroke="#2b2140" stroke-width="3" stroke-linecap="round"/></svg>`,
+    lynx: `<svg viewBox="0 0 48 48"><path d="M24 4v6" stroke="#2b2140" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="4.5" r="3" fill="#ffe48a" stroke="#2b2140" stroke-width="2.5"/><rect x="6" y="11" width="36" height="30" rx="12" fill="#cdb9ff" stroke="#2b2140" stroke-width="3"/><circle cx="17" cy="25" r="4" fill="#2b2140"/><circle cx="31" cy="25" r="4" fill="#2b2140"/><circle cx="18.4" cy="23.6" r="1.4" fill="#fff"/><circle cx="32.4" cy="23.6" r="1.4" fill="#fff"/><path d="M20 33q4 3 8 0" fill="none" stroke="#2b2140" stroke-width="3" stroke-linecap="round"/></svg>`,
+  };
+  $("#units-grid").innerHTML = S.brands
     .map(
       (b) => `
-      <article class="unit reveal" style="color:${b.hue}">
-        <i class="unit-crystal" aria-hidden="true"></i>
-        <span class="unit-code">${b.code}</span>
-        <h3 style="color:var(--ice-0)">${b.name}</h3>
-        <span class="role">${b.role}</span>
-        <p>${b.pitch}</p>
-        <ul style="color:var(--ice-0)">${b.features.map((f) => `<li>${f}</li>`).join("")}</ul>
-      </article>`
-    )
-    .join("");
-  if (!reduceMotion) {
-    unitsGrid.querySelectorAll(".unit").forEach((card) => {
-      card.addEventListener("pointermove", (e) => {
-        const r = card.getBoundingClientRect();
-        const x = (e.clientX - r.left) / r.width - 0.5;
-        const y = (e.clientY - r.top) / r.height - 0.5;
-        card.style.transform = `perspective(900px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
-      });
-      card.addEventListener("pointerleave", () => (card.style.transform = ""));
-    });
-  }
-
-  /* ---------------- backstage: three terminals ---------------- */
-  const brandById = Object.fromEntries(S.brands.map((b) => [b.id, b]));
-  const termsEl = $("#terms");
-  termsEl.innerHTML = Object.keys(S.terminals)
-    .map(
-      (id) => `
-      <div class="term" data-term="${id}">
-        <div class="term-head"><i></i>${brandById[id].name} · ${brandById[id].role.split(/[ ,]/)[0]}<span class="state">idle</span></div>
-        <pre class="term-body" aria-live="off"></pre>
+      <div class="card-wrap reveal">
+        <article class="card unit" data-sheen style="--tint:${esc(b.hue)}">
+          <div class="unit-icon" aria-hidden="true">${ICONS[b.id] || ""}</div>
+          <span class="unit-code">${esc(b.code)}</span>
+          <h3>${esc(b.name)}</h3>
+          <span class="role">${esc(b.role)}</span>
+          <p>${esc(b.pitch)}</p>
+          <ul>${b.features.map((f) => `<li>${esc(f)}</li>`).join("")}</ul>
+        </article>
       </div>`
     )
     .join("");
 
-  const sleep = (ms) => new Promise((r) => setTimeout(r, reduceMotion ? 0 : ms));
-  let runId = 0;
+  /* ---------------- backstage: three terminals on one clock ---------------- */
+  const TYPE_MS = 34;
+  const jitter = (i) => ((Math.sin(i * 12.9898) * 43758.5453) % 1) * 0.6;
+  const timelines = Object.fromEntries(
+    Object.entries(S.terminals).map(([id, lines]) => {
+      let acc = 0;
+      const tl = lines.map(([delay, raw, cls], i) => {
+        const text = raw.replace(/ {2,}/g, "  ");
+        const start = acc + delay;
+        const typed = text.startsWith("$ ");
+        const charTimes = [];
+        let ct = start;
+        if (typed)
+          for (let c = 0; c < text.length; c++) {
+            ct += TYPE_MS * (0.7 + Math.abs(jitter(i * 97 + c)));
+            charTimes.push(ct);
+          }
+        acc = typed ? ct : start;
+        return { start, end: acc, text, cls: cls || "", typed, charTimes };
+      });
+      return [id, tl];
+    })
+  );
+  const SHIFT_MS = Math.max(...Object.values(timelines).map((tl) => tl[tl.length - 1].end)) + 300;
 
-  async function runTerminal(id, myRun) {
-    const term = termsEl.querySelector(`[data-term="${id}"]`);
-    const body = $(".term-body", term);
-    const state = $(".state", term);
-    body.innerHTML = "";
-    term.className = "term running";
-    state.textContent = "running";
-    const caret = document.createElement("span");
-    caret.className = "caret";
-    for (const [delay, text, cls] of S.terminals[id]) {
-      await sleep(delay);
-      if (myRun !== runId) return;
-      const line = document.createElement("span");
-      line.className = cls || "";
-      body.appendChild(line);
-      body.appendChild(caret);
-      if (text.startsWith("$ ") && !reduceMotion) {
-        for (const ch of text) {
-          line.textContent += ch;
-          await sleep(18 + Math.random() * 30);
-          if (myRun !== runId) return;
+  const termsEl = $("#terms");
+  termsEl.innerHTML = Object.keys(S.terminals)
+    .map((id) => {
+      const b = brandById[id];
+      return `
+      <div class="term" data-term="${id}">
+        <div class="term-head"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>${esc(b.name)}<span class="state">idle</span></div>
+        <pre class="term-body" aria-live="off"></pre>
+      </div>`;
+    })
+    .join("");
+  const termView = Object.fromEntries(
+    Object.keys(S.terminals).map((id) => {
+      const el = termsEl.querySelector(`[data-term="${id}"]`);
+      return [id, { el, body: $(".term-body", el), state: $(".state", el), lines: [], key: "" }];
+    })
+  );
+  const lineHTML = (ln, chars) => {
+    const txt = ln.text.slice(0, chars);
+    if (ln.typed) return `<b>$</b>${esc(txt.slice(1))}`;
+    return esc(txt);
+  };
+
+  function renderTerminals(t) {
+    for (const [id, tl] of Object.entries(timelines)) {
+      const v = termView[id];
+      let shown = 0,
+        partial = -1;
+      for (const ln of tl) {
+        if (t < ln.start) break;
+        shown++;
+        if (ln.typed && t < ln.end) {
+          partial = ln.charTimes.findIndex((ct) => ct > t);
+          break;
         }
-      } else {
-        line.textContent = text;
       }
-      line.insertAdjacentText("beforeend", "\n");
-      body.appendChild(caret);
+      const done = shown === tl.length && partial < 0;
+      const key = `${shown}:${partial}`;
+      if (key === v.key) continue;
+      v.key = key;
+      while (v.lines.length > shown) v.lines.pop().remove();
+      v.body.querySelector(".caret")?.remove();
+      for (let i = 0; i < shown; i++) {
+        let span = v.lines[i];
+        if (!span) {
+          span = document.createElement("span");
+          span.className = tl[i].typed ? "cmd" : tl[i].cls;
+          v.body.appendChild(span);
+          v.lines[i] = span;
+        }
+        const chars = i === shown - 1 && partial >= 0 ? partial : tl[i].text.length;
+        const html = lineHTML(tl[i], chars) + (i === shown - 1 && partial >= 0 ? "" : "\n");
+        if (span.dataset.n !== String(chars)) {
+          span.innerHTML = html;
+          span.dataset.n = chars;
+        }
+      }
+      if (!done) {
+        const caret = document.createElement("span");
+        caret.className = "caret";
+        (v.lines[shown - 1] && partial >= 0 ? v.lines[shown - 1] : v.body).appendChild(caret);
+      }
+      v.body.scrollTop = v.body.scrollHeight;
+      v.el.className = `term ${done ? "done" : shown ? "running" : ""}`;
+      v.state.textContent = done ? "done ✓" : shown ? "typing" : "idle";
     }
-    term.className = "term done";
-    state.textContent = "done";
   }
 
-  const metrics = [...document.querySelectorAll("[data-metric]")];
+  const metrics = $$("[data-metric]");
   const dashFill = $("#dash-fill"),
     dashTime = $("#dash-time");
   const fmtNight = (f) => {
@@ -171,41 +208,52 @@
     const h = (22 + Math.floor(mins / 60)) % 24;
     return `${String(h).padStart(2, "0")}:${String(mins % 60).padStart(2, "0")}`;
   };
-
-  async function runShift() {
-    const myRun = ++runId;
-    const totalMs = Math.max(
-      ...Object.values(S.terminals).map((lines) =>
-        lines.reduce((t, [d, txt]) => t + d + (txt.startsWith("$ ") ? txt.length * 33 : 0), 0)
-      )
-    );
-    const start = performance.now();
-    const progress = () => {
-      if (myRun !== runId) return;
-      const f = reduceMotion ? 1 : Math.min(1, (performance.now() - start) / totalMs);
-      dashFill.style.width = `${f * 100}%`;
-      dashTime.textContent = fmtNight(f);
-      metrics.forEach((m) => {
-        const v = +m.dataset.from + (+m.dataset.to - +m.dataset.from) * f;
-        m.textContent = Math.round(v) + (m.dataset.suffix || "");
-      });
-      if (f < 1) requestAnimationFrame(progress);
-    };
-    requestAnimationFrame(progress);
-    await Promise.all(Object.keys(S.terminals).map((id) => runTerminal(id, myRun)));
+  const shift = { elapsed: 0, running: false, visible: false, last: 0, raf: 0 };
+  function renderShift() {
+    const t = shift.elapsed;
+    const f = Math.min(1, t / SHIFT_MS);
+    renderTerminals(t);
+    dashFill.style.width = `${f * 100}%`;
+    dashTime.textContent = fmtNight(f);
+    const e = 1 - Math.pow(1 - f, 2);
+    metrics.forEach((m) => {
+      const v = +m.dataset.from + (+m.dataset.to - +m.dataset.from) * e;
+      m.textContent = Math.round(v) + (m.dataset.suffix || "");
+    });
   }
-
+  function shiftFrame(now) {
+    shift.raf = 0;
+    if (!shift.running) return;
+    if (shift.visible) shift.elapsed += Math.min(100, now - (shift.last || now));
+    shift.last = now;
+    renderShift();
+    if (shift.elapsed >= SHIFT_MS) {
+      shift.running = false;
+      return;
+    }
+    shift.raf = requestAnimationFrame(shiftFrame);
+  }
+  function runShift() {
+    shift.elapsed = reduceMotion ? SHIFT_MS : 0;
+    shift.last = 0;
+    renderShift();
+    if (reduceMotion) return;
+    shift.running = true;
+    if (!shift.raf) shift.raf = requestAnimationFrame(shiftFrame);
+  }
   let shiftStarted = false;
   new IntersectionObserver(
     ([en]) => {
+      shift.visible = en.isIntersecting;
+      shift.last = 0;
       if (en.isIntersecting && !shiftStarted) {
         shiftStarted = true;
         runShift();
       }
     },
-    { threshold: 0.35 }
+    { threshold: 0.25 }
   ).observe($("#dash"));
-  $("#dash-replay").addEventListener("click", () => runShift());
+  $("#dash-replay").addEventListener("click", runShift);
 
   /* ---------------- before / after ---------------- */
   const compare = $("#compare"),
@@ -227,55 +275,56 @@
   });
   compare.addEventListener("pointermove", (e) => dragging && fromEvent(e));
   compare.addEventListener("pointerup", () => (dragging = false));
+  compare.addEventListener("pointercancel", () => (dragging = false));
   handle.addEventListener("keydown", (e) => {
     const cur = +handle.getAttribute("aria-valuenow");
     if (e.key === "ArrowLeft") setPos(cur - 5);
     if (e.key === "ArrowRight") setPos(cur + 5);
+    if (e.key === "Home") setPos(0);
+    if (e.key === "End") setPos(100);
   });
-  createIce($("#mock-ice"), { zoom: 3.4, maxDpr: 1 });
 
   /* ---------------- completed work ---------------- */
-  const workList = $("#work-list");
-  workList.innerHTML = S.projects
-    .map(
-      (p, i) => `
-      <a class="work-item reveal" href="${p.url}" target="_blank" rel="noopener" data-i="${i}">
-        <span class="work-code">${p.code}</span>
-        <span class="work-name">${p.name}<small>${p.kind}</small></span>
-        <p class="work-summary">${p.summary}</p>
-        <span class="work-meta">
-          <span class="chips">
-            ${p.units.map((u) => `<span class="chip unit-chip">${brandById[u].name}</span>`).join("")}
-            ${p.stack.map((s) => `<span class="chip">${s}</span>`).join("")}
-          </span>
-          <span class="work-link">[ ${new URL(p.url).host} ↗ ]</span>
-        </span>
-      </a>`
-    )
+  const THUMBS = [
+    "linear-gradient(135deg, #ffc7e0, #cdb9ff)",
+    "linear-gradient(135deg, #a4ecca, #a7d5ff)",
+    "linear-gradient(135deg, #ffe48a, #ffc2a1)",
+    "linear-gradient(135deg, #cdb9ff, #a7d5ff)",
+  ];
+  $("#work-list").innerHTML = S.projects
+    .map((p, i) => {
+      const grad = THUMBS[i % THUMBS.length];
+      const thumb = p.image ? `url("${esc(p.image)}"), ${grad}` : grad;
+      return `
+      <div class="card-wrap reveal">
+        <a class="card work-item" data-sheen href="${esc(p.url)}" target="_blank" rel="noopener">
+          <div class="work-thumb" style='--thumb:${thumb}'>
+            <span class="code">${esc(p.code)}</span>
+            ${p.image ? "" : `<span class="initial" aria-hidden="true">${esc(p.name[0])}</span>`}
+          </div>
+          <div class="work-body">
+            <div class="work-name"><h3>${esc(p.name)}</h3><small>${esc(p.kind)}</small></div>
+            <p class="work-summary">${esc(p.summary)}</p>
+            <div class="chips">
+              ${p.units.map((u) => `<span class="chip unit-chip" style="--tint:${esc(brandById[u].hue)}">${esc(brandById[u].name)}</span>`).join("")}
+              ${p.stack.map((s) => `<span class="chip">${esc(s)}</span>`).join("")}
+            </div>
+            <span class="work-link">${esc(new URL(p.url).host)}</span>
+          </div>
+        </a>
+      </div>`;
+    })
     .join("");
-  const preview = document.createElement("div");
-  preview.className = "work-preview";
-  document.body.appendChild(preview);
-  workList.querySelectorAll(".work-item").forEach((item) => {
-    const proj = S.projects[+item.dataset.i];
-    item.addEventListener("pointerenter", () => {
-      preview.style.backgroundImage = proj.image
-        ? `url(${proj.image})`
-        : "radial-gradient(circle at 30% 30%, rgba(209,227,255,.25), rgba(11,13,18,.95))";
-      preview.textContent = proj.image ? "" : `${proj.code} · ${proj.name}`;
-      preview.classList.add("on");
-    });
-    item.addEventListener("pointermove", (e) => {
-      const w = preview.offsetWidth,
-        h = preview.offsetHeight;
-      const x = e.clientX + 28 + w > innerWidth ? e.clientX - 28 - w : e.clientX + 28;
-      preview.style.left = x + "px";
-      preview.style.top = Math.max(h / 2 + 8, Math.min(innerHeight - h / 2 - 8, e.clientY)) + "px";
-    });
-    item.addEventListener("pointerleave", () => preview.classList.remove("on"));
+
+  /* ---------------- confetti buttons ---------------- */
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest("[data-confetti]");
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    window.CuteFX?.confetti(r.left + r.width / 2, r.top + r.height / 2, 110);
   });
 
-  /* ---------------- reveal + eyebrow decode ---------------- */
+  /* ---------------- reveal ---------------- */
   const io = new IntersectionObserver(
     (entries) =>
       entries.forEach((en) => {
@@ -283,41 +332,62 @@
         en.target.classList.add("in");
         io.unobserve(en.target);
       }),
-    { threshold: 0.15 }
+    { threshold: 0.12 }
   );
-  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-  const eyebrowIO = new IntersectionObserver((entries) =>
-    entries.forEach((en) => en.isIntersecting && scramble(en.target))
-  );
-  document.querySelectorAll(".eyebrow[data-scramble]").forEach((el) => eyebrowIO.observe(el));
+  $$(".reveal").forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 3) * 90}ms`;
+    io.observe(el);
+  });
 
-  /* ---------------- scroll-linked night clock + fps ---------------- */
-  const clock = $("#clock");
+  /* ---------------- scroll-linked night clock ---------------- */
+  const clock = $("#clock"),
+    clockLeft = $("#clock-left");
   const onScroll = () => {
     const max = document.documentElement.scrollHeight - innerHeight;
-    const f = max > 0 ? scrollY / max : 0;
+    const f = max > 0 ? Math.min(1, scrollY / max) : 0;
     const left = 8 * (1 - f);
-    const h = Math.floor(left),
-      m = Math.floor((left - h) * 60);
-    clock.textContent = `${fmtNight(f)}:00 · T-${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+    clock.textContent = fmtNight(f);
+    clockLeft.textContent =
+      left < 0.05 ? "launched ✓" : `${Math.floor(left)}h ${String(Math.floor((left % 1) * 60)).padStart(2, "0")}m until launch`;
   };
   addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  const fpsEl = $("#fps");
-  let frames = 0,
-    last = performance.now();
-  const fps = (now) => {
-    frames++;
-    if (now - last > 1000) {
-      const fx = window.OvernightFX;
-      fpsEl.textContent = fx?.contexts
-        ? `WebGL · ${frames} fps · ${fx.instances.length} fx · ${fx.contexts} ctx`
-        : "WebGL · off";
-      frames = 0;
-      last = now;
-    }
-    requestAnimationFrame(fps);
+  /* ---------------- WebGL + Unicorn Studio hook ---------------- */
+  const fxStatus = $("#fx-status");
+  const showStatus = () => {
+    const st = window.CuteFX?.status();
+    fxStatus.textContent = st?.webgl
+      ? `WebGL · on · ${st.contexts} ctx · ${st.scale}×`
+      : "WebGL · off · CSS fallback";
   };
-  requestAnimationFrame(fps);
+  const startFX = () => {
+    window.CuteFX?.start({
+      hero: $(".hero"),
+      sections: $$("[data-palette]"),
+      cards: $$("[data-sheen]"),
+    });
+    showStatus();
+    setInterval(showStatus, 2000);
+  };
+  (window.requestIdleCallback || ((cb) => setTimeout(cb, 1)))(startFX, { timeout: 400 });
+
+  const startUnicorn = (projectId) => {
+    const host = $("#unicorn");
+    host.dataset.usProject = projectId;
+    const s = document.createElement("script");
+    s.src = UNICORN_SDK;
+    s.onload = () =>
+      window.UnicornStudio.init()
+        .then((scenes) => {
+          if (!scenes.length) return;
+          document.body.classList.add("unicorn-on");
+          window.CuteFX?.setHeroScene(false);
+        })
+        .catch((err) => console.warn("[unicorn]", err));
+    s.onerror = () => console.warn("[unicorn] sdk blocked; keeping the built-in jelly scene");
+    document.head.appendChild(s);
+  };
+  const unicornId = new URLSearchParams(location.search).get("us") || S.unicornProjectId;
+  if (unicornId && document.createElement("canvas").getContext("webgl2")) startUnicorn(unicornId);
 })();
