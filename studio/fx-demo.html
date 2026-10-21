@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OvernightFX — site presets</title>
+    <meta name="description" content="Preview the five OvernightFX WebGL effects with each site preset." />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 30 16 16 30 2 16Z' fill='none' stroke='%23d1e3ff' stroke-width='2'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter+Tight:wght@300;500&family=Inter:wght@300;500&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Cinzel:wght@400;600&family=Cinzel+Decorative:wght@400;700&family=Josefin+Sans:wght@300;400&family=JetBrains+Mono:wght@400;600&family=Cormorant+Garamond:wght@400;600&family=Cormorant:wght@400;600&family=DM+Sans:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0b0d12;
+        --ink: #e1e6f1;
+        --a: #d1e3ff;
+        --b: #7f9cff;
+        --c: #8ff0c3;
+        --display: "Inter Tight";
+        --body: "IBM Plex Mono";
+        --mono: "IBM Plex Mono", ui-monospace, monospace;
+        --line: color-mix(in srgb, var(--ink) 16%, transparent);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--body), system-ui, sans-serif;
+        overflow-x: hidden;
+        transition: background 0.4s;
+      }
+      .bar {
+        position: sticky;
+        top: 0;
+        z-index: 70;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        align-items: center;
+        padding: 14px 24px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: color-mix(in srgb, var(--bg) 88%, transparent);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(10px);
+      }
+      .bar b {
+        letter-spacing: 0.3em;
+        margin-right: 8px;
+      }
+      .group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+      }
+      .group > span {
+        opacity: 0.55;
+        margin-right: 4px;
+      }
+      .bar button {
+        font: inherit;
+        letter-spacing: inherit;
+        text-transform: inherit;
+        color: var(--ink);
+        background: transparent;
+        border: 1px solid var(--line);
+        padding: 6px 10px;
+        cursor: pointer;
+      }
+      .bar button[aria-pressed="true"] {
+        border-color: var(--a);
+        color: var(--bg);
+        background: var(--a);
+      }
+      .bar button:focus-visible {
+        outline: 2px solid var(--a);
+        outline-offset: 2px;
+      }
+      .status {
+        margin-left: auto;
+        opacity: 0.6;
+      }
+
+      section {
+        position: relative;
+        padding: 110px 48px;
+      }
+      .hero {
+        min-height: calc(100vh - 54px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: radial-gradient(
+          120% 90% at 75% 40%,
+          color-mix(in srgb, var(--b) 18%, var(--bg)),
+          var(--bg) 70%
+        );
+      }
+      .eyebrow {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--a);
+        margin: 0 0 22px;
+      }
+      h1 {
+        margin: 0;
+        max-width: 11ch;
+        font-family: var(--display), serif;
+        font-weight: 400;
+        font-size: clamp(48px, 8.5vw, 128px);
+        line-height: 0.95;
+        letter-spacing: -0.02em;
+      }
+      h1 em {
+        font-style: normal;
+        color: var(--a);
+      }
+      .lede {
+        max-width: 560px;
+        font-size: 17px;
+        line-height: 1.6;
+        opacity: 0.8;
+        margin: 28px 0 0;
+      }
+      h2 {
+        font-family: var(--display), serif;
+        font-weight: 400;
+        font-size: clamp(32px, 4.5vw, 60px);
+        margin: 0 0 32px;
+        letter-spacing: -0.01em;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .card {
+        padding: 26px;
+        min-height: 200px;
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--bg) 72%, transparent);
+        backdrop-filter: blur(12px);
+      }
+      .card h3 {
+        margin: 0 0 10px;
+        font-family: var(--display), serif;
+        font-weight: 500;
+        font-size: 24px;
+      }
+      .card p {
+        margin: 0;
+        line-height: 1.55;
+        opacity: 0.75;
+      }
+      .k {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--a);
+      }
+      .swatches {
+        display: flex;
+        gap: 10px;
+        margin: 18px 0 28px;
+        flex-wrap: wrap;
+      }
+      .swatches span {
+        display: grid;
+        gap: 6px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+      }
+      .swatches i {
+        display: block;
+        width: 64px;
+        height: 40px;
+        border: 1px solid var(--line);
+      }
+      pre {
+        margin: 0;
+        padding: 18px;
+        overflow-x: auto;
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.6;
+        border: 1px solid var(--line);
+        background: color-mix(in srgb, var(--bg) 80%, #000);
+        color: var(--ink);
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      .meta {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 32px;
+        align-items: start;
+      }
+      .meta p {
+        line-height: 1.6;
+        opacity: 0.8;
+      }
+      footer {
+        padding: 28px 48px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0.6;
+      }
+      footer a {
+        color: inherit;
+      }
+      @media (max-width: 860px) {
+        section {
+          padding: 80px 20px;
+        }
+        .cards,
+        .meta {
+          grid-template-columns: 1fr;
+        }
+        .status {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bar" role="toolbar" aria-label="OvernightFX preview controls">
+      <b>OVERNIGHT_FX</b>
+      <div class="group" id="sites"><span>Site</span></div>
+      <div class="group" id="toggles"><span>FX</span></div>
+      <span class="status" id="status">—</span>
+    </div>
+
+    <section class="hero" id="hero">
+      <p class="eyebrow" id="eyebrow">Preset</p>
+      <h1 id="title">Brand <em>name</em></h1>
+      <p class="lede" id="vibe">Vibe</p>
+    </section>
+
+    <section id="panel">
+      <p class="eyebrow">02 · Aurora behind panels</p>
+      <h2>Live surfaces, softly lit.</h2>
+      <div class="cards">
+        <div class="card">
+          <span class="k">Liquid</span>
+          <h3>Cursor trail</h3>
+          <p>Ping-pong trail buffer, advected and rendered as refractive, iridescent caustics.</p>
+        </div>
+        <div class="card">
+          <span class="k">Text</span>
+          <h3>RGB split</h3>
+          <p>The headline is rasterised to a texture and split into channels around the pointer.</p>
+        </div>
+        <div class="card">
+          <span class="k">Grain</span>
+          <h3>Film + dither</h3>
+          <p>Animated grain, Bayer-dithered vignette and faint scanlines across the viewport.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="reveal">
+      <p class="eyebrow">03 · Scroll dissolve</p>
+      <h2>Pixels burn away as it scrolls in.</h2>
+      <div class="meta">
+        <div>
+          <span class="k">Palette</span>
+          <div class="swatches" id="swatches"></div>
+          <p id="source"></p>
+        </div>
+        <div>
+          <span class="k">Drop-in embed</span>
+          <pre id="snippet"></pre>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      OvernightFX · one shared WebGL context · <a href="./">back to Overnight_</a> ·
+      <a href="EMBED.md">EMBED.md</a>
+    </footer>
+
+    <script src="fx-themes.js"></script>
+    <script src="fx.js" data-auto="false"></script>
+    <script>
+      (() => {
+        const FX = window.OvernightFX;
+        const THEMES = window.OvernightFXThemes;
+        const EFFECTS = ["liquid", "text", "grain", "dissolve", "aurora"];
+        const TARGETS = {
+          liquid: "#hero",
+          text: "#title",
+          grain: "body",
+          dissolve: "#reveal .meta",
+          aurora: "#panel",
+        };
+        const CDN = "https://cdn.jsdelivr.net/gh/DANKLICIOUS/Mangasm@main/studio/fx.js";
+        const $ = (s) => document.querySelector(s);
+        const params = new URLSearchParams(location.search);
+        let site = THEMES[params.get("site")] ? params.get("site") : "overnight";
+        let enabled = {};
+
+        const sitesEl = $("#sites"),
+          togglesEl = $("#toggles");
+        Object.keys(THEMES).forEach((key) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.dataset.site = key;
+          b.textContent = key === "overnight" ? "overnight_" : key;
+          b.addEventListener("click", () => select(key));
+          sitesEl.appendChild(b);
+        });
+        EFFECTS.forEach((e) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.dataset.fx = e;
+          b.textContent = e;
+          b.addEventListener("click", () => {
+            enabled[e] = !enabled[e];
+            remount();
+          });
+          togglesEl.appendChild(b);
+        });
+
+        function paint(theme) {
+          const root = document.documentElement.style;
+          for (const k of ["bg", "ink", "a", "b", "c"]) root.setProperty("--" + k, theme.palette[k]);
+          root.setProperty("--display", `"${theme.fonts?.display || "Inter Tight"}"`);
+          root.setProperty("--body", `"${theme.fonts?.body || "IBM Plex Mono"}"`);
+          const [name, tld] = theme.label.split(/(?=\.[A-Za-z]+$)/);
+          $("#eyebrow").textContent = `Preset · ${site}`;
+          $("#title").innerHTML = tld ? `${name}<em>${tld}</em>` : `<em>${theme.label}</em>`;
+          $("#vibe").textContent = theme.vibe;
+          $("#source").textContent = "Source: " + theme.source;
+          $("#swatches").innerHTML = ["bg", "ink", "a", "b", "c"]
+            .map((k) => `<span><i style="background:${theme.palette[k]}"></i>${k} ${theme.palette[k]}</span>`)
+            .join("");
+          $("#snippet").textContent =
+            site === "overnight"
+              ? `<script src="${CDN}" data-theme="overnight" defer><\/script>\n<!-- then mark elements: data-fx="liquid|text|grain|dissolve|aurora" -->`
+              : `<script src="${CDN}" data-site="${site}" defer><\/script>`;
+          document.title = `OvernightFX — ${theme.label}`;
+        }
+
+        async function remount() {
+          FX.destroyAll();
+          const theme = THEMES[site];
+          FX.setTheme(site);
+          const fonts = [theme.fonts?.display, theme.fonts?.body].filter(Boolean);
+          await Promise.all(fonts.map((f) => document.fonts.load(`400 64px "${f}"`).catch(() => {})));
+          const mounted = [];
+          for (const e of EFFECTS) {
+            if (!enabled[e]) continue;
+            const h = FX.mount(TARGETS[e], {
+              effect: e,
+              palette: site,
+              ...(e === "aurora" ? { bleed: 60 } : {}),
+              ...(e === "dissolve" ? { z: 3 } : {}),
+            });
+            if (h) mounted.push(e);
+          }
+          togglesEl.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", !!enabled[b.dataset.fx]));
+          $("#status").textContent = !FX.supported
+            ? "WebGL unavailable · static fallback"
+            : `${mounted.length} fx · ${FX.contexts} WebGL context${FX.reduceMotion ? " · reduced motion" : ""}`;
+        }
+
+        function select(key) {
+          site = key;
+          const theme = THEMES[site];
+          enabled = Object.fromEntries(EFFECTS.map((e) => [e, !!theme.effects?.[e]]));
+          const fxp = params.get("fx");
+          if (fxp) EFFECTS.forEach((e) => (enabled[e] = enabled[e] && FX.allowed(e)));
+          sitesEl.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.site === site));
+          const u = new URL(location.href);
+          u.searchParams.set("site", site);
+          history.replaceState(null, "", u);
+          paint(theme);
+          remount();
+        }
+        select(site);
+      })();
+    </script>
+  </body>
+</html>
