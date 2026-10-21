@@ -21,6 +21,10 @@ All copy lives in `data.js`: brands (with their pastel `hue`), completed project
 terminal sessions. The terminals are driven by one elapsed-time clock built from those delays, so all
 three type in parallel without drift.
 
+`runHistory` feeds the backstage "Run history" panel: a 30-day success/failure chart, headline
+totals, the automations list and a recent-runs feed. It is a static snapshot transcribed from the
+Cursor Automations dashboard (which has no public read API), so update it by hand.
+
 ## Unicorn Studio hero
 
 The hero runs the built-in jelly scene. To use a Unicorn Studio scene instead, set
