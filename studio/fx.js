@@ -612,6 +612,12 @@
       (document.fonts?.ready || Promise.resolve()).then(check);
     });
   }
+  // gradient text (background-clip: text) can't be rasterised; it is left to the DOM
+  const clearColor = (c) => c === "transparent" || /,\s*0\)$/.test(c);
+  const seeThrough = (node) => {
+    const cs = getComputedStyle(node);
+    return clearColor(cs.color) || clearColor(cs.webkitTextFillColor || "");
+  };
   const transform = (s, tt) =>
     tt === "uppercase"
       ? s.toUpperCase()
@@ -636,7 +642,7 @@
       const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
       for (let node; (node = walker.nextNode()); ) {
         const parent = node.parentElement;
-        if (!parent || parent.closest("canvas")) continue;
+        if (!parent || parent.closest("canvas") || seeThrough(parent)) continue;
         const cs = getComputedStyle(parent);
         ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
         if ("letterSpacing" in ctx) ctx.letterSpacing = cs.letterSpacing === "normal" ? "0px" : cs.letterSpacing;
@@ -742,7 +748,7 @@
     if (!inst.ready) {
       if (inst.initing) return;
       inst.initing = true;
-      Promise.resolve(inst.def.init(inst)).then(
+      new Promise((res) => res(inst.def.init(inst))).then(
         () => {
           inst.initing = false;
           inst.ready = true;
@@ -750,6 +756,15 @@
           schedule();
         },
         (err) => {
+          // A compile error with an empty log means the context was lost or the GPU process
+          // was still starting; retry a few times before giving up on this effect.
+          inst.failures = (inst.failures || 0) + 1;
+          if (inst.failures < 4 && (R.gl.isContextLost() || !String(err?.message || "").trim())) {
+            R.programs.clear();
+            inst.initing = false;
+            setTimeout(() => ((inst.dirty = true), schedule()), 400 * inst.failures);
+            return;
+          }
           warn(inst.name, err);
           inst.destroy();
         }
@@ -816,12 +831,10 @@
         return null;
       }
       if (name === "text") {
-        const clear = (c) => c === "transparent" || /,\s*0\)$/.test(c);
-        const seeThrough = [el, ...el.querySelectorAll("*")].some((n) => {
-          const cs = getComputedStyle(n);
-          return clear(cs.color) || clear(cs.webkitTextFillColor || "");
-        });
-        if (seeThrough) {
+        const parents = new Set();
+        const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+        for (let n; (n = tw.nextNode()); ) if (n.textContent.trim()) parents.add(n.parentElement);
+        if (![...parents].some((p) => !seeThrough(p))) {
           warn("text effect skipped: element text is transparent (gradient text?)", el);
           return null;
         }
