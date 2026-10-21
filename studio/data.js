@@ -62,7 +62,7 @@ window.STUDIO = {
         "Safety-first dating app: SwiftUI client, Supabase backend, StoreKit subscriptions and a cinematic storybook launch site.",
       stack: ["SwiftUI", "Supabase", "StoreKit", "Vercel"],
       units: ["slay", "coexist", "lynx"],
-      image: "assets/06-rebuild-phone.jpg",
+      image: "https://www.mangasm.app/assets/06-rebuild-phone.jpg",
     },
     {
       code: "PROJECT_02",
