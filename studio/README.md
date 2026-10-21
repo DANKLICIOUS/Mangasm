@@ -2,8 +2,11 @@
 
 Standalone static landing page (no build step), separate from the Mangasm site in `../web`.
 
-Sections: ice-shader hero → the three units → behind-the-scenes dashboard (three live terminals) →
-before/after slider → completed projects → contact.
+Sections: jelly hero with the Nibbles mascot → the three units → behind-the-scenes dashboard (three
+live terminals) → before/after slider → completed projects → contact (email + GitHub Sponsors).
+
+The look is bright pastels on cream: Fredoka headings, Nunito body, DM Mono terminals, sticker cards
+with white outlines, and candy pill buttons. Text uses the dark ink `#2b2140` for contrast.
 
 ## Run locally
 
@@ -14,36 +17,36 @@ cd studio && python3 -m http.server 4173
 
 ## Edit content
 
-All copy lives in `data.js`: brands, completed projects, and the scripted terminal sessions.
+All copy lives in `data.js`: brands (with their pastel `hue`), completed projects, and the scripted
+terminal sessions. The terminals are driven by one elapsed-time clock built from those delays, so all
+three type in parallel without drift.
 
 ## Unicorn Studio hero
 
-The hero runs a built-in WebGL ice shader. To use a Unicorn Studio scene instead, set
-`unicornProjectId` in `data.js` (or preview with `?us=<PROJECT_ID>`). If the ID is missing or
-invalid, or the browser lacks WebGL2, the page falls back to the built-in shader automatically.
+The hero runs the built-in jelly scene. To use a Unicorn Studio scene instead, set
+`unicornProjectId` in `data.js` (or preview with `?us=<PROJECT_ID>`). If the scene loads, the jelly
+pauses; if the ID is invalid or the browser lacks WebGL2, the jelly stays.
 
-## WebGL effects (`fx.js`)
+## WebGL effects (`cute-fx.js`)
 
-Five Unicorn-Studio-style effects plus the ice scene, all rendered through one shared WebGL
-context (`OvernightFX.contexts === 1`). Each is switched on with a `data-fx` attribute in
-`index.html`; remove the attribute to drop it.
+Five native, dependency-free effects on two contexts (one behind the page, one overlay above it):
 
-| Effect     | Where                         | What it does                                                     |
-| ---------- | ----------------------------- | ---------------------------------------------------------------- |
-| `liquid`   | hero (`header.hero`)          | Cursor-trail fluid: advected trail buffer, iridescent caustics   |
-| `text`     | hero headline (`h1`)          | Headline as a texture: RGB split, wave and slice glitch on hover |
-| `grain`    | whole page (`body`)           | Film grain, Bayer-dithered vignette, scanlines                   |
-| `dissolve` | before/after mock (`#compare`) | Scroll-driven pixel/noise burn-away reveal with glowing edge     |
-| `aurora`   | backstage (`#backstage`)      | Domain-warped gradient-mesh aurora with bloom behind terminals   |
+| Effect               | Where                       | What it does                                                    |
+| -------------------- | --------------------------- | --------------------------------------------------------------- |
+| Jelly metaballs      | hero                        | Raymarched SDF blobs with specular and rim light; follow cursor |
+| Sparkle trail        | whole page (pointer)        | Star, heart and sparkle point sprites with soft glow            |
+| Holographic sheen    | unit and project cards      | Iridescent foil border + glare that tracks the 3D pointer tilt  |
+| Candy aurora         | page background             | Domain-warped gradient mesh; palette shifts per section         |
+| Confetti + squish    | Replay, email, Sponsor; buttons | Confetti burst on click; CSS jelly squish on hover          |
 
-Toggle without editing: `?fx=off` (all five off), `?fx=liquid,text` (only these),
-`?fx=-grain,-text` (all but these). Options: `data-fx-intensity`, `data-fx-scale`, `data-fx-z`,
-`data-fx-bleed`, `data-fx-cell`. Under `prefers-reduced-motion` liquid/text/dissolve are skipped
-and grain/aurora/ice draw one static frame; with no WebGL nothing mounts and the page is unchanged.
+The overlay context is created lazily; the hero jelly pauses offscreen; the render scale adapts to
+frame time (`?q=0.5` pins it). `?fx=off` disables all WebGL. With `prefers-reduced-motion` the
+aurora and jelly draw a static frame, and trail, confetti, tilt and typing are skipped. With no
+WebGL, CSS gradient blobs and a CSS sheen are used instead. Screenshots:
+`node tools/cute-shot.mjs shots.json` (headless Chrome over CDP).
 
-Palettes live in `fx-themes.js` (preset `overnight` here, plus one per site). Preview every
-preset at `fx-demo.html?site=<domain>`; see `EMBED.md` for the one-line embed on other sites.
-Screenshots: `node tools/fx-shot.mjs shots.json` (headless Chrome over CDP).
+`fx.js` / `fx-themes.js` / `fx-demo.html` are the separate icy OvernightFX library for other sites;
+this page no longer loads them.
 
 ## Deploy
 
