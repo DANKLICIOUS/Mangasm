@@ -128,6 +128,8 @@
         if (a[k] != null && (!Array.isArray(a[k]) || !a[k].every((x) => x && typeof x.name === "string"))) p.push("automations." + k + " must be an array of objects with a name");
       });
     }
+    const np = d.nowPlaying;
+    if (np != null && !Array.isArray(np) && !(typeof np === "object" && Array.isArray(np.items))) p.push("nowPlaying must be { live?, label?, items: [...] } or an array of items");
     return p;
   }
 
@@ -1229,6 +1231,134 @@
     });
   }
 
+  /* ---------- Now Playing ticker (nowplaying/ticker.js across the sigil) ---------- */
+
+  const SCRIPT_SRC = (document.currentScript && document.currentScript.src) || location.href;
+  const NP_SNAPSHOT_SEC = 14;
+
+  function loadNowPlaying() {
+    if (window.DREAMING_NP) return Promise.resolve(window.DREAMING_NP);
+    const base = new URL("nowplaying/", SCRIPT_SRC);
+    return Promise.all([
+      import(/* @vite-ignore */ new URL("nowplaying-data.js", base).href),
+      import(/* @vite-ignore */ new URL("ticker.js", base).href),
+    ]).then(([d, t]) => ({ NowPlaying: d.NowPlaying, createTicker: t.createTicker }));
+  }
+
+  // The snapshot runs, replayed one after another from now. They are past runs, so never live.
+  function snapshotFeed(data) {
+    const a = data.automations;
+    const runs = (a.runs || []).slice().reverse();
+    const t0 = Date.now() - 3000;
+    return {
+      live: false,
+      tag: "Snapshot",
+      label: "Snapshot · Cursor Automations runs, " + (a.label || "built-in") + " · replayed, not live",
+      items: runs.map((r, i) => ({
+        type: "run",
+        title: r.name,
+        artist: r.automation || "Cursor Automations",
+        source: [r.time, r.status].filter(Boolean).join(" · "),
+        startedAt: t0 + i * NP_SNAPSHOT_SEC * 1000,
+        durationSec: NP_SNAPSHOT_SEC,
+      })),
+    };
+  }
+
+  // The simulated night on the wall clock: sim minute t starts at anchor + t * msPerMin.
+  function nightFeed(N, S, anchor, msPerMin) {
+    const ev = [{ t: 0, type: "event", title: "The Recursion Engine wakes", artist: "Night begins · 22:00", source: "simulated" }];
+    N.runs.forEach((r) =>
+      ev.push({ t: r.t, type: "run", title: r.name, artist: r.automation, source: "simulated run · " + clock(r.t) + (r.fails ? " · fails, self-repairs" : "") })
+    );
+    N.incidents.forEach((inc) =>
+      ev.push({ t: inc.t, type: "event", title: "Anomaly · " + TRACK_LABEL[inc.track], artist: inc.anomaly, source: "simulated · " + clock(inc.t) })
+    );
+    ev.sort((x, y) => x.t - y.t);
+    return {
+      live: false,
+      tag: "Simulated",
+      label: "Simulated night · seed " + S.seed + " · " + S.speed + "× · not live",
+      items: ev.map((e, i) => {
+        const next = i + 1 < ev.length ? ev[i + 1].t : NIGHT;
+        const { t, ...item } = e;
+        return { ...item, startedAt: anchor + t * msPerMin, durationSec: Math.max(0.2, ((next - t) * msPerMin) / 1000) };
+      }),
+    };
+  }
+
+  function pausedFeed(N, S) {
+    const last = N.runs.filter((r) => r.t <= S.t).pop();
+    return {
+      live: false,
+      tag: "Paused",
+      label: "Simulated night · paused · not live",
+      items: [{ type: "event", title: "The night is paused at " + clock(S.t), artist: last ? "Last run: " + last.name : "No runs yet", source: "simulated", startedAt: Date.now(), durationSec: 0 }],
+    };
+  }
+
+  async function startTicker(ctx, signal, remote) {
+    const host = $("#ritual-np");
+    if (!host) return null;
+    let mod;
+    try {
+      mod = await loadNowPlaying();
+    } catch (err) {
+      console.warn("Recursive Dreaming: Now Playing ticker unavailable.", err);
+      return null;
+    }
+    if (signal.aborted) return null;
+    const np = mod.NowPlaying;
+    host.hidden = false;
+    const ticker = mod.createTicker(host, np, { reducedMotion: reduced });
+    signal.addEventListener("abort", () => {
+      ticker.destroy();
+      np.stop();
+    });
+    const tk = { np, ticker, external: false, mode: "", anchor: 0, next: 0 };
+    // Only a real feed may show LIVE: ?nowplaying=<url>, or `nowPlaying` inside a remote ?data= document.
+    const qs = new URLSearchParams(location.search).get("nowplaying");
+    if (qs) {
+      tk.external = true;
+      await np.load({ url: qs });
+    } else if (remote && ctx.data.nowPlaying && np.set(ctx.data.nowPlaying)) {
+      tk.external = true;
+    }
+    return tk;
+  }
+
+  function syncTicker(tk, ctx, now) {
+    const { np } = tk;
+    const S = ctx.S;
+    if (!tk.external && now >= tk.next) {
+      tk.next = now + 250;
+      const wall = Date.now();
+      if (S.status === "idle" || S.status === "done") {
+        const cur = np.current(wall);
+        if (tk.mode !== "snapshot" || !cur || cur.status !== "playing") {
+          tk.mode = "snapshot";
+          np.set(snapshotFeed(ctx.data));
+        }
+      } else if (S.status === "paused") {
+        if (tk.mode !== "paused") {
+          tk.mode = "paused";
+          np.set(pausedFeed(ctx.N, S));
+        }
+      } else {
+        const msPerMin = (REAL_SECONDS * 1000) / NIGHT / S.speed;
+        const anchor = wall - S.t * msPerMin;
+        const mode = "night" + S.speed + ":" + S.seed;
+        if (tk.mode !== mode || Math.abs(anchor - tk.anchor) > 1500) {
+          tk.mode = mode;
+          tk.anchor = anchor;
+          np.set(nightFeed(ctx.N, S, anchor, msPerMin));
+        }
+      }
+    }
+    tk.ticker.update();
+    tk.ticker.animateEq(np.levels(5, reduced ? 0 : now / 1000));
+  }
+
   /* ---------- Boot ---------- */
 
   function loadSaved() {
@@ -1255,7 +1385,7 @@
     stopCurrent = () => ac.abort();
     window.RecursiveDreaming = Object.assign(window.RecursiveDreaming || {}, { stop: () => stopCurrent && stopCurrent() });
     decorate();
-    const { data, note } = await loadData();
+    const { data, note, remote } = await loadData();
     if (signal.aborted) return;
     if (note) {
       const n = $("#data-notice");
@@ -1266,6 +1396,8 @@
 
     const S = loadSaved() || { status: "idle", t: 0, speed: 1, seed: DEFAULT_SEED };
     const ctx = { data, S, N: buildNight(data, S.seed), engine: Engine($("#engine-canvas"), signal) };
+    let tk = null;
+    startTicker(ctx, signal, remote).then((x) => (tk = x));
 
     const save = () => {
       try {
@@ -1337,6 +1469,7 @@
       lastT = S.t;
       const out = render(ctx);
       stepTweens(dt);
+      if (tk) syncTicker(tk, ctx, now);
       if (ctx.engine) {
         ctx.engine.set({ alerts: out.alerts, health: out.health, running: S.status === "running" });
         if (!reduced) ctx.engine.draw(now, dt);
@@ -1370,6 +1503,11 @@
         save();
       },
       loadData,
+      nowPlaying: () => {
+        if (!tk) return null;
+        const cur = tk.np.current();
+        return { external: tk.external, feed: tk.mode, badge: tk.np.badge(cur).text, title: cur && cur.item.title, label: tk.np.state.label };
+      },
       stop: () => ac.abort(),
     };
   }

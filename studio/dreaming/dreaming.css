@@ -398,6 +398,67 @@ main {
   color: #f8ebc8;
 }
 
+/* Now Playing band (nowplaying/ticker.js) laid across the lower third of the sigil */
+.sigil-wrap { position: relative; width: min(100%, 290px); aspect-ratio: 1; }
+.sigil-wrap .sigil-btn { width: 100%; }
+.ritual-np.np-root {
+  --np-gold: var(--gold);
+  --np-gold-2: var(--gold-hi);
+  --np-gold-dim: #8a6a32;
+  --np-ink: var(--ink);
+  --np-muted: var(--ink-2);
+  --np-serif: var(--f-title);
+  --np-mono: var(--f-title);
+  position: absolute;
+  inset: 0 -26px;
+  z-index: 2;
+  pointer-events: none;
+}
+.ritual-np .np-band {
+  top: 64%;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 0;
+  text-align: left;
+  background:
+    linear-gradient(90deg, rgba(210, 173, 98, 0.08), transparent 35%, transparent 65%, rgba(210, 173, 98, 0.08)),
+    rgba(9, 8, 7, 0.86);
+  border-block-color: var(--gold-line);
+}
+.ritual-np .np-now { position: relative; max-width: none; gap: 9px; padding: 6px 12px 7px; border-right: 0; border-bottom: 1px solid var(--gold-faint); }
+.ritual-np .np-pill { padding: 3px 8px 3px 7px; font-size: 9.5px; letter-spacing: 0.14em; }
+.ritual-np .np-pill[data-tone="demo"] { color: var(--gold-hi); background: rgba(210, 173, 98, 0.1); }
+.ritual-np .np-pill[data-badge="simulated"],
+.ritual-np .np-pill[data-badge="paused"] { color: var(--sim); background: rgba(169, 217, 238, 0.08); border-style: dashed; }
+.ritual-np .np-eq { height: 18px; gap: 2px; }
+.ritual-np .np-eq i { width: 3px; }
+.ritual-np .np-kind { font-size: 8.5px; letter-spacing: 0.2em; color: var(--gold); }
+.ritual-np .np-title { font-size: 13px; white-space: nowrap; display: block; -webkit-line-clamp: none; }
+.ritual-np .np-artist { display: none; }
+.ritual-np .np-meta { flex: 1 1 0; }
+.ritual-np .np-time { position: absolute; left: 0; right: 0; bottom: -1px; display: block; }
+.ritual-np .np-el,
+.ritual-np .np-dur { display: none; }
+.ritual-np .np-bar { display: block; height: 2px; border-radius: 0; background: transparent; }
+.ritual-np .np-bar i { background: linear-gradient(90deg, var(--gold), var(--gold-hi)); box-shadow: 0 0 6px rgba(243, 214, 150, 0.6); }
+.ritual-np .np-marquee { min-height: 26px; }
+.ritual-np .np-q { font: 500 14px var(--f-body); }
+.ritual-np .np-q strong { font-size: 12px; }
+.ritual-np .np-q small { font-size: 12px; font-style: italic; }
+.ritual-np .np-q em { font: 700 8px var(--f-title); color: var(--gold-hi); border-color: var(--gold-line); }
+.ritual-np .np-q[data-type="run"] .np-g { color: var(--gold-hi); }
+.ritual-np .np-band[data-type="run"] .np-eq i { background: linear-gradient(to top, #8a6a32, var(--gold-hi)); box-shadow: 0 0 6px rgba(243, 214, 150, 0.45); }
+.ritual-np .np-src {
+  position: static;
+  padding: 3px 12px 4px;
+  border-top: 1px solid var(--gold-faint);
+  font: italic 500 12.5px/1.2 var(--f-body);
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .ritual-hint { margin: 14px 0 12px; color: var(--ink-2); font-size: 16px; font-style: italic; }
 
 .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
@@ -966,6 +1027,7 @@ td { padding: 9px 10px; border-bottom: 1px solid rgba(210, 173, 98, 0.1); vertic
   :root { --pad: 15px; --gap: 12px; }
   .phases span { font-size: 8.5px; letter-spacing: 0.02em; }
   .loot__ring li { font-size: 8.5px; letter-spacing: 0.02em; }
+  .sigil-wrap { width: min(100%, 266px); }
   .ctl { padding-inline: 11px; }
   .track__head { grid-template-columns: 46px 1fr auto; gap: 10px; }
   .track__emblem { width: 46px; height: 46px; }

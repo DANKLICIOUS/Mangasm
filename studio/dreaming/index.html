@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="nowplaying/nowplaying.css" />
   <link rel="stylesheet" href="dreaming.css" />
 </head>
 <body data-dreaming-root>
@@ -161,30 +162,33 @@
     <section class="hero" aria-label="Ritual controls, Recursion Engine and self-repair cycle">
       <div class="ritual ornate" data-corners>
         <h2 class="panel-title">The Ritual</h2>
-        <button class="sigil-btn" id="activate" type="button" aria-pressed="false" aria-describedby="ritual-hint">
-          <svg class="sigil" viewBox="0 0 300 300" aria-hidden="true">
-            <defs><path id="ring-path" d="M150 150m-121 0a121 121 0 1 1 242 0a121 121 0 1 1-242 0" /></defs>
-            <circle class="s-halo" cx="150" cy="150" r="146" />
-            <g class="s-spin">
-              <circle class="s-line" cx="150" cy="150" r="143" />
-              <circle class="s-ticks" cx="150" cy="150" r="137" />
-              <circle class="s-line s-thin" cx="150" cy="150" r="131" />
-            </g>
-            <g class="s-spin-rev">
-              <text class="s-text"><textPath href="#ring-path" textLength="755">ACTIVATE ✦ RECURSIVE DREAMING ✦ SLEEP ✦ DREAM ✦ REPAIR ✦ ASCEND ✦ </textPath></text>
-            </g>
-            <circle class="s-line" cx="150" cy="150" r="108" />
-            <g class="s-star">
-              <path d="M150 50l86.6 150H63.4z" /><path d="M150 250L63.4 100h173.2z" />
-            </g>
-            <circle class="s-core" cx="150" cy="150" r="66" />
-            <circle class="s-line s-thin" cx="150" cy="150" r="66" />
-          </svg>
-          <span class="sigil-label">
-            <span class="sigil-label__verb" id="activate-verb">Activate</span>
-            <span class="sigil-label__main">Recursive<br />Dreaming</span>
-          </span>
-        </button>
+        <div class="sigil-wrap">
+          <button class="sigil-btn" id="activate" type="button" aria-pressed="false" aria-describedby="ritual-hint">
+            <svg class="sigil" viewBox="0 0 300 300" aria-hidden="true">
+              <defs><path id="ring-path" d="M150 150m-121 0a121 121 0 1 1 242 0a121 121 0 1 1-242 0" /></defs>
+              <circle class="s-halo" cx="150" cy="150" r="146" />
+              <g class="s-spin">
+                <circle class="s-line" cx="150" cy="150" r="143" />
+                <circle class="s-ticks" cx="150" cy="150" r="137" />
+                <circle class="s-line s-thin" cx="150" cy="150" r="131" />
+              </g>
+              <g class="s-spin-rev">
+                <text class="s-text"><textPath href="#ring-path" textLength="755">ACTIVATE ✦ RECURSIVE DREAMING ✦ SLEEP ✦ DREAM ✦ REPAIR ✦ ASCEND ✦ </textPath></text>
+              </g>
+              <circle class="s-line" cx="150" cy="150" r="108" />
+              <g class="s-star">
+                <path d="M150 50l86.6 150H63.4z" /><path d="M150 250L63.4 100h173.2z" />
+              </g>
+              <circle class="s-core" cx="150" cy="150" r="66" />
+              <circle class="s-line s-thin" cx="150" cy="150" r="66" />
+            </svg>
+            <span class="sigil-label">
+              <span class="sigil-label__verb" id="activate-verb">Activate</span>
+              <span class="sigil-label__main">Recursive<br />Dreaming</span>
+            </span>
+          </button>
+          <div class="np-root ritual-np" id="ritual-np" data-ticker="band" hidden></div>
+        </div>
         <p class="ritual-hint" id="ritual-hint">Runs one night, 22:00 to 06:00, in about a minute. Simulated.</p>
         <div class="controls" role="group" aria-label="Simulation controls">
           <button type="button" class="ctl" id="btn-pause" disabled>Pause</button>
