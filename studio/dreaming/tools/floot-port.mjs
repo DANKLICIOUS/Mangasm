@@ -31,10 +31,26 @@ const tail = js.lastIndexOf('if (document.readyState === "loading")');
 if (start < 20 || tail < 0) throw new Error("dreaming.js layout changed; update the port");
 const engine =
   "// @ts-nocheck\n// Generated from studio/dreaming/dreaming.js by tools/floot-port.mjs. Returns a teardown function.\n" +
-  "export function dreamingEngine(data) {\n  window.DREAMING_DATA = data;\n" +
+  "export function dreamingEngine(data, np) {\n  window.DREAMING_DATA = data;\n  window.DREAMING_NP = np;\n" +
   js.slice(start, tail) +
   "  boot();\n  return () => stopCurrent && stopCurrent();\n}\n";
 write("helpers/dreamingEngine.tsx", engine);
+
+// The Now Playing data layer and ticker are ES modules; inline both into one lazily-built helper so
+// nothing touches `window` at import time.
+const unmodule = (src) => {
+  const s = src.replace(/^import [^;]+;\n/gm, "").replace(/^export (?=(const|function|async function) )/gm, "").replace(/^export \{[^}]*\};\n/gm, "");
+  if (/^\s*(import|export)\b/m.test(s)) throw new Error("unexpected import/export left in a Now Playing module");
+  return s;
+};
+write(
+  "helpers/dreamingNowPlaying.tsx",
+  "// @ts-nocheck\n// Generated from studio/dreaming/nowplaying/{nowplaying-data,ticker}.js by tools/floot-port.mjs.\n" +
+    "let built = null;\nexport function dreamingNowPlaying() {\n  if (built) return built;\n" +
+    unmodule(read("nowplaying/nowplaying-data.js")) +
+    unmodule(read("nowplaying/ticker.js")) +
+    "  built = { NowPlaying, createTicker };\n  return built;\n}\n"
+);
 
 // Scope every rule under `.root` and mark the original selectors global.
 function scopeSelector(sel) {
@@ -77,10 +93,10 @@ function transform(css) {
   }
   return res;
 }
-const css = read("dreaming.css");
+const css = read("nowplaying/nowplaying.css") + "\n" + read("dreaming.css");
 const scoped = transform(css)
   .replace(/^\.root \{/m, ".root {\n  min-height: 100vh;\n  position: relative;\n  isolation: isolate;");
-write("pages/_index.module.css", "/* Generated from studio/dreaming/dreaming.css by tools/floot-port.mjs. */\n" + scoped);
+write("pages/_index.module.css", "/* Generated from studio/dreaming/nowplaying/nowplaying.css and dreaming.css by tools/floot-port.mjs. */\n" + scoped);
 
 write(
   "pages/_index.tsx",
@@ -89,6 +105,7 @@ import { Helmet } from "react-helmet";
 import { dreamingData } from "../helpers/dreamingData";
 import { dreamingMarkup } from "../helpers/dreamingMarkup";
 import { dreamingEngine } from "../helpers/dreamingEngine";
+import { dreamingNowPlaying } from "../helpers/dreamingNowPlaying";
 import styles from "./_index.module.css";
 
 export default function IndexPage() {
@@ -97,7 +114,7 @@ export default function IndexPage() {
   useEffect(() => {
     if (!rootRef.current) return;
     rootRef.current.innerHTML = dreamingMarkup;
-    return dreamingEngine(dreamingData);
+    return dreamingEngine(dreamingData, dreamingNowPlaying());
   }, []);
   return (
     <>
