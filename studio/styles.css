@@ -2214,9 +2214,10 @@ body.gl-ice .ice-gl {
     font-size: 15.5px;
   }
   .ice-gauge {
+    top: 84px;
     left: 14px;
     right: 14px;
-    bottom: 14px;
+    bottom: auto;
     grid-template-columns: auto auto 1fr;
     align-items: baseline;
     gap: 10px;
