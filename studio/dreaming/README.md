@@ -31,7 +31,7 @@ The health score (0 to 100) weights the automation success rate (35%), the avera
 
 ## Data contract
 
-`loadData()` in `dreaming.js` is the single entry point for data. It returns `window.DREAMING_DATA` from `data.js`. With `?data=<url>`, it fetches that JSON (`cache: "no-store"`) and merges it over the built-in data: objects merge key by key and arrays replace. If the request fails or the JSON is malformed, the page keeps the snapshot and shows a notice that explains why.
+`loadData()` in `dreaming.js` is the single entry point for data. It returns `window.DREAMING_DATA` from `data.js`. With `?data=<url>`, it fetches that JSON (`cache: "no-store"`) and merges it over the built-in data: objects merge key by key and arrays replace. If the request fails or the JSON is malformed, the page keeps the snapshot and shows a notice that explains why. Any field the feed leaves out keeps its snapshot value, so a `"live"` feed should send the whole `automations` object.
 
 ```jsonc
 {
