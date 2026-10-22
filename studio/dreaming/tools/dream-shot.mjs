@@ -90,9 +90,10 @@ for (const shot of shots) {
   await send("Emulation.setDeviceMetricsOverride", { width: shot.width, height: shot.height, deviceScaleFactor: shot.scale || 1, mobile: !!shot.mobile });
   if (shot.reducedMotion) await send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
   if (shot.clearStorage) {
-    await send("Page.navigate", { url: new URL(shot.url).origin + "/dreaming/data.js" });
-    await sleep(300);
-    await send("Runtime.evaluate", { expression: "localStorage.clear()" });
+    // The dashboard saves its state on pagehide, so block that save before clearing.
+    await send("Page.navigate", { url: shot.url });
+    await sleep(800);
+    await send("Runtime.evaluate", { expression: "Storage.prototype.setItem = function () {}; localStorage.clear()" });
   }
   await send("Page.navigate", { url: shot.url });
   await sleep(shot.settle ?? 1800);
