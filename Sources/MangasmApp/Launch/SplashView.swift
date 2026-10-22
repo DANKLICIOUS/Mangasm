@@ -1,30 +1,15 @@
 import SwiftUI
-import AVKit
+import AVFoundation
 
-// MARK: - AVPlayer holder (stable across SwiftUI body rebuilds)
+// MARK: - Entrance audio holder (stable across SwiftUI body rebuilds)
 
 @MainActor
-private final class RunwayPlayer: ObservableObject {
-    let queuePlayer: AVQueuePlayer?
-    private var looper: AVPlayerLooper?
-    // Entrance soundtrack — a looped deep-house beat that scores the runway walk.
-    // The video itself stays MUTED; this is the only audio. Drop a licensed loop
-    // at Resources/entrance.m4a (or .mp3); absent → silent, no crash.
+private final class EntranceAudio: ObservableObject {
+    // Entrance soundtrack — a looped deep-house beat that scores the splash.
+    // Drop a licensed loop at Resources/entrance.m4a (or .mp3); absent → silent, no crash.
     private var entranceAudio: AVAudioPlayer?
 
     init() {
-        // ── Video (muted, looped) ──
-        if let url = Bundle.module.url(forResource: "runway", withExtension: "mp4") {
-            let item = AVPlayerItem(url: url)
-            let player = AVQueuePlayer(playerItem: item)
-            player.isMuted = true
-            player.allowsExternalPlayback = false
-            looper = AVPlayerLooper(player: player, templateItem: item)
-            queuePlayer = player
-        } else {
-            queuePlayer = nil
-        }
-
         // ── Entrance beat (looped) ──
         let url = Bundle.module.url(forResource: "entrance", withExtension: "m4a")
             ?? Bundle.module.url(forResource: "entrance", withExtension: "mp3")
@@ -41,12 +26,10 @@ private final class RunwayPlayer: ObservableObject {
     }
 
     func play() {
-        queuePlayer?.play()
         entranceAudio?.play()
     }
 
     func pause() {
-        queuePlayer?.pause()
         entranceAudio?.pause()
     }
 
@@ -56,52 +39,6 @@ private final class RunwayPlayer: ObservableObject {
     }
 }
 
-// MARK: - Runway video view (AVPlayerLayer-backed for true .resizeAspectFill cover)
-// SwiftUI's `VideoPlayer` only does aspect-fit (letterboxes a portrait video).
-// AVPlayerLayer must be hosted in a UIView/NSView, so this is the one justified
-// platform-specific shim — `#if` gates a genuinely platform-only hosting API.
-
-#if os(iOS)
-import UIKit
-private final class PlayerHostView: UIView {
-    override class var layerClass: AnyClass { AVPlayerLayer.self }
-    var playerLayer: AVPlayerLayer { layer as! AVPlayerLayer }
-}
-private struct RunwayVideoView: UIViewRepresentable {
-    let player: AVPlayer
-    func makeUIView(context: Context) -> PlayerHostView {
-        let v = PlayerHostView()
-        v.playerLayer.player = player
-        v.playerLayer.videoGravity = .resizeAspectFill
-        v.isUserInteractionEnabled = false
-        return v
-    }
-    func updateUIView(_ uiView: PlayerHostView, context: Context) {
-        uiView.playerLayer.player = player
-    }
-}
-#elseif os(macOS)
-import AppKit
-private final class PlayerHostNSView: NSView {
-    let playerLayer = AVPlayerLayer()
-    init(player: AVPlayer) {
-        super.init(frame: .zero)
-        wantsLayer = true
-        playerLayer.player = player
-        playerLayer.videoGravity = .resizeAspectFill
-        layer = playerLayer            // backing layer auto-resizes with the view
-    }
-    required init?(coder: NSCoder) { fatalError("init(coder:) unavailable") }
-}
-private struct RunwayVideoView: NSViewRepresentable {
-    let player: AVPlayer
-    func makeNSView(context: Context) -> PlayerHostNSView { PlayerHostNSView(player: player) }
-    func updateNSView(_ nsView: PlayerHostNSView, context: Context) {
-        nsView.playerLayer.player = player
-    }
-}
-#endif
-
 // MARK: - SplashView
 
 /// Cinematic launch splash. Calls `onContinue` after user tap, SKIP, CTA, or 8.6s auto-advance.
@@ -109,7 +46,7 @@ public struct SplashView: View {
     public let onContinue: () -> Void
     public init(onContinue: @escaping () -> Void) { self.onContinue = onContinue }
 
-    @StateObject private var runway = RunwayPlayer()
+    @StateObject private var entrance = EntranceAudio()
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -148,12 +85,6 @@ public struct SplashView: View {
                         .clipped()
                         .ignoresSafeArea()
                         .allowsHitTesting(false)
-                } else if let player = runway.queuePlayer {
-                    RunwayVideoView(player: player)
-                        .allowsHitTesting(false)
-                        .frame(width: geo.size.width, height: geo.size.height)
-                        .clipped()
-                        .ignoresSafeArea()
                 } else {
                     LinearGradient(
                         colors: [
@@ -351,8 +282,8 @@ public struct SplashView: View {
             .opacity(opacity)
         }
         .ignoresSafeArea()
-        .onAppear { runway.play() }
-        .onDisappear { runway.pause() }
+        .onAppear { entrance.play() }
+        .onDisappear { entrance.pause() }
         .task { await runTimeline() }
     }
 
@@ -423,7 +354,7 @@ public struct SplashView: View {
     private func go() {
         guard !didContinue else { return }
         didContinue = true
-        runway.fadeOutAudio(0.48)
+        entrance.fadeOutAudio(0.48)
         withAnimation(.easeOut(duration: 0.48)) { opacity = 0 }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.48) {
             onContinue()

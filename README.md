@@ -64,7 +64,7 @@ Sources/
                         CommunitiesView.swift, HostEventForm.swift
       Chat/           — ChatListScreen.swift, ChatThreadScreen.swift
       Settings/       — SettingsScreen.swift
-    Resources/        — lambo_hero.jpg, runway.mp4, Fonts/
+    Resources/        — skull_island_hero.jpg, style-hero-*.jpg, theme-catalog.json, Fonts/
   MangasmPreview/
     main.swift
 Tests/
@@ -85,7 +85,7 @@ Tests/
 ```
 MangasmRootView
   └── LaunchFlow         (AppPhase.launch)
-        ├── SplashView   (runway video + CTA)
+        ├── SplashView   (Skull Island plate + CTA)
         └── SignInView   (landmark slides + auth sheet)
   └── MainTabView        (AppPhase.app)
         ├── DiscoverScreen   (.discover / .search / .likes)
@@ -115,11 +115,11 @@ Until the files are present, `MGFont` falls back transparently to system `.serif
 
 ## Production assets
 
-| Asset             | Status                                    |
-| ----------------- | ----------------------------------------- |
-| `lambo_hero.jpg`  | Bundled — Lamborghini background photo    |
-| `runway.mp4`      | Bundled — splash screen runway video      |
-| Font `.ttf` files | Not bundled — add from Google Fonts (OFL) |
+| Asset                   | Status                                           |
+| ----------------------- | ------------------------------------------------ |
+| `skull_island_hero.jpg` | Bundled — splash and app chrome plate (4.3 identity) |
+| `style-hero-*.jpg`      | Bundled — Profile Style backgrounds              |
+| Font `.ttf` files       | Not bundled — add from Google Fonts (OFL)        |
 
 ## Spec and plan
 
@@ -145,7 +145,7 @@ _Updated 2026-07-23 — the earlier "mock-only prototype" description was stale.
 - **No content filter yet** — moderation/filtering on messages and profiles is not implemented (blocker B1).
 - **Map is stylized, not functional** — `FakeMap` renders gradient streets and pinned avatars; no MapKit, no GPS, no location collection of any kind. Live Discover currently backfills `Candidate.samples` when the DB returns few rows (blocker B4).
 - **DMs are E2E-encrypted** (`MessageCrypto.swift`, CryptoKit sealed boxes), but the client chat schema has drifted from the repo migrations and the live DB (blocker B5).
-- **Placeholder art / fonts** — `lambo_hero.jpg` and `runway.mp4` are the bundled prototype assets. Custom OFL fonts are not included; system fallbacks are active.
+- **Fonts** — custom OFL fonts are not included; system fallbacks are active.
 - **macOS preview is a dev tool** — `MangasmPreview` is excluded from the iOS product; it exists solely to let engineers run screens on a Mac.
 
 ---

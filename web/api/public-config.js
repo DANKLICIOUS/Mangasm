@@ -1,4 +1,7 @@
 /**
+ * LEGACY COPY of repo-root /api/public-config.js. Edit the root file; this one
+ * only deploys if a Vercel project uses Root Directory = web/.
+ *
  * Public client config for /plus checkout.
  *
  * Returns the live Supabase URL + the publishable/anon key from Vercel env.

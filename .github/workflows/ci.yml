@@ -63,16 +63,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      # Root vercel.json + api/ + middleware.js are the Git-deploy source of
+      # truth (.vercelignore, outputDirectory: web). The web/ copies are still
+      # checked because the current production deploy serves web/vercel.json.
       - name: Validate JSON config
         run: |
-          for f in web/vercel.json web/.well-known/apple-app-site-association; do
+          for f in vercel.json web/.well-known/apple-app-site-association web/vercel.json; do
             node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('OK: $f')"
           done
-      - name: Syntax-check edge middleware
+      - name: Syntax-check middleware and serverless functions
         run: |
-          node --check web/middleware.js
-          node --check web/api/public-config.js
-          node --check web/api/waitlist.js
+          for f in middleware.js api/*.js web/middleware.js web/api/*.js; do
+            node --check "$f"
+            echo "OK: $f"
+          done
+      - name: Root vercel.json covers every web/vercel.json route
+        run: node scripts/check-vercel-config-drift.cjs
       - name: Verify required static pages exist
         run: |
           missing=0

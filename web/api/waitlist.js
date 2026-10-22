@@ -1,5 +1,5 @@
 /**
- * NOTE: Production serverless entry is repo-root `/api/waitlist.js`.
+ * LEGACY COPY. Production serverless entry is repo-root `/api/waitlist.js`.
  * Root vercel.json uses outputDirectory: "web", so this path is NOT deployed
  * as a function. Kept for reference / if Root Directory is set to web/.
  *

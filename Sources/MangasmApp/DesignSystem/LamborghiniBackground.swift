@@ -20,7 +20,7 @@ func bundledFileImage(_ name: String, _ ext: String) -> Image? {
 
 // MARK: - LamborghiniBackground
 // App chrome plate. Skull Island (`skull_island_hero`) is the Guideline 4.3
-// significant-change identity; the older Lambo plate remains a fallback.
+// significant-change identity; a jungle gradient covers a missing plate.
 
 public struct LamborghiniBackground: View {
     public let night: Bool
@@ -32,9 +32,7 @@ public struct LamborghiniBackground: View {
     public var body: some View {
         GeometryReader { geo in
             ZStack {
-                if let hero = bundledFileImage("skull_island_hero", "jpg")
-                    ?? bundledFileImage("lambo_hero", "jpg")
-                {
+                if let hero = bundledFileImage("skull_island_hero", "jpg") {
                     hero
                         .resizable()
                         .scaledToFill()

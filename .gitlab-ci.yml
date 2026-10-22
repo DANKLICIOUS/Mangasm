@@ -49,13 +49,18 @@ web:
   image: node:20-alpine
   script:
     - |
-      for f in web/vercel.json web/.well-known/apple-app-site-association; do
+      for f in vercel.json web/.well-known/apple-app-site-association web/vercel.json; do
         node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('OK: $f')"
       done
-    - node --check web/middleware.js
+    - |
+      for f in middleware.js api/*.js web/middleware.js web/api/*.js; do
+        node --check "$f"
+        echo "OK: $f"
+      done
+    - node scripts/check-vercel-config-drift.cjs
     - |
       missing=0
-      for f in index.html ios.html privacy.html terms.html moderation.html promo.html; do
+      for f in index.html ios.html privacy.html terms.html moderation.html promo.html plus.html plus-success.html; do
         if [ ! -f "web/$f" ]; then echo "MISSING: web/$f"; missing=1; fi
       done
       [ "$missing" -eq 0 ] && echo "All required static pages present"

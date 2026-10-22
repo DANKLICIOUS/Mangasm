@@ -56,7 +56,11 @@ assert(
   "plus.html must not embed service_role or Stripe secrets",
 );
 
-const handlerPath = path.join(root, "web/api/public-config.js");
+const handlerPaths = [
+  path.join(root, "api/public-config.js"),
+  path.join(root, "web/api/public-config.js"),
+];
+for (const handlerPath of handlerPaths) {
 const probe = `
 const handler = require(${JSON.stringify(handlerPath)});
 function run(env, method = "GET") {
@@ -99,5 +103,6 @@ if (r.status !== 0) {
   process.stderr.write(r.stdout + r.stderr);
   process.exit(r.status || 1);
 }
-process.stdout.write(r.stdout);
+process.stdout.write(`${path.relative(root, handlerPath)}: ${r.stdout}`);
+}
 console.log("check-web-billing-config: OK");

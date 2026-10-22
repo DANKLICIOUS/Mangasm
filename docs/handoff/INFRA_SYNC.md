@@ -58,9 +58,15 @@ can't do without signing secrets. Run it on Apple hardware:
 ## Vercel
 
 - Projects **`mangasm`** and **`web`** auto-deploy previews per PR (both report
-  Ready on green PRs). Config lives in `web/vercel.json` (host rewrites for
-  `ios.mangasm.app`, `/privacy`, `/terms`, `/moderation`, `/promo`, AASA
-  content-type header) and `web/middleware.js`.
+  Ready on green PRs). Config source of truth is the repo-root `vercel.json`
+  (`outputDirectory: web`, host rewrites for `ios.mangasm.app`, page rewrites,
+  AASA content-type header) and root `api/*.js`, shipped via `.vercelignore`.
+  Root `middleware.js` is not whitelisted in `.vercelignore`, so it does not
+  upload; the `ios.mangasm.app` rewrites in `vercel.json` cover it. `web/vercel.json`, `web/middleware.js`, and `web/api/`
+  are legacy copies: the current production deploy still serves
+  `web/vercel.json` routes, so keep them until production is redeployed from
+  root. CI (`scripts/check-vercel-config-drift.cjs`) fails if root is missing
+  any route the legacy copy declares.
 - Static pages served: `index.html`, `ios.html`, `privacy.html`, `terms.html`,
   `moderation.html`, `promo.html`, `plus.html` (web Stripe at `/plus`).
 
