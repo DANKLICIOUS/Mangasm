@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "source": "live",
+  "generatedAt": "2026-10-22T06:00:00Z",
+  "automations": {
+    "label": "Example feed",
+    "totals": { "runs": 1064, "succeeded": 801, "failed": 256, "automations": 16 },
+    "runs": [
+      { "name": "Example: dawn brief", "automation": "every day", "time": "Oct 22 6:00 AM", "status": "succeeded" },
+      { "name": "Example: crypto signals scan", "automation": "I SEE CRYPTO SIGNALS, INTELLIGENCE", "time": "Oct 22 5:40 AM", "status": "failed" }
+    ]
+  }
+}
