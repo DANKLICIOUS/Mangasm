@@ -2,6 +2,8 @@
 
 Mangasm is a safety-first gay dating app. This repository is the **SwiftUI front-end package**, wired to a mock service layer. Every auth control, service call, and data fetch goes through a protocol seam so the mock can be replaced with a real backend without touching the UI.
 
+
+****
 ## What this repo is
 
 - A multiplatform Swift Package (`swift-tools-version: 6.0`).
