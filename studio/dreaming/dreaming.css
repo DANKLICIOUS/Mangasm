@@ -42,6 +42,8 @@
   --z-ui: 1;
   --z-grain: 40;
   --z-toast: 60;
+  /* Room kept clear at the bottom of the viewport for fixed host chrome (the Floot badge on phones). */
+  --dock-clear: 0px;
 
   --gap: clamp(14px, 1.6vw, 24px);
   --pad: clamp(16px, 2vw, 28px);
@@ -980,7 +982,9 @@ td { padding: 9px 10px; border-bottom: 1px solid rgba(210, 173, 98, 0.1); vertic
 }
 
 @media (max-width: 720px) {
+  :root { --dock-clear: calc(76px + env(safe-area-inset-bottom, 0px)); }
   body { font-size: 17px; }
+  .foot { margin-bottom: calc(40px + var(--dock-clear)); }
   .hero,
   .tracks { grid-template-columns: 1fr; }
   .engine { order: 0; }
@@ -989,7 +993,7 @@ td { padding: 9px 10px; border-bottom: 1px solid rgba(210, 173, 98, 0.1); vertic
   .title__b { letter-spacing: 0.2em; padding-left: 0.2em; }
   .engine__tag { display: none; }
   .flank { display: none; }
-  .toasts { top: auto; bottom: 12px; right: 12px; }
+  .toasts { top: auto; bottom: calc(12px + var(--dock-clear)); right: 12px; }
   .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .metrics--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .totals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1028,7 +1032,10 @@ td { padding: 9px 10px; border-bottom: 1px solid rgba(210, 173, 98, 0.1); vertic
   .phases span { font-size: 8.5px; letter-spacing: 0.02em; }
   .loot__ring li { font-size: 8.5px; letter-spacing: 0.02em; }
   .sigil-wrap { width: min(100%, 266px); }
-  .ctl { padding-inline: 11px; }
+  .ritual-hint { margin: 10px 0 10px; font-size: 15px; }
+  .controls { flex-wrap: nowrap; gap: 6px; }
+  .ctl { padding-inline: 9px; letter-spacing: 0.1em; }
+  .ctl--speed { min-width: 38px; padding-inline: 6px; }
   .track__head { grid-template-columns: 46px 1fr auto; gap: 10px; }
   .track__emblem { width: 46px; height: 46px; }
   .total__k { letter-spacing: 0.1em; }
