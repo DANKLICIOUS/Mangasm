@@ -3,185 +3,189 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Overnight — Slay.LLC × Coexist.LLC × LynxLogix.Ai</title>
+    <title>Overnight — Opsec Iceberg · Slay.LLC × Coexist.LLC × LynxLogix.Ai</title>
     <meta
       name="description"
-      content="Brand, platform and AI agents working in parallel. We transform businesses overnight."
+      content="Own every layer. Brand, infrastructure and AI agents built from the surface down to the abyss — self-sustainable, self-sovereign, overnight."
     />
-    <meta property="og:title" content="We transform businesses overnight." />
+    <meta property="og:title" content="Own every layer. Sovereign by design." />
     <meta
       property="og:description"
-      content="Slay.LLC designs it. Coexist.LLC ships it. LynxLogix.Ai automates it."
+      content="The Opsec Iceberg: Slay.LLC designs the surface, Coexist.LLC owns the hull, LynxLogix.Ai keeps the night watch."
     />
-    <meta name="theme-color" content="#fff6ee" />
+    <meta property="og:image" content="assets/hero-skull.webp" />
+    <meta name="theme-color" content="#070708" />
     <link
       rel="icon"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M7 12 9 3l6 6h2l6-6 2 9c3 3 3 7 3 8 0 6-6 9-12 9S4 26 4 20c0-1 0-5 3-8Z' fill='%23ff9ecb' stroke='%232b2140' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='12' cy='19' r='2' fill='%232b2140'/%3E%3Ccircle cx='20' cy='19' r='2' fill='%232b2140'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070708'/%3E%3Cpath d='M16 4 21 13H11Z' fill='%23e6c77a'/%3E%3Cpath d='M5 13h22' stroke='%235fd6cc' stroke-width='1.6'/%3E%3Cpath d='M9 15h14l-3 9-4 4-4-4Z' fill='none' stroke='%23c9a24a' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E"
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fredoka:wght@400..700&family=Nunito:wght@400..800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..700&family=Cormorant+Garamond:ital,wght@0,400..700;1,400..700&family=DM+Mono:wght@400;500&family=Manrope:wght@400..700&display=swap"
       rel="stylesheet"
     />
+    <link rel="preload" as="image" href="assets/hero-skull.webp" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <a class="skip" href="#main">Skip to content</a>
     <div class="loader" id="loader" aria-hidden="true">
-      <div class="loader-blob"></div>
-      <p>waking up the night shift… <b id="loader-pct">0</b>%</p>
+      <span class="loader-mark"></span>
+      <p>lighting the candles <b id="loader-pct">0</b>%</p>
     </div>
 
-    <canvas id="bg-gl" class="bg-gl" aria-hidden="true"></canvas>
-    <canvas id="fx-gl" class="fx-gl" aria-hidden="true"></canvas>
-
-    <template id="mascot-tpl">
-      <svg class="mascot-svg" viewBox="0 0 240 240" aria-hidden="true">
-        <ellipse class="m-shadow" cx="120" cy="222" rx="62" ry="9" />
-        <g class="m-body">
-          <path
-            class="m-ear"
-            d="M56 92 C50 66 54 40 62 30 C74 34 92 52 102 66 Z"
-          />
-          <path
-            class="m-ear"
-            d="M184 92 C190 66 186 40 178 30 C166 34 148 52 138 66 Z"
-          />
-          <path class="m-ear-in" d="M66 76 C64 62 66 50 70 44 C78 49 86 57 90 64 Z" />
-          <path class="m-ear-in" d="M174 76 C176 62 174 50 170 44 C162 49 154 57 150 64 Z" />
-          <path
-            class="m-blob"
-            d="M120 58 C176 58 206 96 206 144 C206 192 170 214 120 214 C70 214 34 192 34 144 C34 96 64 58 120 58 Z"
-          />
-          <ellipse class="m-gloss" cx="84" cy="92" rx="22" ry="12" transform="rotate(-24 84 92)" />
-          <circle class="m-gloss" cx="110" cy="80" r="5" />
-          <g class="m-face">
-            <g class="m-eyes">
-              <g class="m-eye">
-                <ellipse cx="92" cy="138" rx="12" ry="15" class="m-ink" />
-                <circle class="m-shine" cx="96" cy="132" r="5" />
-                <circle class="m-shine" cx="88" cy="145" r="2.4" />
-              </g>
-              <g class="m-eye">
-                <ellipse cx="148" cy="138" rx="12" ry="15" class="m-ink" />
-                <circle class="m-shine" cx="152" cy="132" r="5" />
-                <circle class="m-shine" cx="144" cy="145" r="2.4" />
-              </g>
-            </g>
-            <g class="m-happy">
-              <path d="M80 140 Q92 124 104 140" />
-              <path d="M136 140 Q148 124 160 140" />
-            </g>
-            <ellipse class="m-blush" cx="72" cy="164" rx="13" ry="7" />
-            <ellipse class="m-blush" cx="168" cy="164" rx="13" ry="7" />
-            <path class="m-mouth" d="M110 160 Q115 168 120 160 Q125 168 130 160" />
-          </g>
-          <ellipse class="m-paw" cx="92" cy="208" rx="16" ry="9" />
-          <ellipse class="m-paw" cx="148" cy="208" rx="16" ry="9" />
-        </g>
-        <g class="m-cap">
-          <path d="M150 64 C160 40 186 26 212 34 C200 44 196 58 196 76 C182 66 166 62 150 64 Z" />
-          <circle cx="212" cy="34" r="8" />
-        </g>
-      </svg>
-    </template>
-
-    <nav class="nav">
-      <a class="logo" href="#top" aria-label="Overnight, home"
-        ><span class="logo-blob" aria-hidden="true"></span>overnight</a
-      >
+    <nav class="nav" aria-label="Primary">
+      <a class="logo" href="#top" aria-label="Overnight, home">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 3 21.5 12.5h-11Z" class="lg-tip" />
+          <path d="M3 13.5h26" class="lg-line" />
+          <path d="M8.5 15.5h15l-3.2 9.3L16 29l-4.3-4.2Z" class="lg-hull" />
+        </svg>
+        <span>Overnight</span>
+      </a>
       <div class="nav-links">
-        <a href="#units">Units</a>
+        <a href="#units">Houses</a>
+        <a href="#iceberg">Iceberg</a>
+        <a href="#sovereign">Sovereignty</a>
         <a href="#backstage">Backstage</a>
-        <a href="#transform">Transform</a>
         <a href="#work">Work</a>
-        <a href="https://github.com/sponsors/gothamgodzilla" target="_blank" rel="noopener"
-          >Sponsor</a
-        >
+        <a href="https://github.com/sponsors/gothamgodzilla" target="_blank" rel="noopener">Sponsor</a>
       </div>
-      <a href="#contact" class="btn btn-pink btn-sm">Start tonight</a>
+      <a href="#contact" class="btn btn-ghost btn-sm">Start tonight</a>
     </nav>
 
-    <main>
-      <header class="hero" id="top" data-palette="hero">
+    <main id="main">
+      <header class="hero" id="top">
+        <div class="hero-scene" aria-hidden="true">
+          <div class="hero-ambient"></div>
+          <img class="hero-art" id="hero-art" src="assets/hero-skull.webp" alt="" width="1152" height="2048" decoding="async" fetchpriority="high" />
+          <canvas id="hero-gl" class="hero-gl"></canvas>
+          <div class="hero-mist"><i></i><i></i><i></i></div>
+          <div class="hero-shade"></div>
+        </div>
         <div id="unicorn" class="unicorn" aria-hidden="true" data-us-production="true" data-us-lazyload="true"></div>
-        <div class="hero-blobs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
         <div class="hero-copy">
-          <p class="pill-row">
-            <span class="tag tag-pink">Slay.LLC</span><span class="tag tag-mint">Coexist.LLC</span
-            ><span class="tag tag-lilac">LynxLogix.Ai</span>
-          </p>
+          <p class="kicker"><span>Opsec Iceberg</span><i aria-hidden="true"></i><span>Self-Sustainable Self-Sovereignty</span></p>
           <h1 class="hero-title">
-            We transform businesses <span class="hl">overnight<svg viewBox="0 0 300 24" aria-hidden="true"><path d="M4 16 C60 4 110 22 160 12 S250 6 296 14" /></svg></span>
+            <span class="ht-a">Own every layer.</span>
+            <span class="ht-b">Sovereign by design.</span>
           </h1>
           <p class="hero-lede">
-            Three studios, one night shift. Slay.LLC designs it, Coexist.LLC ships it, LynxLogix.Ai
-            automates it — in parallel, while you sleep.
+            We build what the world sees and harden everything it doesn't. Brand, infrastructure and AI agents
+            you own end to end, from the surface down to the abyss, shipped overnight.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-pink" href="#backstage">Watch the night shift</a>
-            <a class="btn btn-white" href="#work">See completed work</a>
+            <a class="btn btn-gold" href="#iceberg">Descend the iceberg</a>
+            <a class="btn btn-ghost" href="#contact">Start tonight</a>
           </div>
           <p class="hero-clock">
-            <span class="moon" aria-hidden="true"></span><b id="clock">22:00</b
-            ><span id="clock-left">8h until launch</span>
+            <span class="ember" aria-hidden="true"></span><b id="clock">22:00</b><span id="clock-left">8h until launch</span>
           </p>
         </div>
-        <div class="hero-stage">
-          <button type="button" class="mascot" id="mascot" aria-label="Pet Nibbles, our night-shift cat"></button>
-          <span class="sticker sticker-a" aria-hidden="true">open 9pm–6am</span>
-          <span class="sticker sticker-b" aria-hidden="true">✦ 100% vibes</span>
-        </div>
-        <p class="scroll-hint" aria-hidden="true">scroll for the magic ↓</p>
+        <ul class="hero-strip" aria-label="What you own">
+          <li>Keys</li><li>Namespace</li><li>Infra</li><li>Data</li><li>Revenue</li><li>Agents</li>
+        </ul>
+        <p class="scroll-hint" aria-hidden="true"><span>descend</span><i></i></p>
       </header>
 
-      <section class="section" id="units" data-palette="units">
-        <p class="eyebrow"><b>01</b> the units</p>
-        <h2>Three companies. <span class="ul ul-mint">One cozy pipeline.</span></h2>
-        <div class="units" id="units-grid"></div>
+      <section class="section" id="units">
+        <p class="eyebrow"><b>I</b> The three houses</p>
+        <h2>Three houses. <em>One sovereign stack.</em></h2>
+        <p class="section-lede">
+          One studio for the surface, one for the hull, one for the night watch. They work the same night, on
+          the same repo, and hand you the keys at dawn.
+        </p>
+        <div class="houses" id="units-grid"></div>
       </section>
 
-      <section class="section" id="backstage" data-palette="backstage">
-        <p class="eyebrow"><b>02</b> behind the scenes</p>
-        <h2>The night shift, <span class="ul ul-sky">live.</span></h2>
+      <section class="ice" id="iceberg" aria-labelledby="ice-title">
+        <div class="ice-head">
+          <p class="eyebrow"><b>II</b> The Opsec Iceberg</p>
+          <h2 id="ice-title">What the world sees <em>is the smallest part.</em></h2>
+          <p class="section-lede">
+            Scroll to descend. Six layers, from the brand on the surface to the person at the bottom. Defensive
+            and educational: what to own, what to lock, and where to read more.
+          </p>
+        </div>
+        <div class="ice-track" id="ice-track">
+          <div class="ice-stage" id="ice-stage">
+            <canvas id="ice-gl" class="ice-gl" aria-hidden="true"></canvas>
+            <div class="ice-berg" id="ice-berg" aria-hidden="true"></div>
+            <div class="ice-gauge" aria-hidden="true">
+              <span class="ig-label">depth</span>
+              <b id="ice-depth">0 m</b>
+              <span class="ig-name" id="ice-name">Surface</span>
+              <div class="ig-rule"><i id="ice-fill"></i></div>
+            </div>
+          </div>
+          <ol class="ice-layers" id="ice-layers"></ol>
+        </div>
+      </section>
+
+      <section class="section sov" id="sovereign" aria-labelledby="sov-title">
+        <p class="eyebrow"><b>III</b> Self-sustainable self-sovereignty</p>
+        <h2 id="sov-title">Own it, and let it <em>pay for itself.</em></h2>
         <p class="section-lede">
-          A replay of a real overnight engagement: three agent-driven terminals, one per unit,
-          running in parallel from 22:00 to 06:00.
+          Sovereignty that needs a patron isn't sovereignty. Each thing you own feeds the next, so the loop keeps
+          turning without asking anyone's permission.
         </p>
-        <div class="dash" id="dash">
+        <div class="orbit" id="orbit">
+          <svg class="orbit-ring" viewBox="0 0 860 860" aria-hidden="true">
+            <defs>
+              <marker id="orbit-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M1 1 9 5 1 9" fill="none" stroke="#c9a24a" stroke-width="1.4" />
+              </marker>
+            </defs>
+            <circle cx="430" cy="430" r="300" class="or-base" />
+            <circle cx="430" cy="430" r="300" class="or-flow" />
+            <g class="or-arrows"></g>
+          </svg>
+          <div class="orbit-core">
+            <span class="oc-glyph" aria-hidden="true"></span>
+            <b>Self-sustaining</b>
+            <small>Revenue funds the infra. Infra runs the agents. Agents guard the keys and the data. You keep the name.</small>
+          </div>
+          <ol class="orbit-nodes" id="orbit-nodes"></ol>
+        </div>
+      </section>
+
+      <section class="section" id="backstage">
+        <p class="eyebrow"><b>IV</b> Behind the scenes</p>
+        <h2>The night watch, <em>live.</em></h2>
+        <p class="section-lede">
+          A scripted replay of how an overnight engagement runs: three agent-driven terminals, one per house, in
+          parallel from 22:00 to 06:00.
+        </p>
+        <div class="dash glass" id="dash">
           <div class="dash-bar">
             <span class="dash-title">mission_control · client.com</span>
             <div class="dash-progress" aria-hidden="true"><i id="dash-fill"></i></div>
             <span class="dash-time" id="dash-time">22:00</span>
-            <button type="button" class="btn btn-butter btn-sm" id="dash-replay" data-confetti>
-              ↻ Replay
-            </button>
+            <button type="button" class="btn btn-ghost btn-sm" id="dash-replay">↻ Replay</button>
           </div>
           <div class="terms" id="terms"></div>
           <div class="dash-metrics">
-            <div class="metric m-pink">
-              <span class="k">Lighthouse</span
-              ><b data-metric="perf" data-from="41" data-to="98">41</b>
+            <div class="metric">
+              <span class="k">Lighthouse</span><b data-metric="perf" data-from="41" data-to="98">41</b>
             </div>
-            <div class="metric m-mint">
-              <span class="k">Time to live</span
-              ><b data-metric="ttl" data-from="0" data-to="8" data-suffix="h">0h</b>
+            <div class="metric">
+              <span class="k">Time to live</span><b data-metric="ttl" data-from="0" data-to="8" data-suffix="h">0h</b>
             </div>
-            <div class="metric m-lilac">
+            <div class="metric">
               <span class="k">Agents</span><b data-metric="agents" data-from="0" data-to="11">0</b>
             </div>
-            <div class="metric m-butter">
-              <span class="k">Human gates</span
-              ><b data-metric="gates" data-from="0" data-to="3">0</b>
+            <div class="metric">
+              <span class="k">Human gates</span><b data-metric="gates" data-from="0" data-to="3">0</b>
             </div>
           </div>
         </div>
-        <div class="rh reveal" id="run-history" aria-labelledby="rh-title"></div>
+        <div class="rh glass reveal" id="run-history" aria-labelledby="rh-title"></div>
       </section>
 
-      <section class="section" id="transform" data-palette="transform">
-        <p class="eyebrow"><b>03</b> the glow-up</p>
-        <h2>Same business. <span class="ul ul-butter">One night later.</span></h2>
+      <section class="section" id="transform">
+        <p class="eyebrow"><b>V</b> The transformation</p>
+        <h2>Same business. <em>One night later.</em></h2>
         <p class="section-lede">Drag the divider to compare the 22:00 site with the 06:00 site.</p>
         <div class="compare" id="compare">
           <div class="mock mock-before">
@@ -190,25 +194,21 @@
             </div>
             <div class="mb-hero">
               <h3>Welcome to Our Website!</h3>
-              <p>
-                We provide quality services for all your needs. Contact us today for a free quote.
-              </p>
+              <p>We provide quality services for all your needs. Contact us today for a free quote.</p>
               <button type="button" tabindex="-1">Click Here</button>
             </div>
             <div class="mb-cols"><div></div><div></div><div></div></div>
             <span class="mock-tag">22:00 · before</span>
           </div>
           <div class="mock mock-after" id="mock-after">
-            <div class="ma-blobs" aria-hidden="true"><i></i><i></i><i></i></div>
-            <div class="ma-nav"><b>acme ♥</b><span>Work · Studio <em>Book</em></span></div>
+            <div class="ma-glow" aria-hidden="true"></div>
+            <div class="ma-nav"><b>ACME</b><span>Work · Studio <em>Book</em></span></div>
             <div class="ma-hero">
               <p class="ma-eyebrow">services, re-imagined</p>
               <h3>Built for what<br /><span>comes next.</span></h3>
               <span class="ma-btn">Book a call</span>
             </div>
-            <div class="ma-stats">
-              <span>98 perf</span><span>3× leads</span><span>24/7 agents</span>
-            </div>
+            <div class="ma-stats"><span>98 perf</span><span>DMARC reject</span><span>24/7 agents</span></div>
             <span class="mock-tag">06:00 · after</span>
           </div>
           <div
@@ -226,45 +226,42 @@
         </div>
       </section>
 
-      <section class="section" id="work" data-palette="work">
-        <p class="eyebrow"><b>04</b> completed projects</p>
-        <h2>Shipped, live, and <span class="ul ul-pink">still running.</span></h2>
+      <section class="section" id="work">
+        <p class="eyebrow"><b>VI</b> Completed work</p>
+        <h2>Shipped, live, and <em>still running.</em></h2>
+        <div id="work-feature"></div>
         <div class="work" id="work-list"></div>
       </section>
 
-      <section class="section contact" id="contact" data-palette="contact">
-        <div class="contact-card">
-          <div class="contact-mascot" id="contact-mascot" aria-hidden="true"></div>
-          <p class="eyebrow"><b>05</b> start tonight</p>
-          <h2>Send the brief at 9pm.<br /><span class="ul ul-white">Wake up to a new business.</span></h2>
+      <section class="section contact" id="contact">
+        <div class="contact-card glass">
+          <p class="eyebrow"><b>VII</b> Start tonight</p>
+          <h2>Send the brief at 9pm.<br /><em>Wake up sovereign.</em></h2>
+          <p class="section-lede">
+            Tell us what you have and what you're afraid of losing. We'll come back with the layers we'd build,
+            harden and hand over.
+          </p>
           <div class="contact-actions">
-            <a
-              class="btn btn-ink btn-lg"
-              href="mailto:bae@slay.llc?subject=Overnight%20transformation"
-              data-confetti
-              >bae@slay.llc</a
-            >
-            <a
-              class="btn btn-white btn-lg"
-              href="https://github.com/sponsors/gothamgodzilla"
-              target="_blank"
-              rel="noopener"
-              data-confetti
+            <a class="btn btn-gold btn-lg" href="mailto:bae@slay.llc?subject=Overnight%20transformation">bae@slay.llc</a>
+            <a class="btn btn-ghost btn-lg" href="https://github.com/sponsors/gothamgodzilla" target="_blank" rel="noopener"
               ><span class="heart" aria-hidden="true">♥</span> Sponsor on GitHub</a
             >
           </div>
+          <p class="contact-note">
+            Sponsorship keeps the lab independent. Own your revenue, and help us own ours.
+          </p>
         </div>
       </section>
     </main>
 
     <footer class="footer">
       <span>© 2026 Slay.LLC · Coexist.LLC · LynxLogix.Ai</span>
-      <span>made with <span class="heart" aria-hidden="true">♥</span><span class="sr-only">love</span> overnight</span>
+      <span>Glyph TLD 💀🔥⭐ is a local-simulation prototype. Nothing here is audited crypto or a guarantee.</span>
       <span id="fx-status">WebGL · —</span>
     </footer>
 
     <script src="data.js"></script>
-    <script src="cute-fx.js"></script>
+    <script src="iceberg-fx.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

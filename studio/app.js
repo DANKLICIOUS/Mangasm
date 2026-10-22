@@ -5,6 +5,7 @@
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const esc = (s) =>
     String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
   const UNICORN_SDK =
     "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v2.4.3/dist/unicornStudio.umd.js";
   const brandById = Object.fromEntries(S.brands.map((b) => [b.id, b]));
@@ -13,7 +14,7 @@
   const loader = $("#loader"),
     pct = $("#loader-pct");
   const loadStart = performance.now();
-  const LOAD_MS = reduceMotion ? 0 : 900;
+  const LOAD_MS = reduceMotion ? 0 : 1100;
   const loadTick = (now) => {
     const f = LOAD_MS ? Math.min(1, (now - loadStart) / LOAD_MS) : 1;
     pct.textContent = Math.round(f * f * (3 - 2 * f) * 100);
@@ -23,81 +24,32 @@
   };
   requestAnimationFrame(loadTick);
 
-  /* ---------------- mascot ---------------- */
-  const tpl = $("#mascot-tpl");
-  const mascots = ["#mascot", "#contact-mascot"].map((sel) => {
-    const host = $(sel);
-    host.appendChild(tpl.content.cloneNode(true));
-    return host;
-  });
-  const [heroMascot] = mascots;
-  const eyeState = mascots.map(() => ({ x: 0, y: 0, tx: 0, ty: 0 }));
-  let pointer = null;
-  addEventListener("pointermove", (e) => (pointer = { x: e.clientX, y: e.clientY }), {
-    passive: true,
-  });
-  let lastY = scrollY,
-    squash = 0,
-    lookDown = 0;
-  const mascotTick = () => {
-    const vy = scrollY - lastY;
-    lastY = scrollY;
-    squash += (Math.max(-1, Math.min(1, vy / 40)) - squash) * 0.18;
-    lookDown += ((Math.abs(vy) > 1 ? Math.sign(vy) : 0) - lookDown) * 0.1;
-    mascots.forEach((m, i) => {
-      const r = m.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > innerHeight) return;
-      const st = eyeState[i];
-      if (pointer) {
-        const dx = pointer.x - (r.left + r.width / 2),
-          dy = pointer.y - (r.top + r.height * 0.58);
-        const d = Math.hypot(dx, dy) || 1;
-        const reach = Math.min(1, d / 260);
-        st.tx = (dx / d) * 9 * reach;
-        st.ty = (dy / d) * 7 * reach;
-      }
-      st.ty += lookDown * 4;
-      st.x += (st.tx - st.x) * 0.2;
-      st.y += (st.ty - st.y) * 0.2;
-      $(".m-eyes", m).style.transform = `translate(${st.x.toFixed(2)}px, ${st.y.toFixed(2)}px)`;
-      const s = Math.abs(squash) * 0.09;
-      m.style.transform = s > 0.002 ? `scale(${1 + s}, ${1 - s})` : "";
-    });
-    requestAnimationFrame(mascotTick);
-  };
-  if (!reduceMotion) requestAnimationFrame(mascotTick);
+  /* ---------------- hero: CSS parallax for the no-WebGL image ---------------- */
+  const hero = $(".hero");
+  if (!reduceMotion) {
+    addEventListener(
+      "pointermove",
+      (e) => {
+        hero.style.setProperty("--mx", ((e.clientX / innerWidth) * 2 - 1).toFixed(3));
+        hero.style.setProperty("--my", ((e.clientY / innerHeight) * 2 - 1).toFixed(3));
+      },
+      { passive: true }
+    );
+  }
 
-  const setHappy = (on) => mascots.forEach((m) => m.classList.toggle("happy", on));
-  document.addEventListener("pointerover", (e) => {
-    if (e.target.closest?.(".btn, .work-item")) setHappy(true);
-  });
-  document.addEventListener("pointerout", (e) => {
-    if (e.target.closest?.(".btn, .work-item")) setHappy(false);
-  });
-  let boingTimer = 0;
-  heroMascot.addEventListener("click", () => {
-    heroMascot.classList.remove("boing");
-    void heroMascot.offsetWidth;
-    heroMascot.classList.add("boing", "happy");
-    clearTimeout(boingTimer);
-    boingTimer = setTimeout(() => heroMascot.classList.remove("boing", "happy"), 1100);
-    const r = heroMascot.getBoundingClientRect();
-    window.CuteFX?.confetti(r.left + r.width / 2, r.top + r.height * 0.3, 40);
-  });
-
-  /* ---------------- units ---------------- */
-  const ICONS = {
-    slay: `<svg viewBox="0 0 48 48"><path d="M24 4c2 10 6 14 16 16-10 2-14 6-16 16-2-10-6-14-16-16 10-2 14-6 16-16Z" fill="#ff9ecb" stroke="#2b2140" stroke-width="3" stroke-linejoin="round"/><path d="M39 31c.8 3.6 2.2 5 5.6 5.8-3.4.8-4.8 2.2-5.6 5.8-.8-3.6-2.2-5-5.6-5.8 3.4-.8 4.8-2.2 5.6-5.8Z" fill="#ffe48a" stroke="#2b2140" stroke-width="2.5" stroke-linejoin="round"/></svg>`,
-    coexist: `<svg viewBox="0 0 48 48"><rect x="7" y="7" width="34" height="14" rx="7" fill="#a4ecca" stroke="#2b2140" stroke-width="3"/><rect x="7" y="27" width="34" height="14" rx="7" fill="#a7d5ff" stroke="#2b2140" stroke-width="3"/><circle cx="15" cy="14" r="2.6" fill="#2b2140"/><circle cx="15" cy="34" r="2.6" fill="#2b2140"/><path d="M24 14h10M24 34h10" stroke="#2b2140" stroke-width="3" stroke-linecap="round"/></svg>`,
-    lynx: `<svg viewBox="0 0 48 48"><path d="M24 4v6" stroke="#2b2140" stroke-width="3" stroke-linecap="round"/><circle cx="24" cy="4.5" r="3" fill="#ffe48a" stroke="#2b2140" stroke-width="2.5"/><rect x="6" y="11" width="36" height="30" rx="12" fill="#cdb9ff" stroke="#2b2140" stroke-width="3"/><circle cx="17" cy="25" r="4" fill="#2b2140"/><circle cx="31" cy="25" r="4" fill="#2b2140"/><circle cx="18.4" cy="23.6" r="1.4" fill="#fff"/><circle cx="32.4" cy="23.6" r="1.4" fill="#fff"/><path d="M20 33q4 3 8 0" fill="none" stroke="#2b2140" stroke-width="3" stroke-linecap="round"/></svg>`,
+  /* ---------------- houses ---------------- */
+  const CRESTS = {
+    slay: `<svg viewBox="0 0 48 48"><path d="M10 18 16 8h16l6 10-14 22Z"/><path d="M10 18h28M16 8l4 10 4-10 4 10 4-10M20 18l4 22 4-22"/><path d="M24 2v3M40 6l-2 2M8 6l2 2"/></svg>`,
+    coexist: `<svg viewBox="0 0 48 48"><path d="M6 16 24 5l18 11Z"/><path d="M8 16h32M8 40h32M6 44h36"/><path d="M12 19v18M20 19v18M28 19v18M36 19v18"/></svg>`,
+    lynx: `<svg viewBox="0 0 48 48"><path d="M4 24c6-9 13-13 20-13s14 4 20 13c-6 9-13 13-20 13S10 33 4 24Z"/><circle cx="24" cy="24" r="6.5"/><path d="M24 17.5c-2 2-2 11 0 13"/><path d="M12 9l3 4M36 9l-3 4M24 4v5"/></svg>`,
   };
   $("#units-grid").innerHTML = S.brands
     .map(
       (b) => `
-      <div class="card-wrap reveal">
-        <article class="card unit" data-sheen style="--tint:${esc(b.hue)}">
-          <div class="unit-icon" aria-hidden="true">${ICONS[b.id] || ""}</div>
-          <span class="unit-code">${esc(b.code)}</span>
+      <div class="reveal">
+        <article class="house glass" style="--tint:${esc(b.hue)}">
+          <div class="crest" aria-hidden="true">${CRESTS[b.id] || ""}</div>
+          <span class="house-code">${esc(b.code)}</span>
           <h3>${esc(b.name)}</h3>
           <span class="role">${esc(b.role)}</span>
           <p>${esc(b.pitch)}</p>
@@ -105,6 +57,153 @@
         </article>
       </div>`
     )
+    .join("");
+
+  /* ---------------- the opsec iceberg ---------------- */
+  const LAYERS = S.iceberg;
+  const VB_W = 500,
+    VB_H = 1560,
+    WATER = 187;
+  const EDGES = [0, WATER, 421, 671, 936, 1217, VB_H];
+  const CENTERS = LAYERS.map((_, i) => (i === 0 ? 0.06 : (EDGES[i] + EDGES[i + 1]) / 2 / VB_H));
+  const BERG =
+    "M250 8 L282 52 L300 40 L322 96 L346 130 L372 187 L410 260 L452 350 L476 470 L488 600 L470 720 L482 840 L458 960 L430 1080 L440 1180 L400 1290 L360 1390 L300 1480 L262 1552 L232 1500 L180 1430 L130 1330 L84 1220 L60 1100 L36 980 L26 860 L40 740 L20 620 L34 500 L64 380 L110 270 L140 187 L160 150 L176 104 L198 118 L214 60 L232 70 Z";
+  const FACETS = [
+    "M250 8 L262 187 L300 420 L250 700 L330 960 L300 1240 L262 1552",
+    "M214 60 L200 187 L150 420 L250 700",
+    "M322 96 L300 187",
+    "M372 187 L400 420 L300 420",
+    "M34 500 L150 420",
+    "M488 600 L400 420",
+    "M250 700 L130 980 L84 1220",
+    "M330 960 L458 960",
+    "M250 700 L470 720",
+    "M130 980 L300 1240 L440 1180",
+    "M60 1100 L130 980",
+  ];
+  const LABELS = ["I · Surface", "II · DNS · TLS · Mail", "III · Identity & keys", "IV · Infra", "V · Namespace", "VI · Abyss"];
+  const LABEL_Y = [164, 300, 548, 806, 1080, 1360];
+  $("#ice-berg").innerHTML = `
+    <svg viewBox="0 0 ${VB_W} ${VB_H}" preserveAspectRatio="xMidYMin meet">
+      <defs>
+        <clipPath id="berg-clip"><path d="${BERG}"/></clipPath>
+        <linearGradient id="berg-tip" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f6ead0" stop-opacity="0.62"/>
+          <stop offset="0.6" stop-color="#d9bd7c" stop-opacity="0.28"/>
+          <stop offset="1" stop-color="#c9a24a" stop-opacity="0.16"/>
+        </linearGradient>
+        <linearGradient id="berg-sub" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9ff3ea" stop-opacity="0.34"/>
+          <stop offset="0.35" stop-color="#5fd6cc" stop-opacity="0.13"/>
+          <stop offset="1" stop-color="#0b3a3f" stop-opacity="0.05"/>
+        </linearGradient>
+        <linearGradient id="berg-stroke" x1="0" y1="0" x2="0" y2="${VB_H}" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stop-color="#f3dc9c"/>
+          <stop offset="0.12" stop-color="#e6c77a"/>
+          <stop offset="0.13" stop-color="#9ff3ea"/>
+          <stop offset="0.6" stop-color="#5fd6cc" stop-opacity="0.6"/>
+          <stop offset="1" stop-color="#c9a24a" stop-opacity="0.35"/>
+        </linearGradient>
+      </defs>
+      <g clip-path="url(#berg-clip)">
+        <rect x="0" y="0" width="${VB_W}" height="${WATER}" fill="url(#berg-tip)"/>
+        <rect x="0" y="${WATER}" width="${VB_W}" height="${VB_H - WATER}" fill="url(#berg-sub)"/>
+        ${LAYERS.map((_, i) => `<rect class="berg-band" data-band="${i}" x="0" y="${EDGES[i]}" width="${VB_W}" height="${EDGES[i + 1] - EDGES[i]}"/>`).join("")}
+        <g class="berg-facets">${FACETS.map((d) => `<path d="${d}"/>`).join("")}</g>
+        ${EDGES.slice(2, -1).map((y) => `<line class="berg-sep" x1="0" x2="${VB_W}" y1="${y}" y2="${y}"/>`).join("")}
+      </g>
+      <path class="berg-outline" d="${BERG}"/>
+      ${LABELS.map((l, i) => `<text class="berg-label" data-band="${i}" x="250" y="${LABEL_Y[i]}" text-anchor="middle">${esc(l.toUpperCase())}</text>`).join("")}
+    </svg>`;
+
+  $("#ice-layers").innerHTML = LAYERS.map(
+    (L, i) => `
+    <li class="ice-layer" data-layer="${i}">
+      <article class="ice-card" aria-labelledby="ice-${esc(L.id)}">
+        <p class="ice-meta"><span>${esc(L.kicker)}</span><b>${esc(L.depth)}</b></p>
+        <h3 id="ice-${esc(L.id)}">${esc(L.title)}</h3>
+        <p>${esc(L.body)}</p>
+        ${
+          L.glyph
+            ? `<div class="glyph"><span class="glyph-label" role="img" aria-label="skull, fire, star">${esc(L.glyph.label)}</span><code>${esc(L.glyph.ascii)}</code>${L.prototype ? `<span class="proto">Prototype · local sim</span>` : ""}</div>`
+            : ""
+        }
+        <ul class="ice-points">${L.points.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
+        <ul class="ice-refs" aria-label="Further reading">${L.refs
+          .map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`)
+          .join("")}</ul>
+      </article>
+    </li>`
+  ).join("");
+
+  const iceTrack = $("#ice-track"),
+    iceStage = $("#ice-stage"),
+    berg = $("#ice-berg"),
+    iceDepth = $("#ice-depth"),
+    iceName = $("#ice-name"),
+    iceFill = $("#ice-fill");
+  const iceItems = $$(".ice-layer"),
+    bands = $$(".berg-band"),
+    bandLabels = $$(".berg-label");
+  const NAMES = ["Surface", "Domains & DNS", "Identity & keys", "Infra you control", "Sovereign namespace", "The abyss"];
+  let activeLayer = -1;
+  const smooth = (x) => x * x * (3 - 2 * x);
+  function layoutIce() {
+    const vh = iceStage.clientHeight;
+    const H = berg.offsetHeight;
+    const r = iceTrack.getBoundingClientRect();
+    const p = clamp(-r.top / Math.max(1, r.height - vh));
+    const f = p * (LAYERS.length - 1);
+    const k = Math.min(LAYERS.length - 2, Math.floor(f));
+    const c = CENTERS[k] + (CENTERS[k + 1] - CENTERS[k]) * smooth(clamp(f - k));
+    const bergY = vh * 0.5 - c * H;
+    const waterY = bergY + (WATER / VB_H) * H;
+    berg.style.setProperty("--berg-y", `${bergY.toFixed(1)}px`);
+    iceStage.style.setProperty("--wl", `${((waterY / vh) * 100).toFixed(2)}%`);
+    iceFill.parentElement.style.setProperty("--p", p.toFixed(3));
+    window.IcebergFX?.setIce(waterY, H * (1 - WATER / VB_H));
+    const idx = Math.round(f);
+    if (idx !== activeLayer) {
+      activeLayer = idx;
+      iceItems.forEach((el, i) => el.classList.toggle("on", i === idx));
+      bands.forEach((el, i) => el.classList.toggle("on", i === idx));
+      bandLabels.forEach((el, i) => el.classList.toggle("on", i === idx));
+      iceDepth.textContent = LAYERS[idx].depth;
+      iceName.textContent = NAMES[idx];
+    }
+  }
+
+  /* ---------------- self-sovereignty orbit ---------------- */
+  const PILLAR_ICONS = {
+    keys: `<svg viewBox="0 0 24 24"><circle cx="8" cy="12" r="4.5"/><path d="M12.5 12H22M18 12v3.5M21 12v2.5"/></svg>`,
+    namespace: `<svg viewBox="0 0 24 24"><path d="M5 20V5h11l-2 4 2 4H5"/><path d="M5 22v-2"/></svg>`,
+    infra: `<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><path d="M7 7h.01M7 17h.01"/></svg>`,
+    data: `<svg viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7.5" ry="2.8"/><path d="M4.5 5.5v13c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8v-13M4.5 12c0 1.5 3.4 2.8 7.5 2.8s7.5-1.3 7.5-2.8"/></svg>`,
+    revenue: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16.5s-4-2.4-4-5a2.2 2.2 0 0 1 4-1.2 2.2 2.2 0 0 1 4 1.2c0 2.6-4 5-4 5Z"/></svg>`,
+    agents: `<svg viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/><path d="M15.5 4.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6Z"/></svg>`,
+  };
+  const R = 300 / 860;
+  $("#orbit-nodes").innerHTML = S.pillars
+    .map((pl, i) => {
+      const a = ((-90 + i * 60) * Math.PI) / 180;
+      const x = 50 + Math.cos(a) * R * 100,
+        y = 50 + Math.sin(a) * R * 100;
+      return `<li class="orbit-node reveal" style="--x:${x.toFixed(2)}%;--y:${y.toFixed(2)}%">
+        <div class="on-head"><span class="on-icon" aria-hidden="true">${PILLAR_ICONS[pl.id] || ""}</span><h3>${esc(pl.title)}</h3><span class="on-num" aria-hidden="true">${["I", "II", "III", "IV", "V", "VI"][i]}</span></div>
+        <p>${esc(pl.body)}</p>
+      </li>`;
+    })
+    .join("");
+  $(".or-arrows").innerHTML = S.pillars
+    .map((_, i) => {
+      const a = ((-60 + i * 60) * Math.PI) / 180;
+      const P = [430 + Math.cos(a) * 300, 430 + Math.sin(a) * 300];
+      const t = [-Math.sin(a), Math.cos(a)],
+        n = [Math.cos(a), Math.sin(a)];
+      const p1 = [P[0] - t[0] * 9 + n[0] * 7, P[1] - t[1] * 9 + n[1] * 7];
+      const p2 = [P[0] - t[0] * 9 - n[0] * 7, P[1] - t[1] * 9 - n[1] * 7];
+      return `<path d="M${p1.map((v) => v.toFixed(1))} L${P.map((v) => v.toFixed(1))} L${p2.map((v) => v.toFixed(1))}"/>`;
+    })
     .join("");
 
   /* ---------------- backstage: three terminals on one clock ---------------- */
@@ -265,19 +364,18 @@
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
   const maxDay = Math.max(...RH.days.map(([s, f]) => s + f));
-  const RH_TONES = ["pink", "mint", "lilac", "butter", "sky"];
   const RH_STATS = [
-    ["runs", RH.totals.runs, "runs · 30 days", "lilac"],
-    ["succeeded", RH.totals.succeeded, "succeeded", "mint"],
-    ["failed", RH.totals.failed, "failed", "coral"],
-    ["automations", RH.totals.automations, "automations", "butter"],
+    ["runs", RH.totals.runs, "runs · 30 days", "ivory"],
+    ["succeeded", RH.totals.succeeded, "succeeded", "gold"],
+    ["failed", RH.totals.failed, "failed", "ember"],
+    ["automations", RH.totals.automations, "automations", "lagoon"],
   ];
   const listed = RH.automations.length;
   rhEl.innerHTML = `
     <div class="rh-head">
       <div>
         <h3 id="rh-title">Run history</h3>
-        <p class="rh-sub">Our own Cursor Automations, last 30 days</p>
+        <p class="rh-sub">Our own Cursor Automations, last 30 days: the agents that work while we sleep</p>
       </div>
       <p class="rh-legend" aria-hidden="true"><span class="ok">succeeded</span><span class="bad">failed</span></p>
     </div>
@@ -292,7 +390,7 @@
         ${RH.days
           .map(([s, f], i) => {
             const h = ((s + f) / maxDay) * 100;
-            return `<div class="rh-col" style="--i:${i}" data-tip="${dayLabel(i)} · ${s} ✓${f ? ` · ${f} ✗` : ""}"><div class="rh-bar${h < 8 ? " dot" : ""}" style="--h:${h.toFixed(1)}%">${
+            return `<div class="rh-col" style="--i:${i}" data-tip="${dayLabel(i)} · ${s} ✓${f ? ` · ${f} ✗` : ""}"><div class="rh-bar${h < 6 ? " dot" : ""}" style="--h:${h.toFixed(1)}%">${
               f ? `<i class="bad" style="flex-grow:${f}"></i>` : ""
             }<i class="ok" style="flex-grow:${s}"></i></div></div>`;
           })
@@ -306,8 +404,8 @@
         <ul class="rh-autos">
           ${RH.automations
             .map(
-              (a, i) => `<li>
-                <span class="rh-ico rh-${RH_TONES[i % RH_TONES.length]}" aria-hidden="true">✦</span>
+              (a) => `<li>
+                <span class="rh-ico" aria-hidden="true">✦</span>
                 <span class="rh-name">${esc(a.name)}<small>${esc(a.schedule || "Schedule not shown in snapshot")}${a.next ? ` · next ${esc(a.next)}` : ""}</small></span>
                 <span class="rh-active">Active</span>
               </li>`
@@ -386,7 +484,7 @@
   const compare = $("#compare"),
     handle = $("#compare-handle");
   const setPos = (v) => {
-    v = Math.max(0, Math.min(100, v));
+    v = clamp(v, 0, 100);
     compare.style.setProperty("--pos", v + "%");
     handle.setAttribute("aria-valuenow", Math.round(v));
   };
@@ -412,44 +510,49 @@
   });
 
   /* ---------------- completed work ---------------- */
-  const THUMBS = [
-    "linear-gradient(135deg, #ffc7e0, #cdb9ff)",
-    "linear-gradient(135deg, #a4ecca, #a7d5ff)",
-    "linear-gradient(135deg, #ffe48a, #ffc2a1)",
-    "linear-gradient(135deg, #cdb9ff, #a7d5ff)",
-  ];
+  const chipsFor = (p) =>
+    p.units.map((u) => `<span class="chip unit-chip" style="--tint:${esc(brandById[u].hue)}">${esc(brandById[u].name)}</span>`).join("") +
+    p.stack.map((s) => `<span class="chip">${esc(s)}</span>`).join("");
+  const featured = S.projects.find((p) => p.feature);
+  if (featured) {
+    const [a, b] = featured.feature;
+    $("#work-feature").innerHTML = `
+      <article class="feature glass reveal">
+        <div class="feature-art">
+          <img class="fa-a" src="${esc(a.src)}" alt="${esc(a.alt)}" width="${a.w}" height="${a.h}" loading="lazy" decoding="async" />
+          ${b ? `<img class="fa-b" src="${esc(b.src)}" alt="${esc(b.alt)}" width="${b.w}" height="${b.h}" loading="lazy" decoding="async" />` : ""}
+        </div>
+        <div class="feature-copy">
+          <span class="code">${esc(featured.code)} · ${esc(featured.kind)}</span>
+          <h3>${esc(featured.name)}</h3>
+          ${featured.tagline ? `<p class="tagline">${esc(featured.tagline)}</p>` : ""}
+          <p class="summary">${esc(featured.summary)}</p>
+          <div class="chips">${chipsFor(featured)}</div>
+          <a class="btn btn-ghost" href="${esc(featured.url)}" target="_blank" rel="noopener">${esc(new URL(featured.url).host)} ↗</a>
+        </div>
+      </article>`;
+  }
+  const TINTS = ["#5fd6cc", "#d9b45e", "#e8826a"];
   $("#work-list").innerHTML = S.projects
-    .map((p, i) => {
-      const grad = THUMBS[i % THUMBS.length];
-      const thumb = p.image ? `url("${esc(p.image)}"), ${grad}` : grad;
-      return `
-      <div class="card-wrap reveal">
-        <a class="card work-item" data-sheen href="${esc(p.url)}" target="_blank" rel="noopener">
-          <div class="work-thumb" style='--thumb:${thumb}'>
+    .filter((p) => p !== featured)
+    .map(
+      (p, i) => `
+      <div class="reveal">
+        <a class="work-item glass" href="${esc(p.url)}" target="_blank" rel="noopener" style="--tint:${TINTS[i % TINTS.length]}">
+          <div class="work-thumb">
             <span class="code">${esc(p.code)}</span>
-            ${p.image ? "" : `<span class="initial" aria-hidden="true">${esc(p.name[0])}</span>`}
+            <span class="initial" aria-hidden="true">${esc(p.name[0])}</span>
           </div>
           <div class="work-body">
             <div class="work-name"><h3>${esc(p.name)}</h3><small>${esc(p.kind)}</small></div>
             <p class="work-summary">${esc(p.summary)}</p>
-            <div class="chips">
-              ${p.units.map((u) => `<span class="chip unit-chip" style="--tint:${esc(brandById[u].hue)}">${esc(brandById[u].name)}</span>`).join("")}
-              ${p.stack.map((s) => `<span class="chip">${esc(s)}</span>`).join("")}
-            </div>
+            <div class="chips">${chipsFor(p)}</div>
             <span class="work-link">${esc(new URL(p.url).host)}</span>
           </div>
         </a>
-      </div>`;
-    })
+      </div>`
+    )
     .join("");
-
-  /* ---------------- confetti buttons ---------------- */
-  document.addEventListener("click", (e) => {
-    const el = e.target.closest("[data-confetti]");
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    window.CuteFX?.confetti(r.left + r.width / 2, r.top + r.height / 2, 110);
-  });
 
   /* ---------------- reveal ---------------- */
   const io = new IntersectionObserver(
@@ -466,38 +569,49 @@
     io.observe(el);
   });
 
-  /* ---------------- scroll-linked night clock ---------------- */
+  /* ---------------- scroll: night clock, hero drift, iceberg descent ---------------- */
   const clock = $("#clock"),
     clockLeft = $("#clock-left");
+  const faB = $(".fa-b");
+  let scrollRaf = 0;
   const onScroll = () => {
+    scrollRaf = 0;
     const max = document.documentElement.scrollHeight - innerHeight;
     const f = max > 0 ? Math.min(1, scrollY / max) : 0;
     const left = 8 * (1 - f);
     clock.textContent = fmtNight(f);
     clockLeft.textContent =
       left < 0.05 ? "launched ✓" : `${Math.floor(left)}h ${String(Math.floor((left % 1) * 60)).padStart(2, "0")}m until launch`;
+    if (!reduceMotion) {
+      hero.style.setProperty("--sy", clamp(scrollY / hero.offsetHeight).toFixed(3));
+      if (faB) faB.style.setProperty("--fy", ((faB.parentElement.getBoundingClientRect().top - innerHeight / 2) * -0.06).toFixed(1));
+    }
+    layoutIce();
   };
-  addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+  const queueScroll = () => {
+    if (!scrollRaf) scrollRaf = requestAnimationFrame(onScroll);
+  };
+  addEventListener("scroll", queueScroll, { passive: true });
+  addEventListener("resize", queueScroll, { passive: true });
 
   /* ---------------- WebGL + Unicorn Studio hook ---------------- */
   const fxStatus = $("#fx-status");
   const showStatus = () => {
-    const st = window.CuteFX?.status();
+    const st = window.IcebergFX?.status();
     fxStatus.textContent = st?.webgl
-      ? `WebGL · on · ${st.contexts} ctx · ${st.scale}×`
+      ? `WebGL · on · ${st.contexts} ctx · dpr 1${reduceMotion ? " · static" : ""}`
       : "WebGL · off · CSS fallback";
   };
-  const startFX = () => {
-    window.CuteFX?.start({
-      hero: $(".hero"),
-      sections: $$("[data-palette]"),
-      cards: $$("[data-sheen]"),
-    });
-    showStatus();
-    setInterval(showStatus, 2000);
-  };
-  (window.requestIdleCallback || ((cb) => setTimeout(cb, 1)))(startFX, { timeout: 400 });
+  window.IcebergFX?.start({
+    hero,
+    heroCanvas: $("#hero-gl"),
+    heroArt: $("#hero-art"),
+    iceStage,
+    iceCanvas: $("#ice-gl"),
+  });
+  onScroll();
+  showStatus();
+  setInterval(showStatus, 2000);
 
   const startUnicorn = (projectId) => {
     const host = $("#unicorn");
@@ -509,10 +623,10 @@
         .then((scenes) => {
           if (!scenes.length) return;
           document.body.classList.add("unicorn-on");
-          window.CuteFX?.setHeroScene(false);
+          window.IcebergFX?.setHeroScene(false);
         })
         .catch((err) => console.warn("[unicorn]", err));
-    s.onerror = () => console.warn("[unicorn] sdk blocked; keeping the built-in jelly scene");
+    s.onerror = () => console.warn("[unicorn] sdk blocked; keeping the built-in skull-jungle scene");
     document.head.appendChild(s);
   };
   const unicornId = new URLSearchParams(location.search).get("us") || S.unicornProjectId;
