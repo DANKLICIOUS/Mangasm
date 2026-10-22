@@ -7,6 +7,7 @@
 //         lagoon turquoise into the abyss as you descend, plus marine snow.
 // Render scale is capped at 1 device pixel. `?fx=off` disables WebGL. With
 // prefers-reduced-motion each scene draws a single static frame and redraws only on resize/scroll.
+// The hero texture comes from `data-gl-src` on the art <img> (or its src) and needs CORS if cross-origin.
 (() => {
   const params = new URLSearchParams(location.search);
   const disabled = params.get("fx") === "off";
@@ -335,7 +336,7 @@ void main(){
     heroOn = true;
   const ice = { waterY: 0, span: 1 };
 
-  function start({ hero, heroCanvas, heroArt, iceStage, iceCanvas }) {
+  function start({ hero, heroCanvas, heroArt, iceStage, iceCanvas, onReady = () => {} }) {
     if (disabled) {
       status.hero = status.ice = "off";
       return;
@@ -354,6 +355,7 @@ void main(){
       setup(gl, u, done) {
         const img = new Image();
         img.decoding = "async";
+        img.crossOrigin = "anonymous";
         img.onload = () => {
           const pot = document.createElement("canvas");
           pot.width = 1024;
@@ -362,7 +364,13 @@ void main(){
           const tex = gl.createTexture();
           gl.bindTexture(gl.TEXTURE_2D, tex);
           gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, pot);
+          try {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, pot);
+          } catch (err) {
+            status.hero = "no-image";
+            console.warn("[IcebergFX:hero] texture blocked; keeping the static image", err);
+            return;
+          }
           gl.generateMipmap(gl.TEXTURE_2D);
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
           gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -376,7 +384,7 @@ void main(){
         img.onerror = () => {
           status.hero = "no-image";
         };
-        img.src = heroArt.currentSrc || heroArt.src;
+        img.src = heroArt.dataset.glSrc || heroArt.currentSrc || heroArt.src;
       },
       uniforms(gl, u) {
         const narrow = matchMedia("(max-width: 860px)").matches;
@@ -388,6 +396,7 @@ void main(){
       active: () => heroOn,
       onReady() {
         if (heroOn) document.body.classList.add("gl-hero");
+        onReady("hero");
       },
     });
 
@@ -406,6 +415,7 @@ void main(){
       },
       onReady() {
         document.body.classList.add("gl-ice");
+        onReady("ice");
       },
     });
   }
