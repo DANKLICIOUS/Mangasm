@@ -418,7 +418,7 @@
 
   /* ---------- Engine (2D canvas, no WebGL needed) ---------- */
 
-  function Engine(canvas) {
+  function Engine(canvas, signal) {
     const ctx = canvas.getContext && canvas.getContext("2d");
     if (!ctx) return null;
     const r = mulberry32(7);
@@ -659,7 +659,11 @@
       lastNow = now;
     }
 
-    if (window.ResizeObserver) new ResizeObserver(() => { resize(); if (reduced) draw(lastNow || 0, 0); }).observe(canvas);
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(() => { resize(); if (reduced) draw(lastNow || 0, 0); });
+      ro.observe(canvas);
+      if (signal) signal.addEventListener("abort", () => ro.disconnect());
+    }
     return {
       draw,
       set(opts) {
@@ -678,6 +682,7 @@
 
   function decorate() {
     $$("[data-corners]").forEach((el) => {
+      if (el.querySelector(":scope > .corner")) return;
       ["tl", "tr", "bl", "br"].forEach((c) => {
         el.append(sv("svg", { class: "corner corner--" + c, "aria-hidden": "true", focusable: "false" }, sv("use", { href: "#filigree" })));
       });
@@ -686,6 +691,7 @@
     const svg = $("#spires");
     const r = mulberry32(1307);
     svg.setAttribute("viewBox", "0 0 1600 400");
+    svg.replaceChildren();
     const layer = (cls, base, hMin, hMax, step) => {
       let d = "M0 400V" + base;
       let x = 0;
@@ -1197,7 +1203,7 @@
     setTimeout(() => el.remove(), 4200);
     if (!reduced) {
       const f = h("div", { class: "flash flash--" + kind, "aria-hidden": "true" });
-      document.body.append(f);
+      ($("[data-dreaming-root]") || document.body).append(f);
       setTimeout(() => f.remove(), 1300);
     }
   }
@@ -1240,9 +1246,17 @@
     }
   }
 
+  let stopCurrent = null;
+
   async function boot() {
+    if (stopCurrent) stopCurrent();
+    const ac = new AbortController();
+    const { signal } = ac;
+    stopCurrent = () => ac.abort();
+    window.RecursiveDreaming = Object.assign(window.RecursiveDreaming || {}, { stop: () => stopCurrent && stopCurrent() });
     decorate();
     const { data, note } = await loadData();
+    if (signal.aborted) return;
     if (note) {
       const n = $("#data-notice");
       n.textContent = note;
@@ -1251,7 +1265,7 @@
     renderSnapshot(data);
 
     const S = loadSaved() || { status: "idle", t: 0, speed: 1, seed: DEFAULT_SEED };
-    const ctx = { data, S, N: buildNight(data, S.seed), engine: Engine($("#engine-canvas")) };
+    const ctx = { data, S, N: buildNight(data, S.seed), engine: Engine($("#engine-canvas"), signal) };
 
     const save = () => {
       try {
@@ -1273,31 +1287,34 @@
         S.t = 0;
         setStatus("running");
       }
-    });
+    }, { signal });
     $("#btn-pause").addEventListener("click", () => {
       if (S.status === "running") setStatus("paused");
       else if (S.status === "paused") setStatus("running");
-    });
+    }, { signal });
     $("#btn-replay").addEventListener("click", () => {
       S.t = 0;
       setStatus("running");
-    });
+    }, { signal });
     $$(".ctl--speed").forEach((b) =>
       b.addEventListener("click", () => {
         S.speed = +b.dataset.speed;
         save();
-      })
+      }, { signal })
     );
-    window.addEventListener("pagehide", save);
+    window.addEventListener("pagehide", save, { signal });
+    signal.addEventListener("abort", save);
     if (window.ResizeObserver) {
       let lastW = 0;
-      new ResizeObserver(([e]) => {
+      const ro = new ResizeObserver(([e]) => {
         const w = Math.round(e.contentRect.width);
         if (Math.abs(w - lastW) > 8) {
           lastW = w;
           prev.runs = null;
         }
-      }).observe($("#history-chart"));
+      });
+      ro.observe($("#history-chart"));
+      signal.addEventListener("abort", () => ro.disconnect());
     }
 
     let last = performance.now();
@@ -1305,6 +1322,7 @@
     let lastT = S.t;
     let staticSig = "";
     const frame = (now) => {
+      if (signal.aborted) return;
       const dt = Math.min(0.1, (now - last) / 1000);
       last = now;
       if (S.status === "running") {
@@ -1338,7 +1356,7 @@
     mqReduce.addEventListener && mqReduce.addEventListener("change", (e) => {
       reduced = e.matches;
       redrawStatic();
-    });
+    }, { signal });
     document.fonts && document.fonts.ready.then(redrawStatic);
 
     // Small hook for tests and for wiring a real feed later.
@@ -1352,6 +1370,7 @@
         save();
       },
       loadData,
+      stop: () => ac.abort(),
     };
   }
 
