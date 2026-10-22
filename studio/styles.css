@@ -349,7 +349,7 @@ h3 {
   display: grid;
   align-items: center;
   min-height: max(720px, 100svh);
-  padding: 130px max(24px, 6vw) 140px;
+  padding: 108px max(24px, 6vw) 118px;
   overflow: hidden;
   background: #040404;
   --mx: 0;
@@ -485,7 +485,7 @@ body.unicorn-on .hero-art {
   background: var(--gold);
 }
 .hero-title {
-  font-size: clamp(58px, 8.4vw, 132px);
+  font-size: clamp(56px, 7.6vw, 120px);
   line-height: 0.9;
   font-weight: 600;
   letter-spacing: -0.015em;
@@ -502,7 +502,7 @@ body.unicorn-on .hero-art {
 }
 .hero-lede {
   max-width: 50ch;
-  margin: 30px 0 0;
+  margin: 26px 0 0;
   font-size: 19px;
   color: #d4ccb9;
 }
@@ -1083,7 +1083,7 @@ body.gl-ice .ice-gl {
   left: var(--x);
   top: var(--y);
   translate: -50% -50%;
-  width: 256px;
+  width: 280px;
   padding: 18px 20px;
   background: var(--glass), rgba(9, 10, 12, 0.82);
   backdrop-filter: blur(14px);
@@ -1124,7 +1124,7 @@ body.gl-ice .ice-gl {
   stroke-linejoin: round;
 }
 .orbit-node h3 {
-  font-size: 22px;
+  font-size: 21px;
   white-space: nowrap;
 }
 .orbit-node p {
@@ -2125,6 +2125,9 @@ body.gl-ice .ice-gl {
   }
   .orbit-node p {
     font-size: 13.5px;
+  }
+  .orbit-node h3 {
+    white-space: normal;
   }
 }
 @media (max-width: 860px) {
