@@ -16,7 +16,7 @@ cd studio && python3 -m http.server 4840
 | Automations monitor: 30-day run history, totals, automation list, recent runs | **Snapshot** of the Cursor Automations dashboard on Oct 21, 2026, transcribed from screenshots (`data.js`). Tagged "Snapshot". |
 | Night clock, incidents, self-repair cycle, track metrics, Unreal handoff, dream journal, health score | **Simulated** in the browser. Tagged "Simulated". |
 | Simulated runs added to the automations monitor during the night | **Simulated**. Hatched bars with a dashed outline in the chart, dashed cards with a "Simulated" tag in the runs feed. |
-| Now Playing band across the ACTIVATE sigil | At idle and after dawn: the snapshot runs replayed one by one, badge **SNAPSHOT**. During the night: the simulated runs and anomalies on the night clock, badge **SIMULATED** (**PAUSED** while paused). **LIVE** only appears for a real feed, see below. |
+| Now Playing band across the ACTIVATE sigil | At idle and after dawn: the snapshot runs replayed one by one, badge **SNAPSHOT**. During the night: the simulated runs and anomalies, read off the night clock (so the band freezes when the night is paused and jumps with Replay), badge **SIMULATED**. **LIVE** only appears for a real feed, see below. |
 
 The Cursor dashboard has no public read API, so the snapshot does not update by itself. Crypto Carnival tokens, decay and "minting" are game design, not financial information.
 

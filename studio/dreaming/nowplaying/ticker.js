@@ -11,7 +11,8 @@ const esc = (s) =>
     (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]
   );
 
-export function createTicker(stage, np, { reducedMotion = false } = {}) {
+// `clock` sets the time the ticker reads the feed at; a host with its own timeline can pass a virtual one.
+export function createTicker(stage, np, { reducedMotion = false, clock = Date.now } = {}) {
   const band = document.createElement("div");
   band.className = "np-band";
   band.setAttribute("role", "region");
@@ -125,7 +126,7 @@ export function createTicker(stage, np, { reducedMotion = false } = {}) {
     text.setAttribute("lengthAdjust", "spacing");
   }
 
-  function update(now = Date.now()) {
+  function update(now = clock()) {
     const cur = np.current(now);
     if (!cur) return;
     const { item } = cur;

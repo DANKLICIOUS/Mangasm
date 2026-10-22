@@ -1265,7 +1265,8 @@
     };
   }
 
-  // The simulated night on the wall clock: sim minute t starts at anchor + t * msPerMin.
+  // The simulated night on a virtual clock: sim minute t is at anchor + t * msPerMin. syncTicker reads
+  // the band at that time, so it follows the night clock exactly, including pause, seek and replay.
   function nightFeed(N, S, anchor, msPerMin) {
     const ev = [{ t: 0, type: "event", title: "The Recursion Engine wakes", artist: "Night begins · 22:00", source: "simulated" }];
     N.runs.forEach((r) =>
@@ -1287,16 +1288,6 @@
     };
   }
 
-  function pausedFeed(N, S) {
-    const last = N.runs.filter((r) => r.t <= S.t).pop();
-    return {
-      live: false,
-      tag: "Paused",
-      label: "Simulated night · paused · not live",
-      items: [{ type: "event", title: "The night is paused at " + clock(S.t), artist: last ? "Last run: " + last.name : "No runs yet", source: "simulated", startedAt: Date.now(), durationSec: 0 }],
-    };
-  }
-
   async function startTicker(ctx, signal, remote) {
     const host = $("#ritual-np");
     if (!host) return null;
@@ -1310,12 +1301,12 @@
     if (signal.aborted) return null;
     const np = mod.NowPlaying;
     host.hidden = false;
-    const ticker = mod.createTicker(host, np, { reducedMotion: reduced });
+    const tk = { np, ticker: null, external: false, mode: "", anchor: 0, msPerMin: 0, next: 0, at: () => Date.now() };
+    const ticker = (tk.ticker = mod.createTicker(host, np, { reducedMotion: reduced, clock: () => tk.at() }));
     signal.addEventListener("abort", () => {
       ticker.destroy();
       np.stop();
     });
-    const tk = { np, ticker, external: false, mode: "", anchor: 0, next: 0 };
     // Only a real feed may show LIVE: ?nowplaying=<url>, or `nowPlaying` inside a remote ?data= document.
     const qs = new URLSearchParams(location.search).get("nowplaying");
     if (qs) {
@@ -1330,33 +1321,27 @@
   function syncTicker(tk, ctx, now) {
     const { np } = tk;
     const S = ctx.S;
-    if (!tk.external && now >= tk.next) {
+    const night = S.status === "running" || S.status === "paused";
+    if (!tk.external && night) {
+      const mode = "night" + S.speed + ":" + S.seed;
+      if (tk.mode !== mode) {
+        tk.mode = mode;
+        tk.msPerMin = (REAL_SECONDS * 1000) / NIGHT / S.speed;
+        tk.anchor = Date.now() - S.t * tk.msPerMin;
+        tk.at = () => tk.anchor + S.t * tk.msPerMin;
+        np.set(nightFeed(ctx.N, S, tk.anchor, tk.msPerMin));
+      }
+    } else if (!tk.external && now >= tk.next) {
       tk.next = now + 250;
-      const wall = Date.now();
-      if (S.status === "idle" || S.status === "done") {
-        const cur = np.current(wall);
-        if (tk.mode !== "snapshot" || !cur || cur.status !== "playing") {
-          tk.mode = "snapshot";
-          np.set(snapshotFeed(ctx.data));
-        }
-      } else if (S.status === "paused") {
-        if (tk.mode !== "paused") {
-          tk.mode = "paused";
-          np.set(pausedFeed(ctx.N, S));
-        }
-      } else {
-        const msPerMin = (REAL_SECONDS * 1000) / NIGHT / S.speed;
-        const anchor = wall - S.t * msPerMin;
-        const mode = "night" + S.speed + ":" + S.seed;
-        if (tk.mode !== mode || Math.abs(anchor - tk.anchor) > 1500) {
-          tk.mode = mode;
-          tk.anchor = anchor;
-          np.set(nightFeed(ctx.N, S, anchor, msPerMin));
-        }
+      const cur = np.current(Date.now());
+      if (tk.mode !== "snapshot" || !cur || cur.status !== "playing") {
+        tk.mode = "snapshot";
+        tk.at = () => Date.now();
+        np.set(snapshotFeed(ctx.data));
       }
     }
-    tk.ticker.update();
-    tk.ticker.animateEq(np.levels(5, reduced ? 0 : now / 1000));
+    const cur = tk.ticker.update();
+    tk.ticker.animateEq(np.levels(5, reduced || S.status === "paused" ? 0 : now / 1000, cur));
   }
 
   /* ---------- Boot ---------- */
@@ -1505,7 +1490,7 @@
       loadData,
       nowPlaying: () => {
         if (!tk) return null;
-        const cur = tk.np.current();
+        const cur = tk.np.current(tk.at());
         return { external: tk.external, feed: tk.mode, badge: tk.np.badge(cur).text, title: cur && cur.item.title, label: tk.np.state.label };
       },
       stop: () => ac.abort(),

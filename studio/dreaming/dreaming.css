@@ -429,8 +429,7 @@ main {
 .ritual-np .np-now { position: relative; max-width: none; gap: 9px; padding: 6px 12px 7px; border-right: 0; border-bottom: 1px solid var(--gold-faint); }
 .ritual-np .np-pill { padding: 3px 8px 3px 7px; font-size: 9.5px; letter-spacing: 0.14em; }
 .ritual-np .np-pill[data-tone="demo"] { color: var(--gold-hi); background: rgba(210, 173, 98, 0.1); }
-.ritual-np .np-pill[data-badge="simulated"],
-.ritual-np .np-pill[data-badge="paused"] { color: var(--sim); background: rgba(169, 217, 238, 0.08); border-style: dashed; }
+.ritual-np .np-pill[data-badge="simulated"] { color: var(--sim); background: rgba(169, 217, 238, 0.08); border-style: dashed; }
 .ritual-np .np-eq { height: 18px; gap: 2px; }
 .ritual-np .np-eq i { width: 3px; }
 .ritual-np .np-kind { font-size: 8.5px; letter-spacing: 0.2em; color: var(--gold); }
