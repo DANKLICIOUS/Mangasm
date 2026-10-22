@@ -627,7 +627,7 @@
       for (let i = pulses.length - 1; i >= 0; i--) {
         const p = pulses[i];
         const age = (now - p.t0) / 1600;
-        if (age >= 1) {
+        if (age >= 1 || age < 0) {
           pulses.splice(i, 1);
           continue;
         }
@@ -668,6 +668,7 @@
         running = opts.running;
       },
       pulse(kind) {
+        if (reduced) return;
         pulses.push({ t0: performance.now(), c: kind === "fail" ? "255,96,72" : "243,214,150" });
       },
     };
@@ -792,8 +793,8 @@
       ...A.list.map((a) =>
         h("tr", null,
           h("td", { "data-k": "Automation", text: a.name }),
-          h("td", { "data-k": "Schedule", text: a.schedule || "—" }),
-          h("td", { "data-k": "Next run", text: a.next || "—" }),
+          h("td", { "data-k": "Schedule", class: a.schedule ? null : "is-empty", text: a.schedule || "—" }),
+          h("td", { "data-k": "Next run", class: a.next ? null : "is-empty", text: a.next || "—" }),
           h("td", { "data-k": "Status" }, h("span", { class: "status" + (a.status ? "" : " status--unknown"), text: a.status ? a.status : "Unknown" }))
         )
       )
@@ -1069,6 +1070,14 @@
       items.push(h("li", null, "→ 0", h("span", { text: "recursion continues" })));
       $("#decay-log").replaceChildren(...items);
     }
+    const carnOpen = st.active.find((x) => x.inc.track === "carnival");
+    const loopStep = idle ? -1 : carnOpen ? Math.min(2, Math.max(0, carnOpen.stage - 1)) : S.status === "done" ? 2 : Math.floor(S.t / 5) % 3;
+    if (changed("eloop", loopStep + ":" + !!carnOpen)) {
+      $$("#eloop li").forEach((li, i) => li.classList.toggle("is-on", i === loopStep));
+      $("#eloop").classList.toggle("is-repairing", !!carnOpen);
+      const R = st.repairs;
+      $("#eloop-note").textContent = carnOpen ? "Repairing: " + carnOpen.inc.action.toLowerCase() + "." : "Minted tonight: " + R.mask + " mask · " + R.loop + " loop · " + R.chance + " chance. Even entropy wears a smile.";
+    }
     const repairs = st.incidents.filter((x) => x.inc.repair && x.stage >= 2);
     if (changed("repairs", repairs.length)) {
       const items = repairs.slice().reverse().map((x, i) => h("li", { class: i === 0 ? "is-new" : null }, "+1 " + x.inc.repair, h("span", { text: clock(x.inc.steps[2]) })));
@@ -1335,6 +1344,7 @@
     // Small hook for tests and for wiring a real feed later.
     window.RecursiveDreaming = {
       state: () => ({ ...S, health: ctx.st && +ctx.st.health.toFixed(1), incidents: ctx.st && ctx.st.incidents.length, open: ctx.st && ctx.st.active.length }),
+      script: () => ctx.N.incidents.map((i) => ({ t: i.t, track: i.track, anomaly: i.anomaly })),
       seek(t, status) {
         S.t = clamp(+t || 0, 0, NIGHT);
         lastT = S.t;
