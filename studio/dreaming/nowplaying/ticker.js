@@ -1,7 +1,7 @@
 import { fmtTime } from "./nowplaying-data.js";
 
 const GLYPH = { music: "♪", run: "⟳", event: "✦" };
-const KIND = { music: "Now playing", run: "Automation run", event: "Live event" };
+const KIND = { music: "Now playing", run: "Automation run", event: "Event" };
 const EQ_BARS = 5;
 const PX_PER_SEC = 70;
 
@@ -18,7 +18,7 @@ export function createTicker(stage, np, { reducedMotion = false } = {}) {
   band.setAttribute("aria-label", "Now playing");
   band.innerHTML = `
     <div class="np-now">
-      <span class="np-pill" data-tone="demo"><i aria-hidden="true"></i><b>DEMO</b></span>
+      <span class="np-pill" data-tone="off"><i aria-hidden="true"></i><b>OFF AIR</b></span>
       <span class="np-eq" aria-hidden="true">${"<i></i>".repeat(EQ_BARS)}</span>
       <div class="np-meta">
         <span class="np-kind">Now playing</span>
@@ -65,33 +65,52 @@ export function createTicker(stage, np, { reducedMotion = false } = {}) {
 
   let lastKey = "";
   let lastSecond = -1;
+  let listKey = "";
 
+  const queueTag = (i, cur, n) => {
+    const d = (i - cur.index + n) % n;
+    return d === 0 ? (cur.status === "playing" ? "Now" : "Last") : d === 1 ? "Up next" : "";
+  };
+
+  // Rebuilding the marquee restarts its scroll, so that only happens when the item list changes.
+  // When just the current item moves on, the "Now" / "Up next" tags are updated in place.
   function renderQueue(cur) {
     const items = np.state.items;
-    const order = items.slice(cur.index).concat(items.slice(0, cur.index));
-    const html = order
-      .map((it, i) => {
-        const tag =
-          i === 0 ? (cur.status === "playing" ? "Now" : "Last") : i === 1 ? "Up next" : "";
-        return `<span class="np-q${i === 0 ? " is-now" : ""}" data-type="${it.type}">
-          ${tag ? `<em>${tag}</em>` : ""}<span class="np-g">${GLYPH[it.type]}</span>
+    const n = items.length;
+    const key = items.map((it) => it.title + "|" + it.startedAt).join("\n");
+    if (key !== listKey) {
+      listKey = key;
+      const order = items.slice(cur.index).map((it, k) => [it, cur.index + k]).concat(items.slice(0, cur.index).map((it, k) => [it, k]));
+      const html = order
+        .map(
+          ([it, i]) => `<span class="np-q" data-type="${it.type}" data-i="${i}">
+          <em hidden></em><span class="np-g">${GLYPH[it.type]}</span>
           <strong>${esc(it.title)}</strong>${it.artist ? ` <span>— ${esc(it.artist)}</span>` : ""}${
             it.source ? ` <small>${esc(it.source)}</small>` : ""
-          }</span><span class="np-sep" aria-hidden="true">◆</span>`;
-      })
-      .join("");
-    track.innerHTML = `<div class="np-run">${html}</div><div class="np-run" aria-hidden="true">${html}</div>`;
-    if (!reducedMotion) {
-      requestAnimationFrame(() => {
-        const w = track.firstElementChild.scrollWidth;
-        track.style.setProperty("--np-marquee-dur", `${Math.max(18, w / PX_PER_SEC)}s`);
-      });
+          }</span><span class="np-sep" aria-hidden="true">◆</span>`
+        )
+        .join("");
+      track.innerHTML = `<div class="np-run">${html}</div><div class="np-run" aria-hidden="true">${html}</div>`;
+      if (!reducedMotion) {
+        requestAnimationFrame(() => {
+          const w = track.firstElementChild.scrollWidth;
+          track.style.setProperty("--np-marquee-dur", `${Math.max(18, w / PX_PER_SEC)}s`);
+        });
+      }
     }
+    track.querySelectorAll(".np-q").forEach((q) => {
+      const tag = queueTag(Number(q.dataset.i), cur, n);
+      const em = q.firstElementChild;
+      em.textContent = tag;
+      em.hidden = !tag;
+      q.classList.toggle("is-now", Number(q.dataset.i) === cur.index);
+    });
 
     const it = cur.item;
+    const next = n > 1 ? items[(cur.index + 1) % n] : null;
     const phrase =
       `NOW ${it.type === "run" ? "RUNNING" : "PLAYING"} ✦ ${it.title}${it.artist ? " — " + it.artist : ""} ✦ ${
-        order[1] ? "UP NEXT ✦ " + order[1].title + " ✦ " : ""
+        next ? "UP NEXT ✦ " + next.title + " ✦ " : ""
       }`.toUpperCase();
     const text = ringPath.parentNode;
     text.removeAttribute("textLength");
@@ -115,6 +134,7 @@ export function createTicker(stage, np, { reducedMotion = false } = {}) {
     if (key !== lastKey) {
       lastKey = key;
       pill.dataset.tone = badge.tone;
+      pill.dataset.badge = badge.text.toLowerCase().replace(/\s+/g, "-");
       pill.querySelector("b").textContent = badge.text;
       kind.textContent = cur.status === "playing" ? KIND[item.type] : "Last played";
       title.textContent = item.title;
@@ -146,9 +166,16 @@ export function createTicker(stage, np, { reducedMotion = false } = {}) {
     lastKey = "";
     update();
   };
-  np.subscribe(refresh);
+  const unsubscribe = np.subscribe(refresh);
   document.fonts?.load("700 25px Cinzel").then(refresh, () => {});
   document.fonts?.addEventListener?.("loadingdone", refresh);
 
-  return { band, ring, update, animateEq };
+  function destroy() {
+    unsubscribe();
+    document.fonts?.removeEventListener?.("loadingdone", refresh);
+    band.remove();
+    ring.remove();
+  }
+
+  return { band, ring, update, animateEq, destroy };
 }

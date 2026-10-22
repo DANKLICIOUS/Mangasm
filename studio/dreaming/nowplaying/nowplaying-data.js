@@ -1,7 +1,7 @@
 // Now Playing data layer.
 //
 // Feed shape (JSON, or window.NOW_PLAYING):
-//   { live?: boolean, label?: string,
+//   { live?: boolean, label?: string, tag?: string (badge text when not live, e.g. "SIMULATED"),
 //     items: [{ type: 'music' | 'run' | 'event', title, artist, source,
 //               startedAt: ISO string | epoch ms | epoch s, durationSec, url? }] }
 //
@@ -138,6 +138,13 @@ function createNowPlaying() {
     updatedAt: 0,
     error: null,
     live: false,
+    tag: "",
+  };
+
+  // A tag can rename the non-live badge but can never claim LIVE; only `live: true` does that.
+  const toTag = (v) => {
+    const t = typeof v === "string" ? v.trim().toUpperCase().slice(0, 16) : "";
+    return t && t !== "LIVE" ? t : "";
   };
 
   const emit = () => listeners.forEach((fn) => fn(state));
@@ -149,6 +156,7 @@ function createNowPlaying() {
       items: demoSchedule(anchor),
       mode: "demo",
       live: false,
+      tag: "",
       label: "Demo feed · snapshot of recent automation runs, not live",
     });
   }
@@ -160,6 +168,7 @@ function createNowPlaying() {
       items,
       mode: "inline",
       live: data.live === true,
+      tag: toTag(data.tag),
       label: data.label || (data.live === true ? "Live · inline feed" : "Snapshot · inline feed"),
       updatedAt: Date.now(),
       error: null,
@@ -177,10 +186,12 @@ function createNowPlaying() {
       const data = await res.json();
       const items = normalize(data);
       if (!items.length) throw new Error("feed has no items");
+      const live = data.live !== false;
       Object.assign(state, {
         items,
-        live: data.live !== false,
-        label: data.label || `Live · ${new URL(state.url, location.href).host || "local feed"}`,
+        live,
+        tag: toTag(data.tag),
+        label: data.label || `${live ? "Live" : "Snapshot"} · ${new URL(state.url, location.href).host || "local feed"}`,
         updatedAt: Date.now(),
         error: null,
       });
@@ -255,7 +266,7 @@ function createNowPlaying() {
       if (!cur || cur.status !== "playing") return { text: "OFF AIR", tone: "off" };
       if (state.mode === "demo") return { text: "DEMO", tone: "demo" };
       if (state.error) return { text: "RECONNECTING", tone: "warn" };
-      return state.live ? { text: "LIVE", tone: "live" } : { text: "SNAPSHOT", tone: "demo" };
+      return state.live ? { text: "LIVE", tone: "live" } : { text: state.tag || "SNAPSHOT", tone: "demo" };
     },
 
     // Deterministic pseudo-spectrum shared by the ticker EQ and the robot's visor so they move together.

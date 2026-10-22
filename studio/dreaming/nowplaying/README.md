@@ -105,6 +105,8 @@ through a polite live region.
 - `durationSec`: `0` (or omitted) means open-ended, like a live stream. Elapsed time counts up and
   the ticker shows `LIVE` instead of a duration.
 - `url`: optional, and only `http(s)` links are used.
+- `tag` (top level): optional badge text for a feed that is not live, such as `"Simulated"`. It is
+  upper-cased and capped at 16 characters, and `"live"` is ignored, so only `live: true` shows `LIVE`.
 - The current item is the latest one whose `startedAt` is in the past. Once it ends and nothing newer
   exists, the ticker shows `OFF AIR` / "Last played".
 - A bare array of items is also accepted.
