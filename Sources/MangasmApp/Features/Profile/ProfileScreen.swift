@@ -8,30 +8,15 @@ struct ProfileScreen: View {
     @EnvironmentObject var state: AppState
     @EnvironmentObject var env: AppEnvironment
 
-    private var styleId: ProfileStyleId {
-        state.profileStyle.activeConfig.styleId
-    }
-
     var body: some View {
         ZStack {
-            // Hybrid: style fallback gradient + optional hero plate (+ rain for digitalFlow)
-            ProfileStyleBackground(styleId: styleId)
-            // Legacy Lambo plate under low opacity when style is aspirational-adjacent
-            LamborghiniBackground(night: state.night)
-                .opacity(styleId == .calmStudio ? 0.42 : 0.08)
-            WeatherFX(kind: state.weather, night: state.night)
-                .opacity(0.55)
+            LamborghiniBackground(night: false)
+            WeatherFX(kind: state.weather, night: false)
+                .opacity(0.18)
 
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 14) {
-                    VouchesAIStrip(
-                        vouches: state.profile.vouches,
-                        aiMatch: state.profile.aiMatch
-                    )
-
-                    if state.visibility.headline, !state.profile.headline.isEmpty {
-                        HeadlineView(text: state.profile.headline)
-                    }
+                VStack(spacing: 18) {
+                    WrapperAvatar(urlString: state.profile.avatarURL)
 
                     ProfileCard(
                         profile: state.profile,
@@ -43,9 +28,9 @@ struct ProfileScreen: View {
                         )
                     )
                 }
-                .padding(.top, 150)
-                .padding(.horizontal, 14)
-                .padding(.bottom, 96)
+                .padding(.top, 168)
+                .padding(.horizontal, 22)
+                .padding(.bottom, 110)
             }
 
             ProfileUnlockToastHost()
@@ -154,28 +139,36 @@ private struct ProfileCard: View {
     let visibility: Visibility
     let premium: Bool
     let canSeePhotos: Bool
+    @State private var expanded = false
 
     var body: some View {
-        MGCard(radius: 26) {
-            VStack(alignment: .leading, spacing: 0) {
-                AvatarNameRow(profile: profile, visibility: visibility)
+        VStack(alignment: .leading, spacing: 0) {
+                Text("\(profile.name) \(profile.age)")
+                    .font(MGFont.serif(22, .bold))
+                    .foregroundStyle(WrapperChrome.cream)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                // Bio
                 Text(profile.bio)
-                    .font(MGFont.sans(11.5, .regular))
-                    .foregroundStyle(MGColor.inkSoft)
-                    .lineSpacing(11.5 * 0.55)
+                    .font(MGFont.sans(13, .regular))
+                    .foregroundStyle(WrapperChrome.cream.opacity(0.86))
+                    .lineSpacing(5)
                     .multilineTextAlignment(.leading)
-                    .padding(.top, 13)
+                    .lineLimit(expanded ? nil : 4)
+                    .padding(.top, 10)
 
-                // Bio counter
-                HStack {
-                    Spacer()
-                    Text("\(profile.bio.count)/\(Profile.bioMax(premium: premium))\(premium ? " · M+" : "")")
-                        .font(MGFont.mono(7))
-                        .foregroundStyle(premium ? MGColor.goldDeep : MGColor.inkFaint)
+                Button {
+                    expanded.toggle()
+                } label: {
+                    Text(expanded ? "Less" : "More")
+                        .font(MGFont.sans(12, .semibold))
+                        .foregroundStyle(WrapperChrome.cream)
+                        .tracking(0.8)
                 }
-                .padding(.top, 3)
+                .buttonStyle(.plain)
+                .padding(.top, 12)
+                .frame(maxWidth: .infinity)
+
+                if expanded {
 
                 // Hobbies
                 if visibility.hobbies, !profile.hobbies.isEmpty {
@@ -224,16 +217,44 @@ private struct ProfileCard: View {
 
                 // E2E + Privacy-zone footer
                 E2EFooter()
+                }
 
-                // Photos section (vis.photos outer gate + reputation gate)
                 if visibility.photos {
                     PhotosSection(photos: profile.photos, canView: canSeePhotos)
                 }
             }
-            .padding(.horizontal, 15)
-            .padding(.vertical, 15)
-        }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 18)
+        .background(WrapperChrome.cardFill, in: RoundedRectangle(cornerRadius: 28, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .stroke(Color.white.opacity(0.28), lineWidth: 0.8)
+        )
         .padding(.bottom, 4)
+    }
+}
+
+private struct WrapperAvatar: View {
+    let urlString: String?
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(Color.black.opacity(0.18))
+                .frame(width: 92, height: 92)
+            AsyncImage(url: URL(string: urlString ?? "")) { phase in
+                switch phase {
+                case .success(let img):
+                    img.resizable().scaledToFill()
+                default:
+                    Circle().fill(Color.white.opacity(0.18))
+                }
+            }
+            .frame(width: 88, height: 88)
+            .clipShape(Circle())
+        }
+        .overlay(Circle().stroke(WrapperChrome.ring, lineWidth: 2.5))
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -397,7 +418,7 @@ private struct PhotosSection: View {
                 Text("PHOTOS")
                     .font(MGFont.serif(15, .bold))
                     .tracking(15 * 0.18)
-                    .foregroundStyle(MGColor.ink)
+                    .foregroundStyle(WrapperChrome.cream)
                 Spacer()
                 Text("reputation-gated")
                     .font(MGFont.mono(7.5))

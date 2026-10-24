@@ -30,129 +30,85 @@ public struct TopBar: View {
 
     public var body: some View {
         HStack(alignment: .top, spacing: 0) {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Mangasm")
+                    .font(MGFont.serif(34, .bold))
+                    .tracking(34 * 0.01)
+                    .foregroundStyle(WrapperChrome.cream)
+                    .shadow(color: .black.opacity(0.18), radius: 8, y: 2)
+                    .allowsHitTesting(false)
 
-            // ── Left: community reputation + weather ──
-            VStack(alignment: .leading, spacing: 8) {
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text("REPUTATION")
-                        .font(MGFont.mono(7.5))
-                        .tracking(7.5 * 0.22)
-                        .foregroundStyle(styleTheme.textSecondary)
+                        .font(MGFont.sans(11, .semibold))
+                        .tracking(1.4)
+                        .foregroundStyle(WrapperChrome.cream.opacity(0.78))
 
-                    HStack(alignment: .lastTextBaseline, spacing: 6) {
+                    HStack(alignment: .lastTextBaseline, spacing: 8) {
                         Text("\(state.profile.repScore)")
-                            .font(MGFont.serif(38, .bold))
-                            .foregroundStyle(styleTheme.accent)
-                            .shadow(color: styleTheme.accent.opacity(0.30), radius: 5, x: 0, y: 1)
-                            .shadow(color: .white.opacity(0.4), radius: 0.5, x: 0, y: 1)
+                            .font(MGFont.serif(42, .bold))
+                            .foregroundStyle(WrapperChrome.cream)
+                            .shadow(color: .black.opacity(0.18), radius: 6, y: 1)
                             .lineHeight(0.8)
 
-                        HStack(spacing: 4) {
-                            ProfileStyleBadgeMini(styleId: state.profileStyle.activeConfig.styleId)
-                            Text(styleBadgeLabel)
-                                .font(.custom("CormorantGaramond-Bold", size: 12).italic())
-                                .fontWeight(.semibold)
-                                .foregroundStyle(styleTheme.accentSecondary)
-                                .lineLimit(1)
-                        }
+                        Text(styleBadgeLabel)
+                            .font(MGFont.serif(13, .semibold))
+                            .italic()
+                            .foregroundStyle(WrapperChrome.cream.opacity(0.72))
                     }
                 }
                 .allowsHitTesting(false)
-
-                // Weather pill — prototype shows location "Dubai" hardcoded
-                TopBarWeatherPill(weather: weather)
-                    .allowsHitTesting(false)
             }
 
             Spacer()
 
-            // ── Center: Mangasm logo ──
-            VStack {
-                Text("Mangasm")
-                    .font(MGFont.serif(31, .bold))
-                    .tracking(31 * 0.01)
-                    .foregroundStyle(MGGradient.goldHeading)
-                    .shadow(color: MGColor.gold.opacity(0.40), radius: 6, x: 0, y: 1)
-                    .shadow(color: .white.opacity(0.5), radius: 1, x: 0, y: 1)
-                    .padding(.top, 2)
-            }
-            .allowsHitTesting(false)
-
-            Spacer()
-
-            // ── Right: PRIVATE badge + settings ──
-            VStack(alignment: .trailing, spacing: 8) {
-                // PRIVATE badge — glass pill with lock icon
-                VStack(spacing: 3) {
+            VStack(alignment: .trailing, spacing: 10) {
+                VStack(spacing: 4) {
                     Text("PRIVATE")
-                        .font(MGFont.serif(10.5, .bold))
-                        .tracking(10.5 * 0.14)
-                        .foregroundStyle(MGColor.goldDeep)
-
-                    // Lock icon (SVG path: M6 10V8a6 6 0 0 1 12 0v2 + rect + circle)
-                    Image(systemName: "lock.fill")
+                        .font(MGFont.sans(11, .semibold))
+                        .tracking(1.6)
+                        .foregroundStyle(WrapperChrome.cream)
+                    Image(systemName: "lock")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 13, height: 13)
-                        .foregroundStyle(MGColor.goldDeep)
+                        .frame(width: 16, height: 16)
+                        .foregroundStyle(WrapperChrome.cream.opacity(0.92))
                 }
-                .padding(.vertical, 6)
-                .padding(.horizontal, 11)
-                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 13))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 13)
-                        .stroke(MGColor.gold.opacity(0.47), lineWidth: 1)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 13)
-                        .fill(LinearGradient(colors: [.white.opacity(0.72), .clear],
-                                            startPoint: .top, endPoint: .center))
-                        .blendMode(.overlay)
-                        .allowsHitTesting(false)
-                )
-                .shadow(color: Color(red: 40/255, green: 30/255, blue: 15/255).opacity(0.4),
-                        radius: 8, x: 0, y: 6)
                 .allowsHitTesting(false)
 
-                // Messages button — glass square button (envelope icon)
-                Button(action: onMessages) {
-                    Image(systemName: "envelope")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 14, height: 14)
-                        .foregroundStyle(MGColor.goldDeep)
-                        .frame(width: 30, height: 30)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(MGColor.gold.opacity(0.33), lineWidth: 0.7)
-                        )
-                }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("messages_button")
-                .accessibilityLabel("Messages")
+                HStack(spacing: 8) {
+                    Button(action: onMessages) {
+                        Image(systemName: "envelope")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14, height: 14)
+                            .foregroundStyle(Color.black.opacity(0.55))
+                            .frame(width: 30, height: 30)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(Circle().stroke(Color.white.opacity(0.7), lineWidth: 0.7))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("messages_button")
+                    .accessibilityLabel("Messages")
 
-                // Settings button — glass square button
-                Button(action: onSettings) {
-                    Image(systemName: "gearshape")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 14, height: 14)
-                        .foregroundStyle(MGColor.goldDeep)
-                        .frame(width: 30, height: 30)
-                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(MGColor.gold.opacity(0.33), lineWidth: 0.7)
-                        )
+                    Button(action: onSettings) {
+                        Image(systemName: "gearshape")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 14, height: 14)
+                            .foregroundStyle(Color.black.opacity(0.55))
+                            .frame(width: 30, height: 30)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .overlay(Circle().stroke(Color.white.opacity(0.7), lineWidth: 0.7))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("settings_button")
+                    .accessibilityLabel("Settings")
                 }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("settings_button")
-                .accessibilityLabel("Settings")
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.top, 46)
+        .padding(.horizontal, 22)
+        .padding(.top, 52)
     }
 
     private var styleBadgeLabel: String {
