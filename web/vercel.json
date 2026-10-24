@@ -30,6 +30,8 @@
     { "source": "/themes/", "destination": "/theme-lab.html" },
     { "source": "/theme-lab", "destination": "/theme-lab.html" },
     { "source": "/theme-lab/", "destination": "/theme-lab.html" },
+    { "source": "/wrapper", "destination": "/wrapper.html" },
+    { "source": "/wrapper/", "destination": "/wrapper.html" },
     { "source": "/storybook", "destination": "/storybook.html" },
     { "source": "/storybook/", "destination": "/storybook.html" },
     { "source": "/autopsy", "destination": "/storybook.html" },

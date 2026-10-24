@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// Four App Review identity choices. Not the live default until a human picks one.
-/// Web picker: `/themes` (`web/theme-lab.html`). Storage id for reputation styles
-/// stays `calmStudio` — these are chrome identities, not backend enum values.
+/// Four App Review identity choices in `/themes`. Live shell chrome is the
+/// founder glass wrapper (`wrapper_hero`), not one of these four.
+/// Storage id for reputation styles stays `calmStudio`.
 public enum ThemeChoiceId: String, CaseIterable, Sendable, Codable {
     case viral
     case effective
