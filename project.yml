@@ -19,12 +19,16 @@ targets:
           - Widget/**
           - Secrets.xcconfig
           - Secrets.xcconfig.example
+    entitlements:
+      path: App/iOS/Mangasm.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.mangasm.app
     dependencies:
       - package: MangasmApp
         product: MangasmApp
-    entitlements:
-      path: App/iOS/Mangasm.entitlements
-      properties: {}
+      - target: MangasmWidget
+        embed: true
     info:
       path: App/iOS/Info.plist
       properties:
@@ -90,11 +94,48 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         SWIFT_VERSION: "6.0"
+  MangasmWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: App/iOS/Widget
+        excludes:
+          - README.md
+    entitlements:
+      path: App/iOS/Widget/MangasmWidget.entitlements
+      properties:
+        com.apple.security.application-groups:
+          - group.com.mangasm.app
+    info:
+      path: App/iOS/Widget/Info.plist
+      properties:
+        CFBundleDisplayName: Mangasm Reputation
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: NO
+        PRODUCT_BUNDLE_IDENTIFIER: com.mangasm.app.widget
+        DEVELOPMENT_TEAM: 854XZ2543V
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "iPhone Distribution: Mark Webster (854XZ2543V)"
+        # Create this App Store profile for com.mangasm.app.widget before archive.
+        # scripts/archive-build.sh will not invent a profile name on its own.
+        PROVISIONING_PROFILE_SPECIFIER: "Mangasm Widget App Store"
+        CODE_SIGN_ENTITLEMENTS: App/iOS/Widget/MangasmWidget.entitlements
+        INFOPLIST_FILE: App/iOS/Widget/Info.plist
+        PRODUCT_NAME: MangasmWidget
+        MARKETING_VERSION: "1.1.0"
+        CURRENT_PROJECT_VERSION: "37"
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
+        SWIFT_VERSION: "6.0"
 schemes:
   Mangasm:
     build:
       targets:
         Mangasm: all
+        MangasmWidget: all
         MangasmTests: [test]
         MangasmUITests: [test]
     run:

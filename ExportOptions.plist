@@ -12,6 +12,8 @@
 	<dict>
 		<key>com.mangasm.app</key>
 		<string>Mangasm App Store 18</string>
+		<key>com.mangasm.app.widget</key>
+		<string>Mangasm Widget App Store</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>iPhone Distribution: Mark Webster (854XZ2543V)</string>

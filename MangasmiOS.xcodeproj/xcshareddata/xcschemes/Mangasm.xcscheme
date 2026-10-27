@@ -23,6 +23,20 @@
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A1B100000000000000000009"
+               BuildableName = "MangasmWidget.appex"
+               BlueprintName = "MangasmWidget"
+               ReferencedContainer = "container:MangasmiOS.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
             buildForRunning = "NO"
             buildForProfiling = "NO"
             buildForArchiving = "NO"

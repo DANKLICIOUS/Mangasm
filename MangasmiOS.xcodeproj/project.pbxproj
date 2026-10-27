@@ -18,6 +18,8 @@
 		B3991D578F99050AEBC9676F /* AccountDeletionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A73EF19D756023682C68055 /* AccountDeletionTests.swift */; };
 		D31C04FF680874347E9BE3F7 /* MangasmApp in Frameworks */ = {isa = PBXBuildFile; productRef = 439639961FEF326E42E622A0 /* MangasmApp */; };
 		E1643D1AC94016CAF142391D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 956090C6B869CD7B55EC3C46 /* Assets.xcassets */; };
+		A1B100000000000000000005 /* MangasmReputationWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B100000000000000000001 /* MangasmReputationWidget.swift */; };
+		A1B10000000000000000000C /* MangasmWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A1B100000000000000000004 /* MangasmWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,7 +37,28 @@
 			remoteGlobalIDString = BFA0684EE62C2A42C47EA386;
 			remoteInfo = Mangasm;
 		};
+		A1B10000000000000000000A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 27C5EB8FF37AB90188D34BDF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A1B100000000000000000009;
+			remoteInfo = MangasmWidget;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A1B10000000000000000000D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A1B10000000000000000000C /* MangasmWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		03E2A9BDB35C5616905707E2 /* MangasmUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangasmUITests.swift; sourceTree = "<group>"; };
@@ -54,6 +77,10 @@
 		C43881DD548E43A3F438173E /* AccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessibilityTests.swift; sourceTree = "<group>"; };
 		DEF2248EAED495EC7CE066B6 /* StoreKitFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitFlowTests.swift; sourceTree = "<group>"; };
 		E4075162F68D71543906C5B2 /* Mangasm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Mangasm.entitlements; sourceTree = "<group>"; };
+		A1B100000000000000000001 /* MangasmReputationWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MangasmReputationWidget.swift; sourceTree = "<group>"; };
+		A1B100000000000000000002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A1B100000000000000000003 /* MangasmWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MangasmWidget.entitlements; sourceTree = "<group>"; };
+		A1B100000000000000000004 /* MangasmWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MangasmWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7272258B3B396C524D7457D /* Secrets.xcconfig.example */ = {isa = PBXFileReference; path = Secrets.xcconfig.example; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,12 +144,23 @@
 				40AFB0EF89FD55B8FD4A329E /* Info.plist */,
 				E4075162F68D71543906C5B2 /* Mangasm.entitlements */,
 				640C46FF32476AD1D7AF4191 /* MangasmiOSApp.swift */,
+				A1B10000000000000000000E /* Widget */,
 				19645365FC576CE8AEBF67AC /* PrivacyInfo.xcprivacy */,
 				AB6E2245510C6B7EEF9D26D0 /* Secrets.xcconfig */,
 				F7272258B3B396C524D7457D /* Secrets.xcconfig.example */,
 			);
 			name = iOS;
 			path = App/iOS;
+			sourceTree = "<group>";
+		};
+		A1B10000000000000000000E /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				A1B100000000000000000002 /* Info.plist */,
+				A1B100000000000000000003 /* MangasmWidget.entitlements */,
+				A1B100000000000000000001 /* MangasmReputationWidget.swift */,
+			);
+			path = Widget;
 			sourceTree = "<group>";
 		};
 		CEC1A7C7B81D2A2F0E61809B /* Packages */ = {
@@ -137,6 +175,7 @@
 			isa = PBXGroup;
 			children = (
 				9BAF78D20DC7054DCBD57279 /* Mangasm.app */,
+				A1B100000000000000000004 /* MangasmWidget.appex */,
 				BB48E013ADF3C182D2568515 /* MangasmTests.xctest */,
 				6333C84D8378CE6856AB36FF /* MangasmUITests.xctest */,
 			);
@@ -171,10 +210,12 @@
 				3C4E8607F083D34FDBC767F0 /* Sources */,
 				33D0FDF29E8F2C1B66FFC289 /* Resources */,
 				81BD0842EB36A1098193F35B /* Frameworks */,
+				A1B10000000000000000000D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A1B10000000000000000000B /* PBXTargetDependency */,
 			);
 			name = Mangasm;
 			packageProductDependencies = (
@@ -205,6 +246,25 @@
 			productReference = BB48E013ADF3C182D2568515 /* MangasmTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		A1B100000000000000000009 /* MangasmWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B100000000000000000011 /* Build configuration list for PBXNativeTarget "MangasmWidget" */;
+			buildPhases = (
+				A1B100000000000000000006 /* Sources */,
+				A1B100000000000000000008 /* Resources */,
+				A1B100000000000000000007 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MangasmWidget;
+			packageProductDependencies = (
+			);
+			productName = MangasmWidget;
+			productReference = A1B100000000000000000004 /* MangasmWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -218,6 +278,10 @@
 						TestTargetID = BFA0684EE62C2A42C47EA386;
 					};
 					BFA0684EE62C2A42C47EA386 = {
+						DevelopmentTeam = 854XZ2543V;
+						ProvisioningStyle = Manual;
+					};
+					A1B100000000000000000009 = {
 						DevelopmentTeam = 854XZ2543V;
 						ProvisioningStyle = Manual;
 					};
@@ -241,6 +305,7 @@
 			projectRoot = "";
 			targets = (
 				BFA0684EE62C2A42C47EA386 /* Mangasm */,
+				A1B100000000000000000009 /* MangasmWidget */,
 				D64917A9C2404B54C9B5C433 /* MangasmTests */,
 				BC79DF7775A1DC78DE91A66B /* MangasmUITests */,
 			);
@@ -262,6 +327,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B0B7283C20E8C9A4929C62D /* Mangasm.storekit in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B100000000000000000008 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,6 +359,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A1B100000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B100000000000000000005 /* MangasmReputationWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A1B100000000000000000007 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C3B8601806F50FFB0F317255 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -307,6 +394,11 @@
 			isa = PBXTargetDependency;
 			target = BFA0684EE62C2A42C47EA386 /* Mangasm */;
 			targetProxy = BC2C6D334C2D0D7DF5727284 /* PBXContainerItemProxy */;
+		};
+		A1B10000000000000000000B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A1B100000000000000000009 /* MangasmWidget */;
+			targetProxy = A1B10000000000000000000A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -564,6 +656,58 @@
 			};
 			name = Debug;
 		};
+		A1B10000000000000000000F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App/iOS/Widget/MangasmWidget.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Mark Webster (854XZ2543V)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 37;
+				DEVELOPMENT_TEAM = 854XZ2543V;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/iOS/Widget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mangasm.app.widget;
+				PRODUCT_NAME = MangasmWidget;
+				PROVISIONING_PROFILE_SPECIFIER = "Mangasm Widget App Store";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A1B100000000000000000010 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = App/iOS/Widget/MangasmWidget.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Mark Webster (854XZ2543V)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 37;
+				DEVELOPMENT_TEAM = 854XZ2543V;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/iOS/Widget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mangasm.app.widget;
+				PRODUCT_NAME = MangasmWidget;
+				PROVISIONING_PROFILE_SPECIFIER = "Mangasm Widget App Store";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -590,6 +734,15 @@
 			buildConfigurations = (
 				242AA6B386B7809166EA2A7D /* Debug */,
 				4C3070DCDC1AF233A236B812 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A1B100000000000000000011 /* Build configuration list for PBXNativeTarget "MangasmWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B10000000000000000000F /* Debug */,
+				A1B100000000000000000010 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -1,4 +1,7 @@
 import SwiftUI
+#if os(iOS)
+import WidgetKit
+#endif
 
 // AppPhase lives in AppPhaseMachine.swift (FSM with legal transitions).
 
@@ -94,6 +97,9 @@ public final class AppState: ObservableObject {
             d.set(profile.repScore, forKey: "mangasm.widget.repScore")
             d.set(activeStyle.styleId.rawValue, forKey: "mangasm.widget.styleId")
         }
+        #if os(iOS)
+        WidgetCenter.shared.reloadTimelines(ofKind: "MangasmReputationWidget")
+        #endif
     }
 
     public func isStyleUnlocked(_ id: ProfileStyleId) -> Bool {
@@ -138,6 +144,7 @@ public final class AppState: ObservableObject {
         }
         profileStyle.preferredStyleId = id
         styleStore.savePreferred(id)
+        syncWidgetBridge()
         objectWillChange.send()
     }
 
@@ -152,6 +159,7 @@ public final class AppState: ObservableObject {
         } catch ReputationError.styleLocked {
             profileStyle.preferredStyleId = previous
             styleStore.savePreferred(previous)
+            syncWidgetBridge()
             lastStylePersistMessage = ReputationError.styleLocked.errorDescription
             objectWillChange.send()
         } catch {
