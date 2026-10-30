@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mangasm · Theme lab — pick one</title>
+    <meta name="description" content="Four App Review identity choices for Mangasm. Tap one." />
+    <meta name="rating" content="adult" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@600;700&family=DM+Sans:wght@400;600;700&family=IM+Fell+English:ital@0;1&family=Inter:wght@400;600;700&family=Orbitron:wght@500;700&family=Space+Grotesk:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="theme-lab.css" />
+  </head>
+  <body>
+    <header class="lab-top">
+      <a class="lab-brand" href="/">mangasm<span>.app</span></a>
+      <p class="lab-kicker">18+ · Theme lab · App Review identity</p>
+    </header>
+
+    <main class="lab">
+      <section class="chooser">
+        <h1>Pick the front-end identity</h1>
+        <p class="lede">
+          Four complete looks for launch, sign-in, and Events. Tap a card, then flip the phone
+          between Sign in and Events. Say which id you want applied to iOS.
+        </p>
+
+        <div class="cards" id="cards"></div>
+
+        <p class="pick-line" id="pickLine">No theme selected yet.</p>
+      </section>
+
+      <section class="stage" aria-label="Live phone preview">
+        <div class="screen-toggle" role="tablist">
+          <button type="button" id="tabSignin" class="is-on" data-screen="signin">Sign in</button>
+          <button type="button" id="tabEvents" data-screen="events">Events</button>
+        </div>
+
+        <div class="phone" data-theme="viral" id="phone">
+          <div class="phone-notch" aria-hidden="true"></div>
+          <div class="phone-bg" id="phoneBg"></div>
+          <div class="phone-veil"></div>
+
+          <article class="screen signin is-on" id="screenSignin">
+            <p class="eyebrow" data-copy="kicker">Most saved look</p>
+            <h2 class="wordmark">Mangasm</h2>
+            <p class="tag" data-copy="tag">CAMPFIRE · BROTHERHOOD</p>
+            <button type="button" class="cta" data-copy="cta">Enter the community</button>
+            <p class="fine">Email + password · 18+ · members only</p>
+          </article>
+
+          <article class="screen events" id="screenEvents">
+            <header class="ev-top">
+              <p class="wordmark sm">Mangasm</p>
+              <span class="pill" data-copy="nearby">Nearby</span>
+            </header>
+            <p class="ev-title">Tonight</p>
+            <div class="ev-card">
+              <span class="chip" data-copy="chip">Circle</span>
+              <h3>Campfire Circle</h3>
+              <p>Grove Lodge · Harbor District · 10:30 PM</p>
+              <p class="host">Host Marco · Trusted · 9/12 going</p>
+            </div>
+            <div class="ev-card dim">
+              <span class="chip" data-copy="chip2">Open Door</span>
+              <h3>Studio Loft</h3>
+              <p>Studio Row · Fri 9:00 PM · host-approved address</p>
+            </div>
+            <nav class="tabs" aria-hidden="true">
+              <span>Events</span>
+              <span>Discover</span>
+              <span class="mid">Match</span>
+              <span>Chat</span>
+              <span>You</span>
+            </nav>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="theme-lab.js"></script>
+  </body>
+</html>
