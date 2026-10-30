@@ -54,13 +54,13 @@ final class ProfileStyleCatalogTests: XCTestCase {
         )
         XCTAssertEqual(
             ProfileStyleCatalog.config(id: .calmStudio).heroAssetName,
-            "style-hero-skullIsland"
+            "style-hero-inkhouse"
         )
     }
 
-    func testDefaultStyleIsSkullIslandDisplay() {
+    func testDefaultStyleIsInkhouseDisplay() {
         let cfg = ProfileStyleCatalog.config(id: .calmStudio)
-        XCTAssertEqual(cfg.displayName, "Skull Island")
+        XCTAssertEqual(cfg.displayName, "Inkhouse")
         XCTAssertEqual(cfg.styleId.rawValue, "calmStudio")
         XCTAssertEqual(cfg.badgeName, "New Member")
     }
@@ -68,6 +68,7 @@ final class ProfileStyleCatalogTests: XCTestCase {
     func testLegacyThemeAliasesRoundTrip() {
         XCTAssertEqual(ProfileStyleId.calmStudio.legacyThemeAlias, "bobRoss")
         XCTAssertEqual(ProfileStyleId(legacyThemeAlias: "skullIsland"), .calmStudio)
+        XCTAssertEqual(ProfileStyleId(legacyThemeAlias: "inkhouse"), .calmStudio)
         XCTAssertEqual(ProfileStyleId(legacyThemeAlias: "cyborg"), .precisionTech)
         XCTAssertEqual(ProfileStyleId(legacyThemeAlias: "gothGlam"), .boldExpression)
         XCTAssertNil(ProfileStyleId(legacyThemeAlias: "unknown"))

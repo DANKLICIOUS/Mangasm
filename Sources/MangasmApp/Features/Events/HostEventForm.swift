@@ -193,7 +193,7 @@ struct HostEventForm: View {
                 // Place / Venue field
                 HostField(
                     label: "PLACE / VENUE",
-                    placeholder: "Marina Penthouse",
+                    placeholder: "Gaslight Parlor",
                     text: $place,
                     maxLength: 28
                 )
@@ -201,7 +201,7 @@ struct HostEventForm: View {
                 // Area field
                 HostField(
                     label: "AREA",
-                    placeholder: "Dubai Marina",
+                    placeholder: "Inkhouse Ward",
                     text: $area,
                     maxLength: 24
                 )

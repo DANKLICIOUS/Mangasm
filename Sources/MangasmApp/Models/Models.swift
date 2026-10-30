@@ -100,10 +100,10 @@ public struct Profile: Identifiable, Hashable, Sendable {
     public static let sample = Profile(
         name: "Julian",
         age: 32,
-        location: "Dubai → London",
-        headline: "Slow mornings, fast cars",
-        bio: "Jet-set architect of good nights. Sunsets, fast cars & slow mornings. Find me where the signal shouldn't reach. 🛥️🥂",
-        hobbies: ["Sailing", "Mixology", "Vintage cars", "House music"],
+        location: "Inkhouse Ward",
+        headline: "After dark, ink and brass",
+        bio: "Host of good nights. Gaslight, a parlor that stays open, and the long way home.",
+        hobbies: ["Sailing", "Mixology", "Film", "House music"],
         position: "Vers",
         into: ["Feet", "Roleplay"],
         instagram: "julianv",
@@ -245,8 +245,8 @@ public struct Candidate: Identifiable, Hashable, Sendable {
             lifePath: 5,
             position: "Top",
             sharedInterests: ["House music", "Sailing"],
-            hobbies: ["Sailing", "House music", "Vinyl", "Yachts"],
-            bio: "Yacht broker by day, vinyl DJ by night. I collect sunrises and rare pressings. Bring an appetite and an open mind.",
+            hobbies: ["Sailing", "House music", "Vinyl", "Film"],
+            bio: "Vinyl DJ by night. I collect sunrises and rare pressings. Bring an appetite and an open mind.",
             notes: CompatNotes(
                 astro: "Water trine — deep & loyal",
                 numerology: "Seeker meets free spirit",
@@ -265,9 +265,9 @@ public struct Candidate: Identifiable, Hashable, Sendable {
             chinese: "Monkey",
             lifePath: 3,
             position: "Vers",
-            sharedInterests: ["Mixology", "Vintage cars"],
-            hobbies: ["Mixology", "Vintage cars", "Travel"],
-            bio: "Mixologist with a vintage Porsche problem. Equal parts mischief and manners.",
+            sharedInterests: ["Mixology", "Film"],
+            hobbies: ["Mixology", "Film", "Travel"],
+            bio: "Mixologist with a curiosity problem. Equal parts mischief and manners.",
             notes: CompatNotes(
                 astro: "Water harmony — intuitive",
                 numerology: "Creative spark, playful",
@@ -307,9 +307,9 @@ public struct Candidate: Identifiable, Hashable, Sendable {
             chinese: "Rat",
             lifePath: 7,
             position: "Top",
-            sharedInterests: ["Vintage cars"],
-            hobbies: ["Vintage cars", "Cigars", "Golf"],
-            bio: "Old-money taste, new-school energy. Cars, cigars, and quiet luxury.",
+            sharedInterests: ["Vinyl"],
+            hobbies: ["Vinyl", "Film", "Sailing"],
+            bio: "Slow evenings, vinyl, and a story worth staying for.",
             notes: CompatNotes(
                 astro: "Twin intensity — electric",
                 numerology: "Mirror life paths",
@@ -397,7 +397,7 @@ public struct Conversation: Identifiable, Hashable, Sendable {
             candidateAvatarURL: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&q=80&auto=format&fit=crop&crop=faces",
             messages: [
                 Message(id: "msg-1", senderIsMe: false, text: "Hey — the stars said 94%. Bold of them 😏"),
-                Message(id: "msg-2", senderIsMe: true,  text: "They don't lie. Dubai this weekend?"),
+                Message(id: "msg-2", senderIsMe: true,  text: "They don't lie. Parlor this weekend?"),
                 Message(id: "msg-3", senderIsMe: false, text: "That hot-air balloon date looked unreal 🎈"),
             ],
             unreadCount: 2
@@ -428,7 +428,7 @@ public struct Conversation: Identifiable, Hashable, Sendable {
             candidateName: "Sven",
             candidateAvatarURL: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=120&h=120&q=80&auto=format&fit=crop&crop=faces",
             messages: [
-                Message(id: "msg-8", senderIsMe: false, text: "Cigars and vintage cars — sounds like a plan?"),
+                Message(id: "msg-8", senderIsMe: false, text: "Vinyl and a parlor night — sounds like a plan?"),
             ],
             unreadCount: 1
         ),
@@ -490,7 +490,7 @@ public enum EventType: String, CaseIterable, Sendable, Codable, Identifiable {
         case .openDoor:    return "Open Door"
         case .socialMixer: return "Social Mixer"
         case .circle:      return "Circle"
-        case .cosplay:     return "Cosplay / Roleplay"
+        case .cosplay:     return "Costume"
         }
     }
 }
@@ -549,14 +549,14 @@ public struct EventItem: Identifiable, Hashable, Sendable {
         EventItem(
             id: "e1",
             type: .circle,
-            title: "Sunset Circle",
+            title: "Ink Circle",
             hostName: "Marco",
             hostRep: 88,
             avatarURL: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&q=80&auto=format&fit=crop&crop=faces",
             when: "Tonight · 10:30 PM",
-            place: "Marina Penthouse",
-            area: "Dubai Marina",
-            description: "Rooftop lounge, house sets, skyline views. Hosted, members-only, verified guests.",
+            place: "Gaslight Parlor",
+            area: "Inkhouse Ward",
+            description: "Hosted parlor gathering. Members only, host-approved guests.",
             going: 9,
             capacity: 12,
             privacy: "approval"
@@ -564,14 +564,14 @@ public struct EventItem: Identifiable, Hashable, Sendable {
         EventItem(
             id: "e2",
             type: .cosplay,
-            title: "Latex & Leather Night",
+            title: "Costume Night",
             hostName: "Sven",
             hostRep: 74,
             avatarURL: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=120&h=120&q=80&auto=format&fit=crop&crop=faces",
             when: "Sat · 11:00 PM",
-            place: "Private villa",
-            area: "Palm Jumeirah",
-            description: "Statement-style night — bold looks encouraged. Hosted, dress to impress, members verified.",
+            place: "Flash Hall",
+            area: "Brass Row",
+            description: "Hosted theme night. Costume welcome, members verified.",
             going: 18,
             capacity: 30,
             privacy: "public"
@@ -585,7 +585,7 @@ public struct EventItem: Identifiable, Hashable, Sendable {
             avatarURL: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=120&h=120&q=80&auto=format&fit=crop&crop=faces",
             when: "Fri · 9:00 PM",
             place: "Studio loft",
-            area: "JBR",
+            area: "Studio Row",
             description: "Hosted open house with welcome drinks. ID-verified entry, hosts on site.",
             going: 6,
             capacity: 10,
@@ -594,14 +594,14 @@ public struct EventItem: Identifiable, Hashable, Sendable {
         EventItem(
             id: "e4",
             type: .socialMixer,
-            title: "Lunch Express",
+            title: "Lunch Mixer",
             hostName: "Theo",
             hostRep: 69,
             avatarURL: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&q=80&auto=format&fit=crop&crop=faces",
             when: "Today · 1:00 PM",
-            place: "Business Bay tower",
-            area: "Business Bay",
-            description: "Midday professionals' mixer over coffee. Book a slot, verified members, intros hosted.",
+            place: "Brass Terrace",
+            area: "Inkhouse Ward",
+            description: "Midday mixer over coffee. Book a slot, verified members, intros hosted.",
             going: 4,
             capacity: 8,
             privacy: "public"
@@ -630,9 +630,9 @@ public struct Community: Identifiable, Hashable, Sendable {
 
     /// Seeded from COMMS in mangasm-events.jsx
     public static let samples: [Community] = [
-        Community(id: "c1", name: "Pride Marina",          tagline: "Social · Allies welcome",  memberCount: "4.2k", monogram: "PM"),
-        Community(id: "c2", name: "Bears & Cubs UAE",      tagline: "Body positive",             memberCount: "2.8k", monogram: "BC"),
-        Community(id: "c3", name: "Leather & Fetish",      tagline: "Kink · Gear",               memberCount: "1.9k", monogram: "LF"),
+        Community(id: "c1", name: "Pride Circle",           tagline: "Social · Allies welcome",  memberCount: "4.2k", monogram: "PC"),
+        Community(id: "c2", name: "Bears & Cubs",           tagline: "Body positive",             memberCount: "2.8k", monogram: "BC"),
+        Community(id: "c3", name: "Night Circle",           tagline: "Hosted · Members",          memberCount: "1.9k", monogram: "NC"),
         Community(id: "c4", name: "Trans+ & Allies",       tagline: "Support · Safe space",      memberCount: "1.1k", monogram: "TA"),
         Community(id: "c5", name: "Black Rock Brotherhood", tagline: "Playa · radical inclusion",  memberCount: "3.5k", monogram: "BR"),
         Community(id: "c6", name: "House & After-Hours",   tagline: "Music · Nightlife",         memberCount: "5.6k", monogram: "HA"),

@@ -29,12 +29,18 @@ public enum MGColor {
     public static let launchOrange = Color(hex: "#F08A38")
     public static let launchOrangeDeep = Color(hex: "#C95E1E")
     public static let skylineInk = Color(hex: "#120A14")
-    /// Skull Island chrome (Guideline 4.3 significant-change identity).
-    public static let jungleInk = Color(hex: "#0A120E")
-    public static let jungleCanopy = Color(hex: "#0B2E1A")
-    public static let jungleMist = Color(hex: "#1A4A45")
-    public static let boneIvory = Color(hex: "#E8DCC8")
-    public static let campfire = Color(hex: "#E07A3D")
+    /// Inkhouse chrome (Guideline 4.3 significant-change identity).
+    public static let parlorInk = Color(hex: "#100808")
+    public static let brass = Color(hex: "#C4A36A")
+    public static let brassDeep = Color(hex: "#8A7044")
+    public static let oxblood = Color(hex: "#6B1D2A")
+    public static let parchment = Color(hex: "#F3E6C8")
+    /// Kept as aliases so older jungle call sites compile; values match parlor.
+    public static let jungleInk = parlorInk
+    public static let jungleCanopy = Color(hex: "#3A1A14")
+    public static let jungleMist = brass
+    public static let boneIvory = parchment
+    public static let campfire = oxblood
 }
 
 public enum MGFont {
@@ -63,8 +69,13 @@ public enum MGGradient {
         colors: [MGColor.goldBright, MGColor.goldDeep],
         startPoint: .topLeading, endPoint: .bottomTrailing)
     public static let launchCTA = LinearGradient(
-        colors: [MGColor.launchOrange, MGColor.launchOrangeDeep],
+        colors: [MGColor.oxblood, Color(hex: "#4A121C")],
         startPoint: .topLeading, endPoint: .bottomTrailing)
+    public static let brassHeading = LinearGradient(
+        stops: [.init(color: MGColor.brass, location: 0),
+                .init(color: Color(hex: "#A88850"), location: 0.48),
+                .init(color: MGColor.brassDeep, location: 1)],
+        startPoint: .top, endPoint: .bottom)
     /// Gold gradient for TEXT (wordmarks, section labels, ring centers): 3-stop
     /// vertical bright→gold@48%→deep, matching the prototype's `goldText`.
     /// (Not to be confused with `MGColor.goldText`, the dark ink used ON gold.)

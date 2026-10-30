@@ -2,7 +2,7 @@
 
 React Native / shared TypeScript **Community Reputation** theme provider for Mangasm.
 
-Aligns with iOS Swift `ProfileStyleCatalog` (aliases: `bobRoss`/`skullIsland` ↔ `calmStudio`, etc.). Default display name for `calmStudio` is **Skull Island**.
+Aligns with iOS Swift `ProfileStyleCatalog` (aliases: `bobRoss`/`skullIsland`/`inkhouse` ↔ `calmStudio`, etc.). Default display name for `calmStudio` is **Inkhouse**.
 
 ## Safety (App Store / Play)
 
