@@ -7,7 +7,8 @@ is the smallest part, and every layer underneath is something you should own.
 
 Sections: skull-jungle hero → the three houses (units) → the Opsec Iceberg (scroll-driven descent,
 six layers) → the self-sovereignty orbit (six pillars) → backstage (three live terminals + run
-history) → before/after slider → completed work (Mangasm feature row + three cards) → contact
+history) → before/after slider → completed work (Mangasm feature row + three cards) → the
+signature (gold sigil with the Now Playing band; RANGER-26 is at `nowplaying/`) → contact
 (email + GitHub Sponsors).
 
 The look is dark luxe: onyx black, candle gold `#c9a24a` / `#e6c77a`, lagoon turquoise `#5fd6cc`

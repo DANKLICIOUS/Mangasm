@@ -50,6 +50,7 @@
         <a href="#sovereign">Sovereignty</a>
         <a href="#backstage">Backstage</a>
         <a href="#work">Work</a>
+        <a href="#signature">Sign</a>
         <a href="https://github.com/sponsors/gothamgodzilla" target="_blank" rel="noopener">Sponsor</a>
       </div>
       <a href="#contact" class="btn btn-ghost btn-sm">Start tonight</a>
@@ -233,9 +234,22 @@
         <div class="work" id="work-list"></div>
       </section>
 
+      <section class="section signature" id="signature" aria-labelledby="sig-title">
+        <p class="eyebrow"><b>VII</b> The signature</p>
+        <h2 id="sig-title">Sign the night. <em>The mark stays lit.</em></h2>
+        <p class="section-lede">
+          The house sigil, with the night's now-playing band crossing it. This feed is a labelled demo until a
+          live source is connected. The ranger stands on its own page.
+        </p>
+        <div id="signature-stage"></div>
+        <p class="signature-more">
+          <a class="btn btn-ghost" href="nowplaying/">Open RANGER-26</a>
+        </p>
+      </section>
+
       <section class="section contact" id="contact">
         <div class="contact-card glass">
-          <p class="eyebrow"><b>VII</b> Start tonight</p>
+          <p class="eyebrow"><b>VIII</b> Start tonight</p>
           <h2>Send the brief at 9pm.<br /><em>Wake up sovereign.</em></h2>
           <p class="section-lede">
             Tell us what you have and what you're afraid of losing. We'll come back with the layers we'd build,
@@ -263,5 +277,12 @@
     <script src="data.js"></script>
     <script src="iceberg-fx.js"></script>
     <script src="app.js"></script>
+    <script type="module">
+      import { mount } from "./nowplaying/nowplaying.js";
+      const stage = document.querySelector("#signature-stage");
+      if (stage) {
+        mount(stage, { ticker: "band", controls: false, robot: false });
+      }
+    </script>
   </body>
 </html>

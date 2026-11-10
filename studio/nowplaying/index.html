@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Now Playing · RANGER-26 · Mangasm</title>
+    <meta
+      name="description"
+      content="A live Now Playing ticker crossing the Mangasm sigil, with RANGER-26, an interactive WebGL humanoid."
+    />
+    <meta name="theme-color" content="#050507" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23e9c46f' stroke-width='2'/%3E%3Cpath d='M16 5 25 21H7z' fill='none' stroke='%23e9c46f' stroke-width='1.5'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap"
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: #050507;
+        color: #efe6d2;
+      }
+      body {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        min-height: 100svh;
+        overflow-x: hidden;
+        background:
+          radial-gradient(70vw 40vh at 50% 108%, rgba(36, 190, 180, 0.22), transparent 70%),
+          radial-gradient(50vw 50vh at 50% 40%, rgba(150, 110, 40, 0.12), transparent 70%),
+          radial-gradient(120vw 90vh at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.85)), #050507;
+      }
+      .frame {
+        position: fixed;
+        inset: 12px;
+        border: 1px solid rgba(233, 196, 111, 0.22);
+        pointer-events: none;
+        z-index: 10;
+      }
+      .frame::before,
+      .frame::after {
+        content: "";
+        position: absolute;
+        width: 46px;
+        height: 46px;
+        border: 1px solid rgba(233, 196, 111, 0.6);
+      }
+      .frame::before {
+        top: -6px;
+        left: -6px;
+        border-right: 0;
+        border-bottom: 0;
+      }
+      .frame::after {
+        bottom: -6px;
+        right: -6px;
+        border-left: 0;
+        border-top: 0;
+      }
+      header {
+        position: relative;
+        z-index: 5;
+        text-align: center;
+        padding: clamp(22px, 4vh, 40px) 16px 0;
+      }
+      .eyebrow {
+        margin: 0;
+        font:
+          500 11px/1 "JetBrains Mono",
+          monospace;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: #a59b85;
+      }
+      .eyebrow b {
+        color: #3ff0dc;
+        font-weight: 600;
+      }
+      h1 {
+        margin: 12px 0 0;
+        font:
+          700 clamp(30px, 5.4vw, 64px) / 1 "Cinzel",
+          serif;
+        letter-spacing: 0.12em;
+        background: linear-gradient(100deg, #b88a35, #fff0c4 40%, #c99a43 62%, #f6dc93);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 0 22px rgba(233, 196, 111, 0.25));
+      }
+      .sub {
+        margin: 10px 0 0;
+        font:
+          500 clamp(11px, 1.2vw, 13px) / 1.4 "Cinzel",
+          serif;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: #d8c79c;
+      }
+      .rule {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin: 12px auto 0;
+        color: #e9c46f;
+        font-size: 10px;
+      }
+      .rule::before,
+      .rule::after {
+        content: "";
+        width: min(160px, 22vw);
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e9c46f);
+      }
+      .rule::after {
+        transform: scaleX(-1);
+      }
+      #np {
+        margin-top: -36px;
+      }
+      section.info {
+        position: relative;
+        z-index: 5;
+        max-width: 980px;
+        margin: 26px auto 70px;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+      }
+      .card {
+        border: 1px solid rgba(233, 196, 111, 0.3);
+        background: linear-gradient(180deg, rgba(233, 196, 111, 0.05), rgba(0, 0, 0, 0.3));
+        border-radius: 6px;
+        padding: 18px 20px;
+      }
+      .card h2 {
+        margin: 0 0 10px;
+        font:
+          700 14px "Cinzel",
+          serif;
+        letter-spacing: 0.22em;
+        color: #f6dc93;
+      }
+      .card p,
+      .card li {
+        font-size: 12.5px;
+        line-height: 1.65;
+        color: #c9bfa8;
+      }
+      .card ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+      code,
+      pre {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 11.5px;
+        color: #3ff0dc;
+      }
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: rgba(0, 0, 0, 0.45);
+        border: 1px solid rgba(63, 240, 220, 0.2);
+        border-radius: 4px;
+        padding: 12px;
+      }
+      footer {
+        text-align: center;
+        padding: 0 16px 40px;
+        font-size: 10.5px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #6f6656;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame" aria-hidden="true"></div>
+    <header>
+      <p class="eyebrow">Mangasm · <b>Live from the Cavern</b> · Human × System × Intelligence</p>
+      <h1>Now Playing</h1>
+      <p class="sub">RANGER-26 · Recursive Space Ranger Unit</p>
+      <div class="rule" aria-hidden="true">◆</div>
+    </header>
+
+    <main>
+      <div id="np"></div>
+
+      <section class="info" aria-label="About this module">
+        <div class="card">
+          <h2>Interact</h2>
+          <ul>
+            <li>Move the cursor: RANGER-26's head and eyes track it.</li>
+            <li>Click or tap the robot: it waves, then flies on the next click.</li>
+            <li>
+              <code>W</code> wave · <code>F</code> fly · <code>I</code> intelligence HUD ·
+              <code>T</code> ticker band / ring / both
+            </li>
+            <li>The visor EQ and the ticker EQ share one signal, so they pulse together.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h2>Feed</h2>
+          <p>
+            No live URL is set, so this is the built-in <strong>demo loop</strong>: music items
+            mixed with a snapshot of recent automation runs. Point it at a real feed with
+            <code>?nowplaying=&lt;url&gt;</code> (polled every 15&nbsp;s) or set
+            <code>window.NOW_PLAYING</code>.
+          </p>
+          <pre>
+{ "items": [{ "type": "music", "title": "…", "artist": "…",
+  "source": "…", "startedAt": "2026-10-22T09:30:00Z",
+  "durationSec": 214, "url": "https://…" }] }</pre>
+        </div>
+        <div class="card">
+          <h2>Embed</h2>
+          <pre>
+&lt;div id="np"&gt;&lt;/div&gt;
+&lt;script type="module" src="/nowplaying/nowplaying.js"
+  data-mount="#np" data-ticker="both"
+  data-mode="intelligence" data-feed="/now.json"&gt;&lt;/script&gt;</pre>
+        </div>
+      </section>
+    </main>
+    <footer>Three tracks · One recursive loop · Built to evolve</footer>
+
+    <script type="module" src="./nowplaying.js" data-mount="#np" data-ticker="both"></script>
+  </body>
+</html>

@@ -2362,3 +2362,24 @@ body.gl-ice .ice-gl {
     transform: scale(1.04);
   }
 }
+
+/* Signature embed: sigil + ticker only. The ranger lives on /nowplaying/. */
+.signature .section-lede {
+  max-width: 40rem;
+}
+#signature-stage {
+  margin-top: 28px;
+}
+#signature-stage .np-root {
+  --np-sigil: min(52vh, 78vw, 520px);
+  --np-height: clamp(420px, 68svh, 620px);
+}
+#signature-stage .np-robot,
+#signature-stage .np-controls {
+  display: none;
+}
+.signature-more {
+  display: flex;
+  justify-content: center;
+  margin: 8px 0 0;
+}
