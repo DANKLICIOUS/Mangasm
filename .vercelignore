@@ -9,6 +9,8 @@
 # ...except the site itself and its config.
 !/web
 !/vercel.json
+!/studio
+!/studio/**
 
 # Serverless must live at repo-root /api (outputDirectory only ships static web/).
 !/api
