@@ -130,42 +130,21 @@ private struct GlassTabBar: View {
     @EnvironmentObject var state: AppState
 
     var body: some View {
-        HStack(alignment: .bottom, spacing: 0) {
+        HStack(alignment: .center, spacing: 0) {
             ForEach(AppTab.allCases) { tab in
-                if tab == .aiMatch {
-                    AIMatchTabButton(isActive: state.tab == .aiMatch) {
-                        state.tab = .aiMatch
-                    }
-                } else {
-                    RegularTabButton(tab: tab, isActive: state.tab == tab) {
-                        state.tab = tab
-                    }
+                RegularTabButton(tab: tab, isActive: state.tab == tab) {
+                    state.tab = tab
                 }
             }
         }
-        .padding(.vertical, 9)
-        .padding(.horizontal, 8)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24))
-        .overlay(
-            RoundedRectangle(cornerRadius: 24)
-                .stroke(Color.white.opacity(0.75), lineWidth: 0.7)
-        )
-        .overlay(
-            // Top rim bright highlight — prototype: inset 0 1px 0 rgba(255,255,255,.75)
-            RoundedRectangle(cornerRadius: 24)
-                .fill(LinearGradient(
-                    colors: [.white.opacity(0.72), .clear],
-                    startPoint: .top, endPoint: .init(x: 0.5, y: 0.25)
-                ))
-                .blendMode(.overlay)
-                .allowsHitTesting(false)
-        )
-        // Prototype: 0 14px 40px -12px rgba(40,30,15,0.4)
-        .shadow(color: Color(red: 40/255, green: 30/255, blue: 15/255).opacity(0.4),
-                radius: 20, x: 0, y: 7)
-        .padding(.horizontal, 14)
-        .padding(.bottom, 14)
-        .accessibilityIdentifier("main_tab_bar")   // stable marker: app entered
+        .padding(.vertical, 12)
+        .padding(.horizontal, 10)
+        .background(.ultraThinMaterial, in: Capsule())
+        .overlay(Capsule().stroke(Color.white.opacity(0.85), lineWidth: 0.8))
+        .shadow(color: Color.black.opacity(0.12), radius: 18, y: 8)
+        .padding(.horizontal, 28)
+        .padding(.bottom, 18)
+        .accessibilityIdentifier("main_tab_bar")
     }
 }
 
@@ -183,16 +162,13 @@ private struct RegularTabButton: View {
                 Image(systemName: icon)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 21, height: 21)
-                    .foregroundStyle(isActive ? MGColor.goldDeep : MGColor.inkSoft)
-                    .shadow(color: isActive ? MGColor.gold.opacity(0.6) : .clear,
-                            radius: 3.5, x: 0, y: 0)
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(isActive ? Color.black.opacity(0.78) : Color.black.opacity(0.38))
                     .animation(.easeInOut(duration: 0.2), value: isActive)
 
                 Text(label)
-                    .font(MGFont.serif(10, .bold))
-                    .tracking(10 * 0.08)
-                    .foregroundStyle(isActive ? MGColor.goldDeep : MGColor.inkSoft)
+                    .font(MGFont.sans(9, .semibold))
+                    .foregroundStyle(isActive ? Color.black.opacity(0.72) : Color.black.opacity(0.36))
                     .animation(.easeInOut(duration: 0.2), value: isActive)
             }
             .padding(.horizontal, 6)
@@ -204,9 +180,9 @@ private struct RegularTabButton: View {
 
     private var icon: String {
         switch tab {
-        case .events:   return "sparkles"
-        case .discover: return "square.grid.2x2"
-        case .aiMatch:  return "lightbulb"     // unreachable — handled by AIMatchTabButton
+        case .events:   return "house"
+        case .discover: return "magnifyingglass"
+        case .aiMatch:  return "plus"
         case .likes:    return "heart"
         case .profile:  return "person"
         }
@@ -215,61 +191,11 @@ private struct RegularTabButton: View {
     private var label: String {
         switch tab {
         case .events:   return "Events"
-        case .discover: return "Discover"
-        case .aiMatch:  return "AI Match"
-        case .likes:    return "Likes"
-        case .profile:  return "Profile"
+        case .discover: return "Search"
+        case .aiMatch:  return "Add"
+        case .likes:    return "Heart"
+        case .profile:  return "You"
         }
     }
 }
 
-// MARK: - AIMatchTabButton
-// Raised gold-gradient pill for the AI Match tab.
-// Prototype: 44×44, r15, linear-gradient(135deg, GOLD_BRIGHT, GOLD_DEEP),
-// gold shadow (glow when active), raised via negative Y offset.
-
-private struct AIMatchTabButton: View {
-    let isActive: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 15)
-                    .fill(MGGradient.goldButton)
-                    .frame(width: 44, height: 44)
-                    .shadow(
-                        color: isActive
-                            ? MGColor.gold.opacity(0.9)
-                            : Color(red: 201/255, green: 168/255, blue: 76/255).opacity(0.5),
-                        radius: isActive ? 10 : 6,
-                        x: 0,
-                        y: isActive ? 0 : 3
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 15)
-                            .fill(LinearGradient(
-                                colors: [.white.opacity(0.6), .clear],
-                                startPoint: .top,
-                                endPoint: .center
-                            ))
-                            .allowsHitTesting(false)
-                    )
-                    .animation(.easeInOut(duration: 0.2), value: isActive)
-
-                // Lamp icon — prototype: SVG stroke #3a2c08, strokeWidth 1.9
-                // Approximation: SF Symbol lightbulb substituted for the prototype's
-                // custom lamp path (M9 18h6 M10 21h4 M12 3a6 6 0 0 0-4 10.5...)
-                Image(systemName: isActive ? "lightbulb.fill" : "lightbulb")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 23, height: 23)
-                    .foregroundStyle(Color(red: 58/255, green: 44/255, blue: 8/255))
-            }
-            // Raised above bar — negative Y so the pill visually pops
-            .offset(y: -12)
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.plain)
-    }
-}

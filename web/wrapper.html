@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mangasm · Glass wrapper</title>
+    <meta name="description" content="Live Mangasm wrapper: glass chrome on the founder beach plate." />
+    <meta name="rating" content="adult" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="wrapper.css" />
+  </head>
+  <body>
+    <header class="bar">
+      <a href="/">mangasm.app</a>
+      <p>18+ · Live wrapper · Events stay first</p>
+    </header>
+
+    <main>
+      <section class="copy">
+        <h1>Glass wrapper</h1>
+        <p>
+          Founder mock as the live UI shell: cream type on sky, frosted profile card, floating
+          capsule tab bar. Destinations stay Events, Search, Add, Heart, You. Storage id remains
+          <code>calmStudio</code>.
+        </p>
+      </section>
+
+      <section class="phone" aria-label="Wrapper preview">
+        <div class="plate"></div>
+        <div class="wash"></div>
+
+        <header class="top">
+          <div>
+            <p class="wordmark">Mangasm</p>
+            <p class="rep-label">Reputation</p>
+            <p class="rep-score">42</p>
+          </div>
+          <div class="private">
+            <span>Private</span>
+            <span class="lock" aria-hidden="true"></span>
+          </div>
+        </header>
+
+        <div class="avatar" aria-hidden="true"></div>
+
+        <article class="card">
+          <h2>Julian 32</h2>
+          <p>
+            Host of good nights. Sunsets, a fire that stays lit, and the long way home.
+          </p>
+          <button type="button" id="more">More</button>
+          <div class="photos">
+            <p>Photos</p>
+            <div class="thumbs">
+              <span></span>
+              <span></span>
+              <span class="plus">+</span>
+            </div>
+          </div>
+        </article>
+
+        <nav class="tabs" aria-label="Main tabs">
+          <button type="button" class="is-on" data-tab="events">
+            <i data-i="home"></i><span>Events</span>
+          </button>
+          <button type="button" data-tab="search">
+            <i data-i="search"></i><span>Search</span>
+          </button>
+          <button type="button" data-tab="add">
+            <i data-i="add"></i><span>Add</span>
+          </button>
+          <button type="button" data-tab="heart">
+            <i data-i="heart"></i><span>Heart</span>
+          </button>
+          <button type="button" data-tab="you">
+            <i data-i="you"></i><span>You</span>
+          </button>
+        </nav>
+        <p class="tab-note" id="tabNote">Events is the landing tab.</p>
+      </section>
+    </main>
+
+    <script>
+      const more = document.getElementById("more");
+      const card = document.querySelector(".card p");
+      const full =
+        "Host of good nights. Sunsets, a fire that stays lit, and the long way home. Members only, host-approved addresses.";
+      let open = false;
+      more.addEventListener("click", () => {
+        open = !open;
+        card.textContent = open
+          ? full
+          : "Host of good nights. Sunsets, a fire that stays lit, and the long way home.";
+        more.textContent = open ? "Less" : "More";
+      });
+
+      document.querySelectorAll(".tabs button").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".tabs button").forEach((b) => b.classList.remove("is-on"));
+          btn.classList.add("is-on");
+          const id = btn.dataset.tab;
+          document.getElementById("tabNote").textContent =
+            id === "events"
+              ? "Events is the landing tab."
+              : id === "you"
+                ? "You — profile on the wrapper plate."
+                : id.charAt(0).toUpperCase() + id.slice(1) + " tab.";
+        });
+      });
+    </script>
+  </body>
+</html>

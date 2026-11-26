@@ -139,8 +139,9 @@ public struct SplashView: View {
                 // ── Layer 0: black base ──────────────────────────────────
                 Color.black.ignoresSafeArea()
 
-                // ── Layer 1: Skull Island plate (Guideline 4.3 identity) ─
-                if let island = bundledFileImage("skull_island_hero", "jpg") {
+                // ── Layer 1: Wrapper plate (founder glass-on-beach mock) ─
+                if let island = bundledFileImage(WrapperChrome.plateName, "jpg")
+                    ?? bundledFileImage("skull_island_hero", "jpg") {
                     island
                         .resizable()
                         .scaledToFill()
@@ -170,39 +171,20 @@ public struct SplashView: View {
                 // ── Layer 2: cinematic grade gradient ────────────────────
                 LinearGradient(
                     stops: [
-                        .init(color: Color(red: 6/255, green: 4/255, blue: 9/255, opacity: 0.50), location: 0.00),
-                        .init(color: Color(red: 6/255, green: 4/255, blue: 9/255, opacity: 0.05), location: 0.30),
-                        .init(color: Color(red: 6/255, green: 4/255, blue: 9/255, opacity: 0.35), location: 0.62),
-                        .init(color: Color(red: 4/255, green: 2/255, blue: 7/255, opacity: 0.92), location: 1.00),
+                        .init(color: Color.white.opacity(0.18), location: 0.00),
+                        .init(color: Color.clear, location: 0.36),
+                        .init(color: Color.black.opacity(0.22), location: 1.00),
                     ],
                     startPoint: .top, endPoint: .bottom
                 )
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
 
-                // ── Layer 3: radial orange haze (screen blend) ───────────
                 RadialGradient(
-                    colors: [
-                        MGColor.campfire.opacity(0.16),
-                        MGColor.campfire.opacity(0.05),
-                        Color.clear
-                    ],
-                    center: UnitPoint(x: 0.42, y: 0.72),
-                    startRadius: 0,
-                    endRadius: geo.size.width * 0.70
-                )
-                .blendMode(.screen)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-
-                // ── Layer 4: inset vignette ──────────────────────────────
-                // Approximation: SwiftUI has no box-shadow inset; simulate with
-                // a radial gradient darkening from the edges inward.
-                RadialGradient(
-                    colors: [Color.clear, Color.black.opacity(0.70)],
+                    colors: [Color.clear, Color.black.opacity(0.28)],
                     center: .center,
-                    startRadius: geo.size.width * 0.35,
-                    endRadius: max(geo.size.width, geo.size.height) * 0.75
+                    startRadius: geo.size.width * 0.42,
+                    endRadius: max(geo.size.width, geo.size.height) * 0.78
                 )
                 .ignoresSafeArea()
                 .allowsHitTesting(false)
@@ -262,7 +244,7 @@ public struct SplashView: View {
                         Spacer().frame(height: 12)
 
                         // Tagline — delay 1.5s
-                        Text("CAMPFIRE · BROTHERHOOD · THE ISLAND")
+                        Text("PRIVATE · REPUTATION · EVENTS")
                             .font(MGFont.mono(9.5))
                             .tracking(9.5 * 0.42)  // 0.42em → 3.99pt
                             .foregroundStyle(Color(red: 245/255, green: 235/255, blue: 214/255, opacity: 0.78))

@@ -1,0 +1,431 @@
+:root {
+  --ink: #0b0b0d;
+  --paper: #ece7df;
+  --mute: #8a847a;
+  --line: #2a2722;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+}
+
+.lab-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 18px 28px 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lab-brand {
+  text-decoration: none;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.lab-brand span {
+  color: var(--mute);
+}
+
+.lab-kicker {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.lab {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) 420px;
+  gap: 36px;
+  padding: 28px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.chooser h1 {
+  margin: 0 0 10px;
+  font-size: 28px;
+  line-height: 1.15;
+}
+
+.lede {
+  margin: 0 0 22px;
+  color: #c9c2b6;
+  max-width: 46ch;
+  line-height: 1.5;
+}
+
+.cards {
+  display: grid;
+  gap: 10px;
+}
+
+.card {
+  text-align: left;
+  width: 100%;
+  border: 1px solid var(--line);
+  background: #121214;
+  color: var(--paper);
+  padding: 14px 16px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.card:hover,
+.card.is-on {
+  border-color: #c9c2b6;
+}
+
+.card .meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-bottom: 6px;
+}
+
+.card h2 {
+  margin: 0 0 6px;
+  font-size: 18px;
+}
+
+.card p {
+  margin: 0;
+  font-size: 13px;
+  color: #c9c2b6;
+  line-height: 1.4;
+}
+
+.pick-line {
+  margin: 18px 0 0;
+  font-size: 13px;
+  color: #e8dcc8;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.screen-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.screen-toggle button {
+  background: #121214;
+  color: var(--paper);
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.screen-toggle button.is-on {
+  border-color: #c9c2b6;
+}
+
+.phone {
+  position: relative;
+  width: 360px;
+  height: 740px;
+  border-radius: 36px;
+  overflow: hidden;
+  border: 8px solid #1b1b1f;
+  background: #000;
+  isolation: isolate;
+}
+
+.phone-notch {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 110px;
+  height: 18px;
+  margin-left: -55px;
+  background: #111;
+  border-radius: 12px;
+  z-index: 5;
+}
+
+.phone-bg {
+  position: absolute;
+  inset: 0;
+  background-position: center bottom;
+  background-size: cover;
+  z-index: 0;
+}
+
+.phone-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28) 0%, rgba(0, 0, 0, 0.72) 100%);
+}
+
+.screen {
+  display: none;
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 56px 22px 22px;
+}
+
+.screen.is-on {
+  display: flex;
+  flex-direction: column;
+}
+
+.signin {
+  justify-content: flex-end;
+  gap: 10px;
+  padding-bottom: 36px;
+}
+
+.eyebrow {
+  margin: 0;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+.wordmark {
+  margin: 0;
+  font-size: 46px;
+  line-height: 0.95;
+}
+
+.wordmark.sm {
+  font-size: 26px;
+}
+
+.tag,
+.fine,
+.host,
+.ev-card p {
+  margin: 0;
+}
+
+.cta {
+  border: 0;
+  width: 100%;
+  padding: 14px 16px;
+  margin-top: 8px;
+  font-size: 15px;
+  cursor: default;
+}
+
+.fine {
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+.ev-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pill,
+.chip {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ev-title {
+  margin: 18px 0 10px;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.ev-card {
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+.ev-card.dim {
+  opacity: 0.85;
+}
+
+.ev-card h3 {
+  margin: 8px 0 4px;
+  font-size: 20px;
+}
+
+.tabs {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding-top: 12px;
+}
+
+.tabs .mid {
+  font-weight: 700;
+}
+
+/* Viral — most popular / screenshot culture */
+.phone[data-theme="viral"] {
+  --accent: #f2ff3a;
+  --accent-2: #ff2d7a;
+  --text: #fff;
+  font-family: Inter, system-ui, sans-serif;
+}
+.phone[data-theme="viral"] .wordmark {
+  font-family: Anton, Impact, sans-serif;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.phone[data-theme="viral"] .eyebrow,
+.phone[data-theme="viral"] .chip,
+.phone[data-theme="viral"] .pill {
+  color: #f2ff3a;
+}
+.phone[data-theme="viral"] .cta {
+  background: #f2ff3a;
+  color: #111;
+  font-weight: 800;
+  border-radius: 6px;
+}
+.phone[data-theme="viral"] .ev-card {
+  background: rgba(0, 0, 0, 0.45);
+  border-left: 3px solid #ff2d7a;
+}
+.phone[data-theme="viral"] .phone-veil {
+  background: linear-gradient(180deg, rgba(20, 0, 16, 0.2), rgba(0, 0, 0, 0.78));
+}
+
+/* Effective — most used / lowest friction */
+.phone[data-theme="effective"] {
+  --accent: #c45c26;
+  --text: #f4f1ea;
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+.phone[data-theme="effective"] .wordmark {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.phone[data-theme="effective"] .eyebrow,
+.phone[data-theme="effective"] .chip,
+.phone[data-theme="effective"] .pill {
+  color: #e8c4a2;
+}
+.phone[data-theme="effective"] .cta {
+  background: #c45c26;
+  color: #fff;
+  border-radius: 14px;
+  font-weight: 700;
+}
+.phone[data-theme="effective"] .ev-card {
+  background: rgba(28, 25, 22, 0.72);
+  border-radius: 16px;
+}
+.phone[data-theme="effective"] .phone-veil {
+  background: linear-gradient(180deg, rgba(20, 16, 12, 0.15), rgba(12, 10, 8, 0.7));
+}
+
+/* Fantasy — futuristic */
+.phone[data-theme="fantasy"] {
+  --accent: #3ad0ff;
+  --text: #d8f6ff;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+.phone[data-theme="fantasy"] .wordmark {
+  font-family: Orbitron, sans-serif;
+  font-size: 34px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.phone[data-theme="fantasy"] .eyebrow,
+.phone[data-theme="fantasy"] .chip,
+.phone[data-theme="fantasy"] .pill,
+.phone[data-theme="fantasy"] .tag {
+  color: #3ad0ff;
+  font-family: Orbitron, sans-serif;
+}
+.phone[data-theme="fantasy"] .cta {
+  background: transparent;
+  color: #3ad0ff;
+  border: 1px solid #3ad0ff;
+  border-radius: 2px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.phone[data-theme="fantasy"] .ev-card {
+  background: rgba(7, 11, 20, 0.62);
+  box-shadow: inset 0 0 0 1px rgba(58, 208, 255, 0.35);
+}
+.phone[data-theme="fantasy"] .phone-veil {
+  background: linear-gradient(180deg, rgba(6, 10, 24, 0.2), rgba(6, 8, 18, 0.78));
+}
+
+/* Steampunk — gothic punk tattoo */
+.phone[data-theme="steampunk"] {
+  --accent: #c4a36a;
+  --text: #f3e6c8;
+  font-family: "IM Fell English", Georgia, serif;
+}
+.phone[data-theme="steampunk"] .wordmark {
+  font-family: Cinzel, serif;
+  font-size: 38px;
+}
+.phone[data-theme="steampunk"] .eyebrow,
+.phone[data-theme="steampunk"] .chip,
+.phone[data-theme="steampunk"] .pill {
+  color: #c4a36a;
+  font-family: Cinzel, serif;
+}
+.phone[data-theme="steampunk"] .cta {
+  background: #6b1d2a;
+  color: #f3e6c8;
+  border: 1px solid #c4a36a;
+  font-family: Cinzel, serif;
+}
+.phone[data-theme="steampunk"] .ev-card {
+  background: rgba(16, 8, 8, 0.72);
+  border: 1px solid #c4a36a;
+}
+.phone[data-theme="steampunk"] .phone-veil {
+  background: linear-gradient(180deg, rgba(12, 6, 6, 0.25), rgba(8, 4, 4, 0.8));
+}
+
+.phone .screen {
+  color: var(--text, #fff);
+}
+
+@media (max-width: 900px) {
+  .lab {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+  .phone {
+    width: min(360px, 100%);
+    height: 700px;
+  }
+}

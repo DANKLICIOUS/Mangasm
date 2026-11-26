@@ -5,12 +5,14 @@
 
 ### Significant change (Guideline 4.3)
 
-This version is a **significant visual and product identity change**, not a reskin of a generic dating template:
+This version uses a **glass-on-beach wrapper** (founder mock) for launch, sign-in, and the shared shell. Events remain the product differentiator — not the backdrop.
 
-- **Skull Island** is the default chrome: launch, sign-in, and New Member profile style. Jungle, campfire, and a geological skull-mountain plate — not a gold/Lambo luxury grid.
-- **Events remain the differentiator:** Discover → Events (Circle / Open Door / Social Mixer) with host-approved addresses.
-- Cosmetic **Community Reputation** styles (Skull Island, Aspirational, Precision Tech, Digital Flow, Bold Expression) never unlock messages or adult features.
-- Backend style id for Skull Island remains `calmStudio` (storage only). Reviewers will see the name **Skull Island**.
+- **Wrapper chrome:** cream type, frosted profile card, floating capsule tab bar on the beach plate (`wrapper_hero`).
+- **Events remain the differentiator:** default landing tab is Events (Circle / Open Door / Social Mixer) with host-approved addresses.
+- Cosmetic **Community Reputation** styles never unlock messages or adult features.
+- Backend style id remains `calmStudio` (storage only).
+
+Guideline 4.3 is **not claimed solved** by this wrapper. Do not submit as App Review ready until Events-first behavior is verified on the attached binary.
 
 > Paste **Demo Account** + **Notes** into App Store Connect → version → **App Review Information**.  
 > Do not invent credentials — provision via `./scripts/provision-demo-reviewer.sh` then paste.
