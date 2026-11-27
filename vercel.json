@@ -126,6 +126,18 @@
       "source": "/admin/revenue/",
       "destination": "/admin/revenue.html"
     },
+    { "source": "/cruise", "destination": "/index.html" },
+    { "source": "/cruise/", "destination": "/index.html" },
+    { "source": "/map", "destination": "/index.html" },
+    { "source": "/map/", "destination": "/index.html" },
+    { "source": "/status", "destination": "/story.html" },
+    { "source": "/status/", "destination": "/story.html" },
+    { "source": "/story", "destination": "/story.html" },
+    { "source": "/story/", "destination": "/story.html" },
+    { "source": "/patterns", "destination": "/story.html" },
+    { "source": "/patterns/", "destination": "/story.html" },
+    { "source": "/honesty", "destination": "/story.html" },
+    { "source": "/honesty/", "destination": "/story.html" },
     {
       "source": "/",
       "destination": "/index.html"
