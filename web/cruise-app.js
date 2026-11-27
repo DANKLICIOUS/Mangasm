@@ -366,8 +366,8 @@ function renderDrop() {
 function renderSheet() {
   if (!state.mode) return;
   const pin = state.selectedId ? findPin(state.selectedId) : null;
-  let html = "";
-  let label = "Details";
+  let html;
+  let label;
   if (state.mode === "pin" && pin) {
     html = renderPinSheet(pin);
     label = pin.name;
