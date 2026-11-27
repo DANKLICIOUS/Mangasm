@@ -22,6 +22,7 @@ import {
   repTier,
 } from "./cruise-data.js";
 import { mountMap } from "./cruise-map.js";
+import { mountLounge } from "./lounge.js";
 
 const AGE_KEY = "mangasm.ageOk";
 const CHECKIN_ID = "you-checkin";
@@ -58,12 +59,45 @@ const state = {
   ticker: 0,
 };
 
+const loungeAt = place(2.9, 32);
+state.pins.push({
+  id: "pixel-lounge",
+  kind: "spot",
+  name: "Pixel Lounge",
+  age: null,
+  rightNow: true,
+  hosting: false,
+  traveling: false,
+  position: "",
+  bio: "A walkable pixel room. Step in, say something, tap someone. Messages stay on this device.",
+  rep: null,
+  when: "",
+  place: "",
+  going: null,
+  capacity: null,
+  privacy: "",
+  eventType: "",
+  hostName: "",
+  memberCount: "",
+  tagline: "Chat room · local",
+  checkedInMin: 0,
+  linkedEventId: "",
+  monogram: "PL",
+  source: "seed",
+  x: loungeAt.x,
+  y: loungeAt.y,
+  distanceM: 2900,
+  zone: nearestZone(loungeAt.x, loungeAt.y),
+});
+
 const gate = $("#age-gate");
 const app = $("#app");
 const sheet = $("#sheet");
 const sheetBody = $("#sheet-body");
 const toast = $("#toast");
 let map;
+let lounge;
+let inLounge = false;
 let toastTimer = 0;
 
 function civilToday() {
@@ -151,10 +185,12 @@ function renderChrome() {
   document.querySelectorAll("[data-dock]").forEach((button) => {
     const dock = button.dataset.dock;
     const on =
-      dock === "map"
-        ? state.mode == null
-        : state.mode === dock ||
-          (dock === "roster" && state.mode === "pin" && state.sheetReturn === "roster");
+      dock === "lounge"
+        ? inLounge
+        : dock === "map"
+          ? !inLounge && state.mode == null
+          : state.mode === dock ||
+            (dock === "roster" && state.mode === "pin" && state.sheetReturn === "roster");
     button.setAttribute("aria-pressed", on ? "true" : "false");
   });
   map?.setYouFlags(state.you);
@@ -226,6 +262,9 @@ function renderPinSheet(pin) {
           : `${shown.distanceLabel} · ${escapeHTML(pin.zone)}${pin.checkedInMin != null ? ` · ${pin.checkedInMin}m ago` : ""}`;
   const rep =
     pin.rep != null ? `<p class="rep">Rep ${pin.rep} · ${escapeHTML(repTier(pin.rep))}</p>` : "";
+  if (pin.id === "pixel-lounge") {
+    actions = `<div class="actions"><button type="button" class="btn primary" data-act="enter-lounge">Enter the lounge</button></div>`;
+  }
   const safety =
     pin.kind === "person" || pin.kind === "event"
       ? `<div class="linkish"><button type="button" data-act="block" data-id="${escapeHTML(pin.id)}">Block</button><button type="button" data-act="report" data-id="${escapeHTML(pin.id)}">Report</button></div>`
@@ -613,7 +652,9 @@ function onSheetClick(event) {
   if (act === "drop-kind") {
     state.dropKind = button.dataset.kind;
     renderSheet();
+    return;
   }
+  if (act === "enter-lounge") showLounge();
 }
 
 function onSheetSubmit(event) {
@@ -679,11 +720,35 @@ function bootMap() {
       }
     },
   });
+  lounge = mountLounge($("#lounge"), {
+    youName: YOU_PROFILE.name,
+    onTap(person) {
+      if (state.tapped.has(person.id)) state.tapped.delete(person.id);
+      else state.tapped.add(person.id);
+      showToast(state.tapped.has(person.id) ? `Tapped ${person.name}.` : "Tap removed.");
+    },
+    onDirect(person, text) {
+      let thread = state.chats.find((chat) => chat.personId === person.id);
+      if (!thread) {
+        thread = {
+          id: `conv-${person.id}`,
+          personId: person.id,
+          name: person.name,
+          unread: 0,
+          messages: [],
+        };
+        state.chats.unshift(thread);
+      }
+      thread.messages.push({ id: `lounge-${Date.now()}`, mine: true, text });
+      renderChrome();
+    },
+  });
   requestAnimationFrame(() => {
     recenter();
     state.lastRadius = clusterRadiusForZoom(map.getZoom());
     paintMarkers();
     renderChrome();
+    if (location.hash === "#lounge") showLounge(true);
   });
 
   document.querySelectorAll("[data-filter]").forEach((button) => {
@@ -719,7 +784,12 @@ function bootMap() {
   document.querySelectorAll("[data-dock]").forEach((button) => {
     button.addEventListener("click", () => {
       const dock = button.dataset.dock;
+      if (dock === "lounge") {
+        if (!inLounge) showLounge();
+        return;
+      }
       if (dock === "map") {
+        if (inLounge) showMapView();
         closeSheet();
         recenter();
         return;
@@ -756,8 +826,14 @@ function bootMap() {
   sheet.addEventListener("click", onSheetClick);
   sheet.addEventListener("submit", onSheetSubmit);
   $("#sheet-handle").addEventListener("click", () => sheet.classList.toggle("expanded"));
+  $("#open-lounge")?.addEventListener("click", () => showLounge());
+  window.addEventListener("hashchange", () => {
+    if (location.hash === "#lounge") showLounge(true);
+    else if (inLounge) showMapView(true);
+  });
   document.addEventListener("keydown", (event) => {
     if (!app.hidden && event.key === "Escape") {
+      if (inLounge && lounge?.closeCard()) return;
       if (state.mode === "chat" && state.threadId) {
         state.threadId = null;
         renderSheet();
@@ -766,7 +842,7 @@ function bootMap() {
       if (state.mode) closeSheet();
       return;
     }
-    if (app.hidden || event.target.closest("input, textarea, select")) return;
+    if (app.hidden || inLounge || event.target.closest("input, textarea, select")) return;
     if (event.key === "+" || event.key === "=") map.zoomBy(1.18);
     if (event.key === "-" || event.key === "_") map.zoomBy(1 / 1.18);
     if (event.key === "r" || event.key === "R") recenter();
@@ -776,6 +852,29 @@ function bootMap() {
     state.ticker = (state.ticker + 1) % ACTIVITY.length;
     $("#ticker-text").textContent = ACTIVITY[state.ticker].text;
   }, 4200);
+}
+
+function showLounge(fromHash = false) {
+  if (!lounge) return;
+  const already = inLounge;
+  inLounge = true;
+  document.body.classList.add("in-lounge");
+  if (!already) {
+    closeSheet();
+    lounge.show();
+  }
+  if (!fromHash && location.hash !== "#lounge") location.hash = "#lounge";
+  renderChrome();
+}
+
+function showMapView(fromHash = false) {
+  inLounge = false;
+  document.body.classList.remove("in-lounge");
+  lounge?.hide();
+  if (!fromHash && location.hash === "#lounge") {
+    history.replaceState(null, "", `${location.pathname}${location.search}`);
+  }
+  renderChrome();
 }
 
 function openApp() {
