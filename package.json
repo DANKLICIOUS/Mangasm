@@ -7,7 +7,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "echo 'No TS typecheck at repo root (Swift package)'",
-    "test": "swift test --parallel"
+    "test": "swift test --parallel",
+    "test:web": "node --test web/cruise-data.test.mjs"
   },
   "devDependencies": {
     "husky": "^9.1.7",

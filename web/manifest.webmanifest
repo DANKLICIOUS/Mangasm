@@ -1,0 +1,18 @@
+{
+  "name": "Mangasm",
+  "short_name": "Mangasm",
+  "description": "Privacy-zone map for nearby people, check-ins, groups, and events.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#07080d",
+  "theme_color": "#07080d",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

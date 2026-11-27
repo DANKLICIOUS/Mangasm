@@ -2,302 +2,206 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Mangasm — They Built It For Us. Then They Forgot Us.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Mangasm — Nearby</title>
     <meta
       name="description"
-      content="An autopsy of gay dating culture online. Mangasm is the rebuild — safety-first connection without extraction."
+      content="Mangasm's map. Nearby people, check-ins, groups, and events in privacy zones — never an exact address. 18+."
     />
-    <meta property="og:title" content="Mangasm.app — The rebuild begins" />
-    <meta
-      property="og:description"
-      content="They promised connection. Too many apps delivered extraction. We’re building a home together."
-    />
-    <meta property="og:image" content="assets/06-rebuild-phone.jpg" />
+    <meta name="theme-color" content="#07080d" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="rating" content="adult" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Mangasm" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="cruise.css" />
+    <script>
+      (function () {
+        var story = {
+          "#top": 1,
+          "#story": 1,
+          "#patterns": 1,
+          "#honesty": 1,
+          "#status": 1,
+          "#join": 1,
+          "#act-01": 1,
+          "#act-03": 1,
+          "#act-05": 1,
+          "#act-06": 1,
+        };
+        if (story[location.hash]) location.replace("/story.html" + location.hash);
+      })();
+    </script>
   </head>
   <body>
-    <div class="grain" aria-hidden="true"></div>
-
-    <nav class="nav">
-      <a class="logo" href="#top">mangasm<span>.app</span></a>
-      <div class="nav-links">
-        <a href="/wrapper">Wrapper</a>
-        <a href="/themes">Themes</a>
-        <a href="/storybook">Storybook</a>
-        <a href="#story">Story</a>
-        <a href="#patterns">Patterns</a>
-        <a href="#honesty">Honesty</a>
-        <a href="#status">Status</a>
-        <a href="#join" class="nav-cta">Join the rebuild</a>
-      </div>
-    </nav>
-
-    <header class="hero" id="top">
-      <div class="hero-media">
-        <img
-          src="assets/01-opening-hero.jpg"
-          alt=""
-          width="1600"
-          height="900"
-          fetchpriority="high"
-        />
-        <div class="hero-veil"></div>
-      </div>
-      <div class="hero-copy">
-        <p class="eyebrow">01 · Opening · Building in public</p>
-        <h1>They Built It For Us.<br /><em>Then They Forgot Us.</em></h1>
-        <p class="lede">
-          Connection without extraction. A home we rebuild together — campfire, not casino.
+    <section class="gate" id="age-gate" aria-labelledby="age-title">
+      <div class="gate-card">
+        <p class="wordmark">mangasm<span>.app</span></p>
+        <p class="gate-kicker">Adults only · 18+</p>
+        <h1 id="age-title">The map is a privacy zone.</h1>
+        <p class="gate-copy">
+          Nearby people, live check-ins, groups, and events. Pins are neighborhoods, not doorsteps.
         </p>
-        <div class="hero-actions">
-          <a class="btn primary" href="#join">Join the rebuild</a>
-          <a class="btn ghost" href="/storybook">Open storybook</a>
-          <button type="button" class="btn ghost" id="btn-story">Walk the six acts</button>
-          <button type="button" class="btn ghost" id="btn-play-vo">Play 60s VO</button>
-        </div>
-        <!-- Public trust signal only — no internal ops -->
-        <div class="hero-stats" id="hero-stats">
-          <div class="stat">
-            <span class="n" id="stat-pct">—</span><span class="l">built so far</span>
-          </div>
-          <div class="stat">
-            <span class="n" id="stat-hours">—</span><span class="l">hours of work ahead</span>
-          </div>
-          <div class="stat wide">
-            <span class="n soft" id="stat-tagline">Building in public</span
-            ><span class="l">safety first · no data sale</span>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <div class="rail" id="story" aria-label="Story progress">
-      <button type="button" class="rail-dot active" data-act="0">01</button>
-      <button type="button" class="rail-dot" data-act="1">02</button>
-      <button type="button" class="rail-dot" data-act="2">03</button>
-      <button type="button" class="rail-dot" data-act="3">04</button>
-      <button type="button" class="rail-dot" data-act="4">05</button>
-      <button type="button" class="rail-dot" data-act="5">06</button>
-    </div>
-
-    <section class="act-panel" id="act-01" data-act="0">
-      <div class="act-inner split">
-        <div class="act-text">
-          <p class="act-num">01 · Opening</p>
-          <h2>They built it for us.<br />Then they forgot us.</h2>
-          <p>Too many apps sold belonging and shipped extraction. This is our rebuild story.</p>
-        </div>
-        <figure class="act-fig">
-          <img
-            src="assets/01-opening-hero.jpg"
-            alt="Phone under a harsh light — the autopsy begins"
-            loading="lazy"
-          />
-        </figure>
-      </div>
-    </section>
-
-    <!-- Softened: industry archetypes, not competitors -->
-    <section class="act-panel dark" id="patterns" data-act="1">
-      <div class="act-inner">
-        <div class="act-text center">
-          <p class="act-num">02 · Industry patterns</p>
-          <h2>Different faces. <em>Same failure mode.</em></h2>
-          <p class="pink">They promised connection. Too often they delivered extraction.</p>
-          <p class="legal-note">
-            Fictional archetypes of market failure — not portraits of any single company or product.
-          </p>
-        </div>
-        <figure class="act-fig full">
-          <img
-            src="assets/02-accused.jpg"
-            alt="Four archetypal failure modes in a stylized lineup"
-            loading="lazy"
-          />
-        </figure>
-        <div class="failed-row">
-          <span>Body marketplace</span>
-          <span>Rainbow paint job</span>
-          <span>Ghosted by design</span>
-          <span>Surveillance by default</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="act-panel" id="act-03" data-act="2">
-      <div class="act-inner split reverse">
-        <figure class="act-fig">
-          <img
-            src="assets/03-evidence.jpg"
-            alt="Investigation board of industry patterns"
-            loading="lazy"
-          />
-        </figure>
-        <div class="act-text">
-          <p class="act-num">03 · The pattern board</p>
-          <h2>The receipts of a <em>broken category.</em></h2>
-          <p class="legal-note">
-            Category-level problems users report across apps — not a claim about one named service.
-          </p>
-          <ul class="receipts">
-            <li>Profiles treated as inventory, not people</li>
-            <li>Expression muted when it doesn’t monetize</li>
-            <li>Safety deprioritized against engagement</li>
-            <li>Abuse reports that go nowhere human</li>
-            <li>People erased from discovery for who they are</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="act-panel dark" id="honesty" data-act="3">
-      <div class="act-inner">
-        <div class="act-text center">
-          <p class="act-num">04 · Radical honesty</p>
-          <h2>What the category sold <em>vs</em> what too many built.</h2>
-        </div>
-        <figure class="act-fig full">
-          <img
-            src="assets/04-honesty-split.jpg"
-            alt="Soft promises versus extraction machinery"
-            loading="lazy"
-          />
-        </figure>
-        <div class="tri three">
-          <article class="card">
-            <h3>Sold</h3>
-            <p>Belonging. Soft promises. Rainbow branding. Forever UI.</p>
-          </article>
-          <article class="card">
-            <h3>Too often built</h3>
-            <p>Trackers. Harvest. Loops. Empty chats. Vanity metrics. Profit on loneliness.</p>
-          </article>
-          <article class="card ours">
-            <h3>What we’re building</h3>
-            <p id="third-body">
-              A safety-first home: report &amp; block in reach, privacy-zone location, honest Apple
-              subscriptions, full account deletion — no data-sale ad model.
-            </p>
-            <div class="mini-stats">
-              <div><span class="label">Built so far</span><strong id="third-pct">—</strong></div>
-              <div><span class="label">Work ahead</span><strong id="third-hours">—</strong></div>
-            </div>
-            <div class="progress"><i id="third-bar"></i></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="act-panel" id="act-05" data-act="4">
-      <div class="act-inner">
-        <figure class="act-fig full cinematic">
-          <img
-            src="assets/05-manifesto-campfire.jpg"
-            alt="Community around a fire — campfire not casino"
-            loading="lazy"
-          />
-          <div class="overlay-copy">
-            <p class="act-num">05 · The manifesto</p>
-            <h2>MANGASM WAS BUILT DIFFERENT.<br /><em>LET US PROVE IT.</em></h2>
-            <p>We’re not the product. We are the reason.</p>
-          </div>
-        </figure>
-      </div>
-    </section>
-
-    <section class="act-panel dark" id="act-06" data-act="5">
-      <div class="act-inner split">
-        <div class="act-text">
-          <p class="act-num">06 · The rebuild</p>
-          <h2>The autopsy is over.<br /><em>The rebuild begins.</em></h2>
-          <p>Not another app. A home we build together.</p>
-          <a class="btn primary" href="#join">Join the rebuild</a>
-        </div>
-        <figure class="act-fig">
-          <img
-            src="assets/06-rebuild-phone.jpg"
-            alt="Phone glowing with rebuild energy"
-            loading="lazy"
-          />
-        </figure>
-      </div>
-    </section>
-
-    <!-- PUBLIC STATUS — building in public (no secrets / ops map) -->
-    <section class="public-status" id="status">
-      <div class="section-head">
-        <p class="act-num">Building in public</p>
-        <h2>Where we are right now</h2>
-        <p id="status-headline">Honest progress — not a ship-date promise.</p>
-      </div>
-      <div class="status-board">
-        <div class="status-big">
-          <div class="stat-xl">
-            <span class="n" id="pub-pct">—</span>
-            <span class="l">complete (est.)</span>
-          </div>
-          <div class="stat-xl">
-            <span class="n" id="pub-hours">—</span>
-            <span class="l">hours of work ahead (est.)</span>
-          </div>
-          <div class="stat-xl focus">
-            <span class="n soft" id="pub-milestone">—</span>
-            <span class="l">current focus</span>
-          </div>
-        </div>
-        <p class="status-body" id="pub-body"></p>
-        <div class="phases" id="pub-phases"></div>
-        <ul class="promises" id="pub-promises"></ul>
-        <p class="disclaimer" id="pub-disclaimer"></p>
-      </div>
-    </section>
-
-    <section class="join" id="join">
-      <img class="join-bg" src="assets/06-rebuild-phone.jpg" alt="" aria-hidden="true" />
-      <div class="join-inner">
-        <h2>We’re not the product.<br /><em>We are the reason.</em></h2>
-        <p class="lede">Leave your email for rebuild updates. No data sale. Ever.</p>
-        <form id="join-form" class="join-form">
-          <label class="sr-only" for="email">Email</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            required
-            placeholder="you@domain.com"
-            autocomplete="email"
-          />
-          <button type="submit" class="btn primary" id="join-btn">Join the rebuild</button>
+        <form id="age-form">
+          <label for="age-dob">Date of birth</label>
+          <input id="age-dob" name="bday" type="date" autocomplete="bday" required />
+          <p class="gate-error" id="age-error" role="alert"></p>
+          <button class="btn primary block" id="age-enter" type="submit">Enter the map</button>
         </form>
-        <p class="form-note" id="form-note" role="status"></p>
-        <p class="legal-links">
-          <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a> ·
-          <a href="/moderation.html">Moderation</a>
+        <p class="gate-note">Checked on this device. The date is not saved and is not sent.</p>
+        <p class="gate-links">
+          <a href="/story">Read the story instead</a>
+          · <a href="/terms.html">Terms</a> · <a href="/privacy.html">Privacy</a>
         </p>
       </div>
     </section>
 
-    <div class="vo-dock" id="vo-panel" hidden>
-      <div class="vo-progress"><i id="vo-bar"></i></div>
-      <p class="vo-line" id="vo-line"></p>
-      <button type="button" class="btn ghost small" id="btn-stop-vo">Stop</button>
+    <div id="app" hidden inert>
+      <div class="map" id="map" role="application" aria-label="Nearby map"></div>
+      <div class="vignette" aria-hidden="true"></div>
+      <p class="map-empty" id="map-empty" hidden>
+        Nothing in this radius. Widen distance or clear a filter.
+      </p>
+
+      <header class="chrome">
+        <div class="topbar">
+          <div>
+            <a class="wordmark" href="/">mangasm<span>.app</span></a>
+            <p class="zone-name">Dubai Marina · privacy zone</p>
+          </div>
+          <div class="top-links">
+            <a href="/story">Story</a>
+            <span class="live-count" id="stat-live">0 right now</span>
+          </div>
+        </div>
+        <p class="ticker" id="ticker" aria-live="polite">
+          <span id="ticker-text">Marco checked in · Dubai Marina</span>
+        </p>
+        <div class="filters" role="toolbar" aria-label="Map filters">
+          <button type="button" class="pill" data-filter="rightNow" aria-pressed="false">
+            Right Now
+          </button>
+          <button
+            type="button"
+            class="pill distance"
+            id="filter-distance"
+            aria-label="Distance, tap to change"
+          >
+            15 km
+          </button>
+          <button type="button" class="pill" data-filter="groups" aria-pressed="false">
+            Groups
+          </button>
+          <button type="button" class="pill" data-filter="events" aria-pressed="false">
+            Events
+          </button>
+          <button type="button" class="pill" data-filter="hosting" aria-pressed="false">
+            Hosting
+          </button>
+          <button type="button" class="pill" data-filter="traveling" aria-pressed="false">
+            Traveling
+          </button>
+        </div>
+      </header>
+
+      <div class="hud-bl">
+        <div class="scale" aria-hidden="true"><i id="scale-bar"></i><span>500 m</span></div>
+        <p class="privacy-chip">Fuzzed ≥500m · no GPS sent</p>
+      </div>
+
+      <div class="fabs" aria-label="Map controls">
+        <button type="button" class="fab" data-fab="in" aria-label="Zoom in">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+        </button>
+        <button type="button" class="fab" data-fab="out" aria-label="Zoom out">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14" /></svg>
+        </button>
+        <button type="button" class="fab" data-fab="recenter" aria-label="Recenter">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M12 3v3M12 18v3M3 12h3M18 12h3" />
+          </svg>
+        </button>
+        <span class="fab-gap"></span>
+        <button type="button" class="fab fab-extra" data-fab="roster" aria-label="List or grid">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </button>
+        <button
+          type="button"
+          class="fab fab-extra primary"
+          data-fab="drop"
+          aria-label="Drop a pin or host an event"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z" />
+            <circle cx="12" cy="10" r="2" />
+          </svg>
+        </button>
+        <button type="button" class="fab fab-extra" data-fab="chat" aria-label="Chats">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 16l-2 5 5-2h9a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4z" />
+          </svg>
+        </button>
+      </div>
+
+      <nav class="dock" aria-label="Primary">
+        <button type="button" data-dock="map" aria-pressed="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M9 4l-5 2v14l5-2 6 2 5-2V4l-5 2z" />
+            <path d="M9 4v14M15 6v14" />
+          </svg>
+          Map
+        </button>
+        <button type="button" data-dock="roster" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10" /></svg>
+          Nearby
+        </button>
+        <button type="button" data-dock="drop" aria-pressed="false">
+          <svg viewBox="0 0 24 24"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11z" /></svg>
+          Drop
+        </button>
+        <button type="button" data-dock="chat" aria-pressed="false">
+          <svg viewBox="0 0 24 24">
+            <path d="M5 16l-2 5 5-2h9a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4z" />
+          </svg>
+          Chat
+          <span class="badge" id="chat-badge">3</span>
+        </button>
+        <button type="button" data-dock="you" aria-pressed="false">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="3" />
+            <path d="M5 19c1.5-3 3.8-4.5 7-4.5S17.5 16 19 19" />
+          </svg>
+          You
+        </button>
+      </nav>
+
+      <aside class="sheet" id="sheet" hidden role="dialog" aria-modal="false" aria-label="Details">
+        <button
+          type="button"
+          class="handle"
+          id="sheet-handle"
+          aria-label="Expand or collapse details"
+        ></button>
+        <div class="sheet-body" id="sheet-body"></div>
+      </aside>
+      <div class="toast" id="toast" role="status"></div>
     </div>
 
-    <footer class="foot">
-      <p>Mangasm · Adult social · Safety first</p>
-      <p class="muted">
-        Story archetypes are fictional. Visuals by Grok Imagine. Ops status lives off this page.
+    <noscript>
+      <p style="padding: 24px">
+        Mangasm's map needs JavaScript. <a href="/story">Read the story</a>.
       </p>
-    </footer>
-
-    <script src="app.js" type="module"></script>
-    <script type="module" src="analytics.js"></script>
+    </noscript>
+    <script type="module" src="cruise-app.js"></script>
   </body>
 </html>
